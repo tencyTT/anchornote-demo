@@ -375,16 +375,6 @@ body { font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif
 
 </div><!-- .page-main -->
 
-<aside class="cp-sidebar">
-  <div class="cp-sidebar-head">
-    <span class="cp-sidebar-icon">📍</span>
-    <span class="cp-sidebar-title">阅读断点</span>
-    <span class="cp-sidebar-count" id="cp-sidebar-count">0</span>
-  </div>
-  <div class="cp-sidebar-list" id="cp-sidebar-list">
-    <div class="cp-sidebar-empty">暂无阅读记录<small>在任意页面保存断点后显示</small></div>
-  </div>
-</aside>
 
 </div><!-- .page-body -->
 
@@ -500,6 +490,34 @@ window.addEventListener('storage', function(e) {
   if (e.key && e.key.startsWith('anchornote.embed.')) renderAll();
 });
 </script>
+
+<script>
+window.ANCHORNOTE_CONFIG = {
+  pageId:          'tencent-research-index',
+  pageTitle:       '腾讯研究院',
+  pageUrl:         'research.tencent.com/research-index',
+  articleSelector: '.page-main',
+  seedBookmarks: [
+    {
+      id:           'cp-deep-001',
+      type:         'checkpoint',
+      crossPage:    true,
+      sourceUrl:    'tencent-news-deep.html',
+      selectedText: '被用户列为排名第一的痛点：阅读中断后找不回位置',
+      note:         'AI大模型正在重塑内容消费 · 腾讯新闻深度报道',
+      section:      'intro',
+      colorIndex:   1,
+      createdAt:    new Date(Date.now() - 7200000).toISOString()
+    }
+  ],
+  onJumpFail: function(bm) {
+    if (bm.crossPage && bm.sourceUrl) {
+      window.open(bm.sourceUrl, '_blank');
+    }
+  }
+};
+</script>
+<script src="../anchornote-embed.js"></script>
 
 </body>
 </html>

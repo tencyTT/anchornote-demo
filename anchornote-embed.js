@@ -1296,8 +1296,8 @@
     if (!scrollTarget) {
       const textHit = hiText(bm.selectedText, art);
       if (!textHit && cfg.onJumpFail) {
-        // Text not in DOM yet — delegate to page-level lazy-load hook
-        showToast('⏳ 内容尚未加载，正在自动滚动加载…', 3500);
+        // crossPage bookmarks navigate away — skip the lazy-load toast
+        if (!bm.crossPage) showToast('⏳ 内容尚未加载，正在自动滚动加载…', 3500);
         cfg.onJumpFail(bm, function retryJump() {
           clearHi();
           const target = hiText(bm.selectedText, article());
@@ -1416,6 +1416,8 @@
       note:         norm(input.note        || ''),
       colorIndex:   input.colorIndex ?? 0,
       createdAt:    input.createdAt || new Date().toISOString(),
+      crossPage:    input.crossPage || false,
+      sourceUrl:    input.sourceUrl || '',
       ...meta
     };
   }
