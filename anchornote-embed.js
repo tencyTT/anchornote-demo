@@ -609,6 +609,7 @@
 
     document.addEventListener('selectionchange', () => {
       if (_bubbleDown) return;
+      if ($('an-sel').contains(document.activeElement)) return;
       const s = window.getSelection();
       if (!s || !s.toString().trim()) hideBubble();
     });
