@@ -290,6 +290,21 @@
     }
     .an-lib-actions button:hover { background: #1559ce; }
     .an-lib-actions span { color: #68758f; font-size: 13px; }
+    .an-view-tabs {
+      display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+      margin: 0 0 14px; padding: 10px 12px;
+      background: #f8fbff; border: 1px solid #d9e8ff; border-radius: 10px;
+    }
+    .an-view-tabs span {
+      color: #68758f; font-size: 12px; font-weight: 700; margin-right: 2px;
+    }
+    .an-view-btn {
+      min-height: 28px; padding: 0 10px; border: 1px solid #d0dffa; border-radius: 8px;
+      background: #fff; color: #4a6a9c; font: inherit; font-size: 12px; font-weight: 700;
+      cursor: pointer;
+    }
+    .an-view-btn:hover { border-color: #1f6feb; color: #1f6feb; background: #eaf2ff; }
+    .an-view-btn.an-active { border-color: #1f6feb; background: #1f6feb; color: #fff; }
 
     /* clustering */
     .an-cluster-section { margin-bottom: 14px; }
@@ -573,6 +588,7 @@
 
   const RAIL_TOP_KEY    = 'anchornote.rail-top.'    + PAGE.id;
   const RAIL_HIDDEN_KEY = 'anchornote.rail-hidden.' + PAGE.id;
+  const VIEW_MODE_KEY   = 'anchornote.view-mode.'   + PAGE.id;
   let railTop    = Math.min(window.innerHeight - 120, Math.max(60, parseInt(localStorage.getItem(RAIL_TOP_KEY) || '170', 10)));
   let railHidden = localStorage.getItem(RAIL_HIDDEN_KEY) === '1';
 
@@ -581,6 +597,7 @@
     pending: null,
     selectedColorIndex: 0,
     query: '',
+    viewMode: localStorage.getItem(VIEW_MODE_KEY) || '',
     editingBmId: null    // tracks which library note editor is open
   };
 
@@ -1088,6 +1105,7 @@
     const hasReturn = state.bookmarks.find(b => b.type === 'return');
     const hasSources = visible.some(b => b.source);
     const isDense = visible.length >= 8;
+    const activeView = effectiveView(matched, hasSources);
 
     const card = mkEl('div', 'an-lib-card');
     card.innerHTML = `
@@ -1101,6 +1119,12 @@
           ${hasReturn ? '<button id="an-goto-ret" style="background:#e5fbf4;color:#087967">↩ 返回上次位置</button>' : ''}
         </div>
         <span>${matched.length} 个书签位置</span>
+      </div>
+      <div class="an-view-tabs" aria-label="书签视图切换">
+        <span>视图切换</span>
+        <button class="an-view-btn${activeView === 'list' ? ' an-active' : ''}" data-view="list">列表</button>
+        <button class="an-view-btn${activeView === 'intent' ? ' an-active' : ''}" data-view="intent">AI 聚类</button>
+        ${hasSources ? `<button class="an-view-btn${activeView === 'source' ? ' an-active' : ''}" data-view="source">来源分组</button>` : ''}
       </div>
       <div id="an-bm-list" class="an-bm-list"></div>`;
 
@@ -1117,13 +1141,29 @@
       state.bookmarks = state.bookmarks.filter(b => b.type !== 'return');
       persist(); renderAll();
     });
+    card.querySelectorAll('.an-view-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.viewMode = btn.dataset.view || '';
+        localStorage.setItem(VIEW_MODE_KEY, state.viewMode);
+        renderLib();
+      });
+    });
 
     const list = card.querySelector('#an-bm-list');
-    if (hasSources)           renderBySource(matched, list);
-    else if (matched.length >= 3) renderByIntent(matched, list);
-    else                      matched.forEach(bm => list.appendChild(renderBmItem(bm)));
+    if (activeView === 'source')      renderBySource(matched, list);
+    else if (activeView === 'intent') renderByIntent(matched, list);
+    else                             matched.forEach(bm => list.appendChild(renderBmItem(bm)));
 
     body.appendChild(card);
+  }
+
+  function effectiveView(bms, hasSources) {
+    if (state.viewMode === 'list' || state.viewMode === 'intent' || state.viewMode === 'source') {
+      return state.viewMode;
+    }
+    if (hasSources) return 'source';
+    if (bms.length >= 3) return 'intent';
+    return 'list';
   }
 
   function renderBySource(bms, container) {
@@ -1248,9 +1288,10 @@
   function clearDocAnnotations() {
     document.querySelectorAll('.an-doc-dot').forEach(d => d.remove());
     document.querySelectorAll('.an-doc-hi').forEach(m => {
-      if (m.parentNode) {
-        m.parentNode.replaceChild(document.createTextNode(m.textContent), m);
-        m.parentNode.normalize();
+      const parent = m.parentNode;
+      if (parent) {
+        parent.replaceChild(document.createTextNode(m.textContent), m);
+        parent.normalize();
       }
     });
     document.querySelectorAll('.an-has-anno').forEach(el => el.classList.remove('an-has-anno'));
