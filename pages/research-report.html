@@ -204,13 +204,13 @@ body { font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif
 </nav>
 
 <div class="demo-goal">
-  <span class="dg-label">🎯 演示目标 · 长报告阅读 + AI 回访简报</span>
+  <span class="dg-label">🎯 演示目标 · AI 语义重定位 + 长报告阅读</span>
   <div class="dg-steps">
-    <span class="dg-step"><span class="dg-num">①</span> 点右侧「N 书签」打开书签库，查看 AI 回访简报（关注焦点 / 关键要点 / 建议）</span>
+    <span class="dg-step"><span class="dg-num">①</span> 点右侧第4条书签「各平台 AI 战略分化…」（黄色，3天前保存，原文已更新）</span>
     <span class="dg-arrow">→</span>
-    <span class="dg-step"><span class="dg-num">②</span> 点书签条目精准跳转到白皮书对应章节</span>
+    <span class="dg-step"><span class="dg-num">②</span> 精确匹配失败 → AI 语义分析 → 自动定位到最相似段落，Toast 提示「原文已更新」</span>
     <span class="dg-arrow">→</span>
-    <span class="dg-step"><span class="dg-num">③</span> 切换顶部标签（产业洞察 / 政策研究…），书签跨标签页保留</span>
+    <span class="dg-step"><span class="dg-num">③</span> 点「N 书签」查看 AI 回访简报，其余书签正常精确跳转</span>
   </div>
 </div>
 
@@ -812,13 +812,16 @@ window.ANCHORNOTE_CONFIG = {
     },
     {
       type: 'mark',
-      selectedText: '各平台的策略分化愈发明显。以腾讯新闻、今日头条为代表的资讯平台在推荐算法的AI化改造方面投入最大',
+      selectedText: '各平台的内容 AI 战略分化态势已十分清晰，资讯型平台将主要资源投入推荐算法深度优化，内容理解型平台则侧重阅读助手与 AI 标注功能，两条路径在产品形态上已出现本质分歧',
       section: 'ch1',
       source: '腾讯研究院产业洞察',
-      note: '竞品路径对比，支撑差异化叙事',
-      contextText: '从主要内容平台的AI布局来看，各平台的策略分化愈发明显。以腾讯新闻、今日头条为代表的资讯平台在推荐算法的AI化改造方面投入最大；以微信读书为代表的深度阅读平台则更加侧重AI辅助理解功能。'
+      note: '⚠️ 3天前保存，原文已更新 · 点击触发AI语义定位',
+      contextText: '从主要内容平台的AI布局来看，各平台的策略分化愈发明显。头部平台正在加速AI化改造，资讯平台与内容理解平台的路径选择出现本质分歧，两种策略在用户留存上的效果正在逐步显现。',
+      colorIndex: 0,
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
     }
-  ]
+  ],
+  semanticRelocate: true
 };
 </script>
 <script src="../anchornote-embed.js"></script>

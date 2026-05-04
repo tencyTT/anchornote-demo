@@ -179,13 +179,13 @@ body { font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif
 </nav>
 
 <div class="demo-goal">
-  <span class="dg-label">🎯 演示目标 · 父→子页面断点继续阅读</span>
+  <span class="dg-label">🎯 演示目标 · 本站书签（父页面可见子页面断点）</span>
   <div class="dg-steps">
-    <span class="dg-step"><span class="dg-num">①</span> 点击「继续阅读」进入研究报告详情页，保存书签或断点</span>
+    <span class="dg-step"><span class="dg-num">①</span> 右侧便利贴显示「本站↗」标签书签，来自研究报告子页面的阅读断点</span>
     <span class="dg-arrow">→</span>
-    <span class="dg-step"><span class="dg-num">②</span> 返回本页，顶部蓝色横幅显示上次断点摘要</span>
+    <span class="dg-step"><span class="dg-num">②</span> 点击任意「本站书签」→ 跳转到对应报告页的书签位置（Chrome 扩展版自动跨页定位）</span>
     <span class="dg-arrow">→</span>
-    <span class="dg-step"><span class="dg-num">③</span> 点「继续阅读 →」精准跳回报告内上次位置</span>
+    <span class="dg-step"><span class="dg-num">③</span> 点「继续阅读 →」从报告首页直接进入上次断点位置</span>
   </div>
 </div>
 
@@ -499,15 +499,37 @@ window.ANCHORNOTE_CONFIG = {
   articleSelector: '.page-main',
   seedBookmarks: [
     {
-      id:           'cp-deep-001',
+      id:           'site-bm-report-001',
       type:         'checkpoint',
       crossPage:    true,
-      sourceUrl:    'tencent-news-deep.html',
-      selectedText: '被用户列为排名第一的痛点：阅读中断后找不回位置',
-      note:         'AI大模型正在重塑内容消费 · 腾讯新闻深度报道',
-      section:      'intro',
+      sourceUrl:    'research-report.html',
+      selectedText: 'AI语义书签技术提供了一条可量化的解法路径',
+      note:         '📊 2024AI内容产业白皮书 · 执行摘要核心结论，上次读到这里',
+      source:       '本站书签',
       colorIndex:   1,
-      createdAt:    new Date(Date.now() - 7200000).toISOString()
+      createdAt:    new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id:           'site-bm-report-002',
+      type:         'mark',
+      crossPage:    true,
+      sourceUrl:    'research-report.html',
+      selectedText: '在精确文本匹配失败的情况下（约占回访场景的13%），大模型的比较优势才得以充分体现',
+      note:         '📊 第四章 · AI重定位技术路径，扩展版核心差异点',
+      source:       '本站书签',
+      colorIndex:   2,
+      createdAt:    new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id:           'site-bm-report-003',
+      type:         'mark',
+      crossPage:    true,
+      sourceUrl:    'research-report.html',
+      selectedText: '能够准确回到中断位置的用户其30日留存率比普通用户高出62%',
+      note:         '📊 执行摘要 · 关键数据，可引用于路演开场',
+      source:       '本站书签',
+      colorIndex:   0,
+      createdAt:    new Date(Date.now() - 3600000).toISOString()
     }
   ],
   onJumpFail: function(bm) {

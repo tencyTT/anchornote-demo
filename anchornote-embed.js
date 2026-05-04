@@ -166,6 +166,13 @@
       box-shadow: 0 8px 24px rgba(24,48,91,.14);
       font-family: -apple-system,"PingFang SC",sans-serif;
     }
+    .an-site-badge {
+      position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+      font-size: 9px; font-weight: 700; color: #1d4ed8;
+      background: rgba(0,110,255,.13); border-radius: 3px;
+      padding: 1px 4px; letter-spacing: .02em; line-height: 1.4;
+      writing-mode: horizontal-tb; white-space: nowrap; pointer-events: none;
+    }
     .an-del {
       position: absolute; top: -7px; left: -9px;
       display: none; width: 22px; height: 22px;
@@ -1005,8 +1012,10 @@
       note.dataset.bmId = bm.id;
       note.innerHTML = `
         <button class="an-del" type="button">×</button>
-        <span>${esc(shortLbl(bm))}</span>
+        ${bm.crossPage ? '<div class="an-site-badge">本站↗</div>' : ''}
+        <span style="${bm.crossPage ? 'margin-top:16px' : ''}">${esc(shortLbl(bm))}</span>
         <div class="an-sticky-detail">
+          ${bm.crossPage ? '<div style="font-size:11px;color:#1d4ed8;font-weight:700;margin-bottom:6px;background:rgba(0,110,255,.08);border-radius:5px;padding:3px 8px;display:inline-block">📎 本站书签 · 跨页跳转</div>' : ''}
           <h3>${esc(bm.title)}</h3>
           <p><mark>${esc(bm.selectedText)}</mark></p>
           <p>${esc(bm.summary)}</p>
@@ -1014,7 +1023,7 @@
           ${bm.note ? `<p><strong>备注：</strong>${esc(bm.note)}</p>` : ''}
           <p>${esc(bm.nextAction)}</p>
           <div class="an-d-actions">
-            <button class="an-jump-s">跳转</button>
+            <button class="an-jump-s">${bm.crossPage ? '跳转页面' : '跳转'}</button>
             <button class="an-edit-s">备注</button>
             ${idx > 0            ? '<button class="an-up-s">↑</button>' : ''}
             ${idx < arr.length-1 ? '<button class="an-dn-s">↓</button>' : ''}
@@ -1312,6 +1321,10 @@
         });
         return;
       }
+      if (!textHit && cfg.semanticRelocate) {
+        semanticRelocate(bm, art);
+        return;
+      }
       scrollTarget = textHit || art?.querySelector(`[data-section="${bm.section}"]`) || art;
       pulseTarget = scrollTarget;
     }
@@ -1359,6 +1372,60 @@
         m.parentNode.normalize();
       }
     });
+  }
+
+  /* ── AI semantic relocation ─────────────────────────────────────────── */
+  function semanticRelocate(bm, art) {
+    showToast('🔍 AI 语义匹配中，正在遍历段落…', 2500);
+
+    function bigrams(str) {
+      const clean = str.replace(/[\s\n\r\t，。、！？：；""''【】（）《》\[\]·…]/g, '');
+      const s = new Set();
+      for (let i = 0; i < clean.length - 1; i++) s.add(clean.slice(i, i + 2));
+      return s;
+    }
+    function simScore(a, b) {
+      const ba = bigrams(a), bb = bigrams(b);
+      if (!ba.size || !bb.size) return 0;
+      let inter = 0;
+      ba.forEach(g => { if (bb.has(g)) inter++; });
+      return 2 * inter / (ba.size + bb.size);
+    }
+
+    // Build query from saved text + context
+    const query = ((bm.selectedText || '') + ' ' + (bm.contextText || '')).trim();
+
+    // Candidates: paragraph-level elements in article
+    const root = art || document.body;
+    const candidates = [...root.querySelectorAll('p, h2, h3, h4, li, blockquote')]
+      .filter(el => {
+        const t = el.textContent.trim();
+        return t.length > 20 && !el.closest('script,style,.an-hi');
+      });
+
+    let best = null, bestScore = 0;
+    candidates.forEach(el => {
+      const score = simScore(query, el.textContent);
+      if (score > bestScore) { bestScore = score; best = el; }
+    });
+
+    const THRESHOLD = 0.18;
+    setTimeout(() => {
+      if (best && bestScore >= THRESHOLD) {
+        best.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        best.classList.add('an-pulse');
+        setTimeout(() => best.classList.remove('an-pulse'), 1600);
+        // brief scan-highlight outline on best match
+        const prev = best.style.outline;
+        best.style.outline = '2px dashed rgba(0,110,255,.6)';
+        best.style.outlineOffset = '4px';
+        setTimeout(() => { best.style.outline = prev; best.style.outlineOffset = ''; }, 2000);
+        showToast('✅ 原文已更新，已定位到最相似位置 ↓', 5000);
+      } else {
+        showToast('⚠️ 未找到相似段落，原文内容可能已被删除', 4000);
+      }
+      renderAll();
+    }, 900);
   }
 
   /* ── order ──────────────────────────────────────────────────────────── */
