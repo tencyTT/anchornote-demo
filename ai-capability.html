@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>AnchorNote · AI 能力说明与竞品分析</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #1f6feb;
+    --amber: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --teal: #0d9488;
+    --orange: #ea580c;
+    --text: #0f172a;
+    --sub: #475569;
+    --muted: #94a3b8;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+  }
+  @page { size: A4; margin: 14mm 16mm; }
+  body {
+    font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: #fff; color: var(--text);
+    font-size: 10.5pt; line-height: 1.65;
+  }
+
+  /* Cover */
+  .cover {
+    min-height: 200px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #1f6feb 100%);
+    border-radius: 10px; padding: 36px 44px 32px;
+    color: #fff; margin-bottom: 28px; position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(31,111,235,.4) 0%, transparent 70%);
+  }
+  .cover-tag {
+    display: inline-block; font-size: 8.5pt; font-weight: 700;
+    background: rgba(245,158,11,.2); border: 1px solid rgba(245,158,11,.4);
+    color: #fcd34d; padding: 3px 12px; border-radius: 20px; margin-bottom: 14px;
+  }
+  .cover h1 { font-size: 22pt; font-weight: 900; line-height: 1.2; margin-bottom: 8px; }
+  .cover h1 em { font-style: normal; color: #7dd3fc; }
+  .cover-sub { font-size: 10pt; color: rgba(255,255,255,.65); margin-bottom: 20px; }
+  .cover-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .cover-meta span { font-size: 9pt; color: rgba(255,255,255,.6); display: flex; align-items: center; gap: 5px; }
+  .cover-meta strong { color: rgba(255,255,255,.9); }
+
+  /* Section title */
+  .sec-title {
+    font-size: 8.5pt; font-weight: 700; letter-spacing: .1em;
+    color: var(--muted); text-transform: uppercase;
+    border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-bottom: 14px;
+  }
+  .section { margin-bottom: 26px; }
+
+  /* Big heading */
+  .block-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .block-head .bh-badge {
+    padding: 3px 12px; border-radius: 20px;
+    font-size: 8.5pt; font-weight: 800; color: #fff; white-space: nowrap;
+  }
+  .block-head h2 { font-size: 13pt; font-weight: 800; color: var(--text); }
+
+  /* Capability cards */
+  .cap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .cap-card {
+    border: 1px solid var(--border); border-radius: 9px;
+    padding: 13px 15px; background: var(--bg);
+    break-inside: avoid;
+  }
+  .cap-card .cap-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .cap-card .cap-icon { font-size: 14pt; flex-shrink: 0; }
+  .cap-card .cap-title { font-size: 10pt; font-weight: 800; color: var(--text); }
+  .cap-card .cap-tag {
+    font-size: 7.5pt; font-weight: 700; padding: 2px 7px; border-radius: 10px;
+    margin-left: auto; white-space: nowrap; flex-shrink: 0;
+  }
+  .tag-demo    { background: #dbeafe; color: #1e40af; }
+  .tag-ext     { background: #ede9fe; color: #5b21b6; }
+  .tag-both    { background: #d1fae5; color: #065f46; }
+  .cap-card .cap-desc { font-size: 9pt; color: var(--sub); line-height: 1.55; margin-bottom: 6px; }
+  .cap-card .cap-impl {
+    font-size: 8pt; color: #6b7280;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 5px; padding: 5px 8px; line-height: 1.5;
+  }
+  .cap-card .cap-impl code { font-family: "SF Mono", "Fira Code", monospace; color: var(--brand); font-size: 8pt; }
+
+  /* Full-width card */
+  .cap-card-full {
+    border: 1px solid var(--border); border-radius: 9px;
+    padding: 13px 15px; background: var(--bg);
+    margin-bottom: 12px; break-inside: avoid;
+  }
+  .cap-card-full .cap-head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .cap-card-full .cap-icon { font-size: 14pt; }
+  .cap-card-full .cap-title { font-size: 10.5pt; font-weight: 800; color: var(--text); }
+  .cap-card-full .cap-tag { font-size: 7.5pt; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: auto; }
+  .cap-card-full .cap-desc { font-size: 9pt; color: var(--sub); line-height: 1.55; margin-bottom: 7px; }
+  .cap-card-full .cap-impl {
+    font-size: 8pt; color: #6b7280;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 5px; padding: 5px 8px; line-height: 1.5;
+  }
+  .cap-card-full .cap-impl code { font-family: "SF Mono", "Fira Code", monospace; color: var(--brand); font-size: 8pt; }
+
+  /* Highlight border variants */
+  .border-brand { border-color: #bfdbfe; background: #f0f7ff; }
+  .border-purple { border-color: #e9d5ff; background: #fdf4ff; }
+  .border-green  { border-color: #a7f3d0; background: #f0fdf4; }
+  .border-amber  { border-color: #fde68a; background: #fffbeb; }
+  .border-orange { border-color: #fed7aa; background: #fff7ed; }
+  .border-teal   { border-color: #99f6e4; background: #f0fdfa; }
+
+  /* Flow diagram */
+  .flow-row {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; margin: 8px 0;
+  }
+  .flow-node {
+    flex: 1; text-align: center; background: #fff;
+    border: 1px solid var(--border); border-radius: 7px; padding: 7px 6px;
+    font-size: 8pt;
+  }
+  .flow-node .fn-label { color: var(--muted); margin-bottom: 2px; font-size: 7.5pt; }
+  .flow-node .fn-val   { font-weight: 700; color: var(--text); line-height: 1.3; }
+  .flow-node.fn-fail   { border-color: #fca5a5; background: #fef2f2; }
+  .flow-node.fn-fail .fn-val { color: var(--red); }
+  .flow-node.fn-ai     { border-color: #c4b5fd; background: #fdf4ff; }
+  .flow-node.fn-ai .fn-val  { color: #7c3aed; }
+  .flow-node.fn-ok     { border-color: #6ee7b7; background: #f0fdf4; }
+  .flow-node.fn-ok .fn-val  { color: var(--green); }
+  .flow-arrow { color: var(--muted); font-size: 12pt; flex-shrink: 0; }
+
+  /* Comparison table */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; margin-bottom: 16px; }
+  .comp-table th {
+    background: #0f172a; color: #fff; padding: 8px 10px;
+    font-weight: 700; text-align: left; font-size: 8pt;
+  }
+  .comp-table th:first-child { border-radius: 6px 0 0 0; }
+  .comp-table th:last-child  { border-radius: 0 6px 0 0; }
+  .comp-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.4; }
+  .comp-table tr:nth-child(even) td { background: var(--bg); }
+  .comp-table tr:last-child td { border-bottom: 0; }
+  .comp-table td:first-child { font-weight: 700; color: var(--text); white-space: nowrap; }
+  .tick   { color: var(--green);  font-weight: 800; }
+  .cross  { color: var(--red);    font-weight: 800; }
+  .half   { color: var(--amber);  font-weight: 800; }
+  .anchor-row td { background: #f0f7ff !important; }
+  .anchor-row td:first-child { color: var(--brand); }
+
+  /* Differentiator cards */
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .diff-card {
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 13px; break-inside: avoid;
+  }
+  .diff-card .diff-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8.5pt; font-weight: 800; color: #fff;
+    margin-bottom: 7px;
+  }
+  .diff-card .diff-title { font-size: 9.5pt; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+  .diff-card .diff-desc  { font-size: 8.5pt; color: var(--sub); line-height: 1.5; }
+  .diff-card .diff-vs    { font-size: 7.5pt; color: #9ca3af; margin-top: 5px; font-style: italic; }
+  .diff-card .diff-vs::before { content: "vs 竞品｜"; font-weight: 600; color: var(--orange); font-style: normal; }
+
+  /* Privacy callout */
+  .privacy-box {
+    background: #f0fdf4; border: 1px solid #a7f3d0;
+    border-left: 4px solid var(--green);
+    border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 16px;
+    break-inside: avoid;
+  }
+  .privacy-box h3 { font-size: 10pt; font-weight: 800; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .privacy-list { list-style: none; }
+  .privacy-list li { font-size: 9pt; color: var(--sub); padding: 4px 0; border-bottom: 1px solid #d1fae5; display: flex; gap: 8px; }
+  .privacy-list li:last-child { border-bottom: 0; }
+  .privacy-list li::before { content: "✓"; color: var(--green); font-weight: 800; flex-shrink: 0; }
+
+  /* Summary table */
+  .sum-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+  .sum-table th { background: #1e3a5f; color: #fff; padding: 7px 10px; font-weight: 700; font-size: 8pt; text-align: left; }
+  .sum-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .sum-table tr:nth-child(even) td { background: var(--bg); }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 28px; padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    font-size: 7.5pt; color: var(--muted);
+  }
+
+  .badge-demo   { background: #1f6feb; }
+  .badge-ext    { background: #8b5cf6; }
+  .badge-ai     { background: #ea580c; }
+</style>
+</head>
+<body>
+
+<!-- Cover -->
+<div class="cover">
+  <div class="cover-tag">AI Capability & Competitive Analysis · AnchorNote</div>
+  <h1>AnchorNote<br><em>AI 能力说明与竞品分析</em></h1>
+  <p class="cover-sub">Demo 端 × Chrome 插件端 · AI 在语义书签全链路的应用</p>
+  <div class="cover-meta">
+    <span><strong>AI 能力数</strong> 7 项（含 2 项核心定位兜底）</span>
+    <span><strong>竞品对比维度</strong> 8 个关键维度</span>
+    <span><strong>核心差异</strong> 动态内容精准定位，业内首创</span>
+    <span><strong>版本</strong> v2.3 · 2026-05-04</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PART 1: AI IN DEMO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="sec-title">Part 1 · Demo 端 AI 能力（本地实现，无需 API Key）</div>
+
+  <div class="block-head">
+    <div class="bh-badge badge-demo">Demo</div>
+    <h2>6 项 AI 能力，全部在浏览器本地运行</h2>
+  </div>
+  <p style="font-size:9pt;color:var(--sub);margin-bottom:14px;">Demo 不依赖网络或大模型 API，所有 AI 效果由本地规则引擎（<code style="font-family:monospace;color:var(--brand);font-size:8.5pt">anchornote-embed.js</code>）实现，确保评委在任何网络环境下都能完整体验产品闭环。</p>
+
+  <!-- Cap 1+2 -->
+  <div class="cap-grid">
+    <div class="cap-card border-brand">
+      <div class="cap-head">
+        <span class="cap-icon">🏷️</span>
+        <span class="cap-title">内容理解与摘要生成</span>
+        <span class="cap-tag tag-both">Demo + 插件</span>
+      </div>
+      <div class="cap-desc">用户选中文字保存书签后，系统自动从选中文本和上下文中提取<strong>关键词</strong>、生成<strong>简短标题</strong>和<strong>一句话摘要</strong>。书签从"原文摘录"变成可识别的信息节点，下次回访时不需要重读全文就能判断书签价值。</div>
+      <div class="cap-impl">
+        Demo：基于文本切分 + 关键词频率规则本地生成<br>
+        插件：调用大模型 API，返回结构化 JSON（<code>bookmarkTitle / summary / aiNote</code>）
+      </div>
+    </div>
+
+    <div class="cap-card border-purple">
+      <div class="cap-head">
+        <span class="cap-icon">🎯</span>
+        <span class="cap-title">意图识别（7 类）</span>
+        <span class="cap-tag tag-both">Demo + 插件</span>
+      </div>
+      <div class="cap-desc">对每条书签自动判断保存意图，分为 7 类：<strong>技术实现、产品价值、数据洞察、政策法规、战略建议、个人经历、问题痛点</strong>。意图结果驱动书签分组展示和知识点生成策略，用户无需手动打标签。</div>
+      <div class="cap-impl">
+        Demo：本地正则规则匹配（<code>INTENT_ICON</code> 映射表，7 类 + 通用兜底）<br>
+        插件：大模型对 selectedText + contextText 做语义分类，精度更高
+      </div>
+    </div>
+  </div>
+
+  <!-- Cap 3+4 -->
+  <div class="cap-grid">
+    <div class="cap-card border-green">
+      <div class="cap-head">
+        <span class="cap-icon">📋</span>
+        <span class="cap-title">AI 回访简报（Resume Brief）</span>
+        <span class="cap-tag tag-both">Demo + 插件</span>
+      </div>
+      <div class="cap-desc">当一个页面存在多条书签时，书签库顶部自动生成页面级<strong>回访简报</strong>：关注焦点、关键要点、后续建议三栏。帮助用户在回访时 10 秒内恢复"上次为什么读这页、接下来该做什么"的记忆，而不是从头扫读。</div>
+      <div class="cap-impl">
+        Demo：遍历书签列表，按意图聚合，模板化生成三栏文本<br>
+        插件：大模型输入书签元数据列表，生成更自然的自由文本简报
+      </div>
+    </div>
+
+    <div class="cap-card border-amber">
+      <div class="cap-head">
+        <span class="cap-icon">🔗</span>
+        <span class="cap-title">相关书签联想（Nudge）</span>
+        <span class="cap-tag tag-both">Demo + 插件</span>
+      </div>
+      <div class="cap-desc">保存新书签时，系统检测与当前页面已有书签的<strong>关键词重叠度</strong>。若相似度超过阈值，书签库面板弹出提示：「这条书签与『XXX』相关，可一并复盘」。降低内容碎片化，帮助用户在保存时建立关联。</div>
+      <div class="cap-impl">
+        Demo：关键词集合交集计算，重叠 ≥ 2 个词触发 nudge 提示<br>
+        插件：语义向量相似度检测，召回更准确，可跨页面联想
+      </div>
+    </div>
+  </div>
+
+  <!-- Cap 5: AI Notes Export (full width) -->
+  <div class="cap-card-full border-teal">
+    <div class="cap-head">
+      <span class="cap-icon">📝</span>
+      <span class="cap-title">AI 阅读笔记导出</span>
+      <span class="cap-tag tag-demo" style="background:#ccfbf1;color:#0f766e;">Demo 已实现</span>
+    </div>
+    <div class="cap-desc">点击「📝 AI 笔记」按钮，系统将当前页面所有书签转化为一份完整的阅读笔记，包含：整页内容摘要 + 每条书签的<strong>意图驱动知识点解析</strong>。7 种意图各有对应的说明角度——技术实现书签展示实现原理，数据洞察书签展示数字含义，战略建议书签展示行动路径。支持一键复制 Markdown，可直接用于写报告或整理素材，省去手动整理步骤。这是 AnchorNote 从「单条书签理解」到「整页内容整理」的能力延伸。</div>
+    <div class="cap-impl">
+      <code>articleOverview(bms)</code> 读取页面 h1/h2/h3 + 书签关键词，合成整页摘要 ·
+      <code>buildKnowledgePoint(bm)</code> 按 intent 字段选择对应解析模板（7 种意图各不同）·
+      <code>buildNotesMarkdown()</code> 组装可复制的 Markdown 格式 ·
+      <code>copyNotesMarkdown()</code> 调用 navigator.clipboard.writeText，成功后按钮变绿反馈
+    </div>
+  </div>
+
+  <!-- Cap 6: Lazy-load (full width, starred) -->
+  <div class="cap-card-full border-orange" style="border-color:#fed7aa;background:#fff7ed;">
+    <div class="cap-head">
+      <span class="cap-icon">⚡</span>
+      <span class="cap-title">懒加载书签定位兜底 ★ 核心</span>
+      <span class="cap-tag" style="background:#ffedd5;color:#c2410c;font-size:7.5pt;font-weight:800;padding:2px 7px;border-radius:10px;margin-left:auto;">Demo 已实现</span>
+    </div>
+    <div class="cap-desc">信息流页面（如腾讯要闻）的部分内容在首屏不渲染。当书签指向未加载的内容时，常规精确文本匹配会返回 null，书签跳转失败。AnchorNote 通过页面级 <strong>onJumpFail 钩子</strong>实现定位兜底：检测到定位失败 → 自动触发内容加载 → 动画展示卡片渐入过程 → 回调 retryJump() 二次精准定位。整个过程有可见动画，评委能直观看到「系统检测到内容未加载 → 自动处理 → 精准找到」的完整流程。</div>
+    <div class="cap-impl">
+      <code>hiText(text, container)</code> TreeWalker 精确文本匹配，返回 &lt;mark&gt; 或 null ·
+      <code>cfg.onJumpFail(bm, retryJump)</code> 页面注册钩子，触发 <code>loadMoreContent()</code> ·
+      <code>loadMoreContent()</code> 将 BATCH2_CARDS 追加到 DOM，90ms/卡片错开动画 ·
+      <code>retryJump()</code> 1600ms 后回调，执行二次 hiText + scrollIntoView + pulse 高亮
+    </div>
+    <!-- Flow -->
+    <div class="flow-row" style="margin-top:10px;">
+      <div class="flow-node">
+        <div class="fn-label">点击书签</div>
+        <div class="fn-val">hiText()<br>查找原文</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-fail">
+        <div class="fn-label">内容未渲染</div>
+        <div class="fn-val">返回 null<br>× 定位失败</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-ai">
+        <div class="fn-label">onJumpFail 钩子</div>
+        <div class="fn-val">Toast 提示<br>+ 自动加载</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="fn-label">卡片渐入动画</div>
+        <div class="fn-val">loadMoreContent()<br>90ms 错开</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-ok">
+        <div class="fn-label">retryJump()</div>
+        <div class="fn-val">精准高亮<br>脉冲定位 ✓</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PART 2: AI IN EXTENSION -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="sec-title">Part 2 · Chrome 插件端 AI 能力（超越 Demo 的部分）</div>
+
+  <div class="block-head">
+    <div class="bh-badge badge-ext">Extension</div>
+    <h2>插件版调用真实大模型，并新增系统级能力</h2>
+  </div>
+  <p style="font-size:9pt;color:var(--sub);margin-bottom:14px;">Chrome 插件通过 AI Proxy（Node/Python 代理服务）调用大模型 API，API Key 保存在代理环境变量中，不写入扩展代码，保护密钥安全。以下是插件版独有或显著增强的 AI 能力。</p>
+
+  <div class="cap-grid">
+    <div class="cap-card border-orange" style="border-color:#fed7aa;background:#fff7ed;">
+      <div class="cap-head">
+        <span class="cap-icon">🧭</span>
+        <span class="cap-title">AI 语义重定位 ★ 核心</span>
+        <span class="cap-tag tag-ext">仅插件</span>
+      </div>
+      <div class="cap-desc">页面内容因编辑、改版、广告插入而变化后，精确文本定位失败。插件提取当前页面候选内容块，将原始书签的 selectedText + 上下文做语义嵌入，计算与候选块的<strong>余弦相似度</strong>，取 Top-1 块作为跳转目标。高置信度时自动跳转，低置信度时提示用户确认，避免误定位。</div>
+      <div class="cap-impl">
+        保存时：选中文本 + context → AI Proxy → 语义嵌入向量写入 Chrome Storage<br>
+        跳转时：hiText 失败 → 提取页面内容块 → 余弦相似度计算 → Top-1 跳转
+      </div>
+    </div>
+
+    <div class="cap-card border-teal">
+      <div class="cap-head">
+        <span class="cap-icon">👁️</span>
+        <span class="cap-title">MutationObserver 动态监听</span>
+        <span class="cap-tag tag-ext">仅插件</span>
+      </div>
+      <div class="cap-desc">插件无需页面手动注册 onJumpFail 钩子，通过 <strong>MutationObserver</strong> 自动监听 DOM 节点新增事件。书签指向懒加载内容时，插件在后台等待目标文本出现，出现后立即执行定位，对用户完全透明。适配所有信息流、虚拟滚动和动态加载场景。</div>
+      <div class="cap-impl">
+        Content Script 在跳转失败后启动 MutationObserver，监听 childList 变化<br>
+        目标文本出现后自动调用 hiText 定位，超时（10s）后降级提示用户手动滚动
+      </div>
+    </div>
+  </div>
+
+  <div class="cap-grid">
+    <div class="cap-card border-brand">
+      <div class="cap-head">
+        <span class="cap-icon">🔢</span>
+        <span class="cap-title">出现序号精确定位</span>
+        <span class="cap-tag tag-ext">仅插件</span>
+      </div>
+      <div class="cap-desc">当同一文本在页面中出现多次（如"重要"、常见短语）时，保存时记录 <strong>selectedOccurrenceIndex</strong>（第几次出现），跳转时严格对齐到第 N 次，避免多处命中时的错误定位。</div>
+      <div class="cap-impl">
+        保存时：TreeWalker 遍历全文，统计 selectedText 出现次数，记录当前序号<br>
+        跳转时：多处命中时按序号选取，单处命中时直接定位
+      </div>
+    </div>
+
+    <div class="cap-card border-purple">
+      <div class="cap-head">
+        <span class="cap-icon">🤖</span>
+        <span class="cap-title">完整结构化 AI 元数据</span>
+        <span class="cap-tag tag-ext">仅插件（完整版）</span>
+      </div>
+      <div class="cap-desc">插件版每条书签保存时获取完整 AI 结构化输出：<strong>bookmarkTitle / summary / intent / keywords / nextAction / aiNote</strong> 六字段，阅读断点额外生成 <strong>checkpointBrief</strong>（前面读了什么 / 停在哪里 / 接下来读什么），均约束为 JSON 格式，UI 稳定渲染不依赖自由文本解析。</div>
+      <div class="cap-impl">
+        Prompt 强制要求 JSON 输出，Background Worker 解析后写入 chrome.storage.local<br>
+        AI 不可用时自动降级到 shared/meta.js 本地启发式逻辑，保证 Demo 可用
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Proxy architecture note -->
+  <div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:8.5pt;color:var(--sub);line-height:1.6;">
+    <strong style="color:var(--text);">AI Proxy 安全架构：</strong>
+    扩展端（Content Script / Side Panel / Background）只保存代理服务的 URL，不保存 API Key。
+    所有大模型请求通过 Node.js 或 Python 代理转发，密钥写在代理服务的环境变量中。
+    代理层支持切换 OpenAI API、腾讯混元大模型 API 或腾讯云智能体开发平台，接口格式 OpenAI-compatible。
+    API 超时或不可用时，Background Worker 自动切换到本地启发式逻辑，确保核心演示不因网络问题中断。
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PART 3: COMPETITIVE ANALYSIS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="sec-title">Part 3 · 竞品对比分析</div>
+
+  <div class="block-head">
+    <div class="bh-badge" style="background:#0f172a;">对比</div>
+    <h2>8 个维度 · 6 类竞品</h2>
+  </div>
+
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th style="width:14%">产品</th>
+        <th style="width:12%">页内精准定位</th>
+        <th style="width:12%">动态内容定位</th>
+        <th style="width:12%">AI 意图理解</th>
+        <th style="width:12%">AI 笔记导出</th>
+        <th style="width:13%">懒加载自动处理</th>
+        <th style="width:13%">跨页断点续读</th>
+        <th style="width:12%">隐私（不扫全文）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="anchor-row">
+        <td>🔵 AnchorNote</td>
+        <td><span class="tick">✓</span> 文本 + 语义双层</td>
+        <td><span class="tick">✓</span> onJumpFail + AI 重定位</td>
+        <td><span class="tick">✓</span> 7 类意图分类</td>
+        <td><span class="tick">✓</span> 意图驱动知识点</td>
+        <td><span class="tick">✓</span> 自动触发加载</td>
+        <td><span class="tick">✓</span> CR 横幅 + deep link</td>
+        <td><span class="tick">✓</span> 只处理已选中文字</td>
+      </tr>
+      <tr>
+        <td>浏览器书签<br><small style="color:var(--muted)">(Chrome/Edge)</small></td>
+        <td><span class="cross">✗</span> 仅保存 URL</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="tick">✓</span></td>
+      </tr>
+      <tr>
+        <td>Pocket /<br>Instapaper</td>
+        <td><span class="cross">✗</span> 保存整篇文章</td>
+        <td><span class="cross">✗</span> 无页内定位</td>
+        <td><span class="half">△</span> 文章级标签</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 上传全文到云端</td>
+      </tr>
+      <tr>
+        <td>Hypothesis /<br>Weava</td>
+        <td><span class="half">△</span> 依赖 DOM selector</td>
+        <td><span class="cross">✗</span> 改版后失效</td>
+        <td><span class="cross">✗</span> 无意图理解</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="half">△</span> 上传选中文字</td>
+      </tr>
+      <tr>
+        <td>Readwise</td>
+        <td><span class="half">△</span> 高亮保存，无精准跳转</td>
+        <td><span class="cross">✗</span> 无重定位</td>
+        <td><span class="half">△</span> 通用 AI 摘要</td>
+        <td><span class="half">△</span> 每日回顾，非笔记导出</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 上传全文</td>
+      </tr>
+      <tr>
+        <td>Liner</td>
+        <td><span class="half">△</span> 高亮 + 简单跳转</td>
+        <td><span class="cross">✗</span> 无重定位</td>
+        <td><span class="half">△</span> AI 摘要，无意图分类</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 上传高亮文本</td>
+      </tr>
+      <tr>
+        <td>Notion<br>Web Clipper</td>
+        <td><span class="cross">✗</span> 导出到 Notion，无定位</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="half">△</span> Notion AI 摘要</td>
+        <td><span class="half">△</span> 需手动整理</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 无</td>
+        <td><span class="cross">✗</span> 上传全文</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:8pt;color:var(--muted);margin-bottom:16px;">✓ 完整支持 &nbsp;△ 部分支持或有明显局限 &nbsp;✗ 不支持</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PART 4: CORE DIFFERENTIATORS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="sec-title">Part 4 · 核心差异化：AnchorNote 做了什么竞品都没做到</div>
+
+  <div class="diff-grid">
+    <div class="diff-card" style="border-color:#bfdbfe;background:#f0f7ff;">
+      <div class="diff-num" style="background:var(--brand);">1</div>
+      <div class="diff-title">书签保存页面内位置，不只是 URL</div>
+      <div class="diff-desc">所有竞品的"收藏"都指向整个页面。AnchorNote 把书签精确到句子级别，保存选中文字、上下文、DOM 位置，回访时直接跳到那句话，不需要用户再次扫读整篇文章。</div>
+      <div class="diff-vs">浏览器书签 / Pocket / Instapaper 均为页面级收藏</div>
+    </div>
+
+    <div class="diff-card" style="border-color:#fed7aa;background:#fff7ed;">
+      <div class="diff-num" style="background:var(--orange);">2</div>
+      <div class="diff-title">动态内容定位兜底，业内首创</div>
+      <div class="diff-desc">信息流懒加载、文章改版、广告插入都会导致传统定位失效。AnchorNote 的双层兜底（onJumpFail 自动加载 + AI 语义重定位）使书签在内容变化后仍能找到最相关位置，其他工具遇到这个场景直接失效。</div>
+      <div class="diff-vs">Hypothesis / Weava / Liner 改版后定位失效，无兜底机制</div>
+    </div>
+
+    <div class="diff-card" style="border-color:#e9d5ff;background:#fdf4ff;">
+      <div class="diff-num" style="background:var(--purple);">3</div>
+      <div class="diff-title">意图驱动的 AI 理解，不是泛泛摘要</div>
+      <div class="diff-desc">AnchorNote 对每条书签判断"为什么保存"（7 类意图），并据此生成定制化的知识点解析和下一步建议。Readwise / Liner 的 AI 只做通用摘要，无法区分"这段是数据支撑"还是"这段是政策限制"。</div>
+      <div class="diff-vs">Readwise / Liner AI 摘要无意图分类，所有书签同质化处理</div>
+    </div>
+
+    <div class="diff-card" style="border-color:#a7f3d0;background:#f0fdf4;">
+      <div class="diff-num" style="background:var(--green);">4</div>
+      <div class="diff-title">AI 阅读笔记一键导出 Markdown</div>
+      <div class="diff-desc">书签不只是标记，而是可以一键转化为完整阅读笔记的原材料。AnchorNote 结合页面结构和书签意图，生成整页摘要 + 逐条知识点，直接可用于写报告、整理素材，省去手动整理环节。</div>
+      <div class="diff-vs">没有任何竞品提供基于阅读意图驱动的笔记导出功能</div>
+    </div>
+
+    <div class="diff-card" style="border-color:#99f6e4;background:#f0fdfa;">
+      <div class="diff-num" style="background:var(--teal);">5</div>
+      <div class="diff-title">跨页断点续读，平台内无缝衔接</div>
+      <div class="diff-desc">用户在详情页保存断点，切换到频道首页时 CR 横幅自动出现，点击直接跳回。解决了"我知道自己读过但不知道在哪里继续"的问题，尤其适合腾讯新闻等多入口产品生态。</div>
+      <div class="diff-vs">竞品书签只绑定完整 URL，从首页、频道页看不到详情页的断点</div>
+    </div>
+
+    <div class="diff-card" style="border-color:#fde68a;background:#fffbeb;">
+      <div class="diff-num" style="background:var(--amber);">6</div>
+      <div class="diff-title">隐私优先：AI 只处理你选中的内容</div>
+      <div class="diff-desc">Pocket、Readwise、Liner 均需要上传全文到云端才能生成 AI 摘要。AnchorNote 的 AI 只处理用户主动选中并保存的片段，从不扫描整页内容，不在浏览时持续调用 API，数据默认存本地不上云。</div>
+      <div class="diff-vs">Pocket / Readwise / Liner 均上传全文，隐私边界模糊</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PART 5: AI BOUNDARY -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="sec-title">Part 5 · AI 能力边界说明</div>
+  <div class="privacy-box">
+    <h3>🛡️ AnchorNote 的 AI 做了什么，没做什么</h3>
+    <ul class="privacy-list">
+      <li>只处理用户<strong>主动选中并保存</strong>的文字片段，从不扫描整页内容</li>
+      <li>仅在用户<strong>主动点击保存/AI 笔记</strong>时触发一次 AI 请求，不持续监听页面行为</li>
+      <li>不生成、改写或替代原文——AI 只帮用户管理自己选的内容</li>
+      <li>书签数据默认存储在<strong>用户本地 localStorage / chrome.storage.local</strong>，不上云、不共享</li>
+      <li>API Key 保存在代理服务环境变量，不写入浏览器扩展代码或前端页面</li>
+      <li>AI 不可用时系统自动回退本地规则，<strong>核心功能不依赖网络</strong></li>
+      <li>不做推荐内容、广告定向或任何商业化数据分析</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Summary table -->
+<div class="section">
+  <div class="sec-title">能力总览</div>
+  <table class="sum-table">
+    <thead>
+      <tr>
+        <th>AI 能力</th>
+        <th>Demo 实现方式</th>
+        <th>插件实现方式</th>
+        <th>解决的核心问题</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>内容理解与摘要</td>
+        <td>本地关键词规则</td>
+        <td>大模型 JSON 输出</td>
+        <td>书签从摘录变成可识别节点</td>
+      </tr>
+      <tr>
+        <td>意图识别（7 类）</td>
+        <td>本地正则匹配</td>
+        <td>大模型语义分类</td>
+        <td>无需手动分类，驱动笔记生成</td>
+      </tr>
+      <tr>
+        <td>AI 回访简报</td>
+        <td>模板化聚合生成</td>
+        <td>大模型自由文本</td>
+        <td>10 秒恢复上次阅读状态</td>
+      </tr>
+      <tr>
+        <td>相关书签联想</td>
+        <td>关键词集合交集</td>
+        <td>语义向量相似度</td>
+        <td>保存时建立内容关联</td>
+      </tr>
+      <tr>
+        <td><strong>AI 阅读笔记导出</strong></td>
+        <td>意图模板 + 标题结构</td>
+        <td>—（Demo 已完整）</td>
+        <td>书签直接转化为可用笔记</td>
+      </tr>
+      <tr>
+        <td><strong>懒加载定位兜底 ★</strong></td>
+        <td>onJumpFail hook + retryJump</td>
+        <td>MutationObserver 自动监听</td>
+        <td>未渲染内容仍能精准定位</td>
+      </tr>
+      <tr>
+        <td><strong>AI 语义重定位 ★</strong></td>
+        <td>—（需后端 API）</td>
+        <td>余弦相似度 Top-1</td>
+        <td>页面改版后书签不失效</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Footer -->
+<div class="doc-footer">
+  <span>AnchorNote · AI 能力说明与竞品分析 · v1.0 · 2026-05-04</span>
+  <span>内部材料 · 请勿外传</span>
+</div>
+
+</body>
+</html>
