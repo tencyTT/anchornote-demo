@@ -1513,6 +1513,17 @@
   function seedBMs() {
     const seeds = cfg.seedBookmarks || [];
     if (!seeds.length) return;
+
+    // If seedVersion in config is higher than what's stored, force a full reseed.
+    const cfgVer   = cfg.seedVersion || 0;
+    const storedVer = parseInt(localStorage.getItem(STORAGE_KEY + '.sv') || '0', 10);
+    if (cfgVer > storedVer) {
+      state.bookmarks = seeds.map((s, i) => makeBM({ ...s, colorIndex: s.colorIndex ?? i % COLORS.length }));
+      localStorage.setItem(STORAGE_KEY + '.sv', String(cfgVer));
+      persist();
+      return;
+    }
+
     // In doc mode, reseed if the stored bookmarks no longer match the article text
     // (stale localStorage from a previous version of the page)
     if (state.bookmarks.length && MODE === 'doc') {
