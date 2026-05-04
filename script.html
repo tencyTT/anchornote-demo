@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>AnchorNote Demo 演示脚本</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #1f6feb;
+    --amber: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --text: #0f172a;
+    --sub: #475569;
+    --muted: #94a3b8;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+  }
+  @page { size: A4; margin: 16mm 18mm; }
+  body {
+    font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: #fff; color: var(--text);
+    font-size: 11pt; line-height: 1.65;
+  }
+
+  /* ── Cover ── */
+  .cover {
+    min-height: 240px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #1f6feb 100%);
+    border-radius: 10px; padding: 40px 44px 36px;
+    color: #fff; margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(31,111,235,.4) 0%, transparent 70%);
+  }
+  .cover-tag {
+    display: inline-block; font-size: 9pt; font-weight: 700;
+    background: rgba(245,158,11,.2); border: 1px solid rgba(245,158,11,.4);
+    color: #fcd34d; padding: 3px 12px; border-radius: 20px; margin-bottom: 16px;
+  }
+  .cover h1 { font-size: 26pt; font-weight: 900; line-height: 1.2; margin-bottom: 8px; }
+  .cover h1 em { font-style: normal; color: #7dd3fc; }
+  .cover-sub { font-size: 11pt; color: rgba(255,255,255,.65); margin-bottom: 24px; }
+  .cover-meta { display: flex; gap: 28px; flex-wrap: wrap; }
+  .cover-meta span { font-size: 9.5pt; color: rgba(255,255,255,.6); display: flex; align-items: center; gap: 5px; }
+  .cover-meta strong { color: rgba(255,255,255,.9); }
+
+  /* ── Section ── */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-size: 9pt; font-weight: 700; letter-spacing: .1em;
+    color: var(--muted); text-transform: uppercase;
+    border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 16px;
+  }
+
+  /* ── Overview boxes ── */
+  .overview-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .ov-box {
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; background: var(--bg);
+  }
+  .ov-box .ov-label { font-size: 8.5pt; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+  .ov-box .ov-val { font-size: 13pt; font-weight: 800; color: var(--text); }
+  .ov-box .ov-desc { font-size: 8.5pt; color: var(--sub); margin-top: 2px; }
+
+  /* ── Scene cards ── */
+  .scene {
+    border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 20px; overflow: hidden;
+    break-inside: avoid;
+  }
+  .scene-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 18px 11px;
+    border-bottom: 1px solid var(--border);
+  }
+  .scene-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10pt; font-weight: 800; color: #fff; flex-shrink: 0;
+  }
+  .scene-info { flex: 1; }
+  .scene-info h3 { font-size: 12pt; font-weight: 800; color: var(--text); line-height: 1.3; }
+  .scene-info .scene-page { font-size: 8.5pt; color: var(--muted); margin-top: 1px; }
+  .scene-time {
+    font-size: 9pt; font-weight: 700; color: var(--muted);
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+  }
+
+  .scene-body { padding: 14px 18px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* Steps */
+  .steps-col {}
+  .steps-col .col-label { font-size: 8pt; font-weight: 700; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 8px; }
+  .step { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+  .step:last-child { margin-bottom: 0; }
+  .step-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8.5pt; font-weight: 800; color: #fff;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step-text { font-size: 9.5pt; color: var(--sub); line-height: 1.55; }
+  .step-text strong { color: var(--text); font-weight: 700; }
+  .step-text em { font-style: normal; color: var(--brand); font-weight: 600; }
+
+  /* Narration */
+  .narr-col {}
+  .narr-col .col-label { font-size: 8pt; font-weight: 700; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 8px; }
+  .narr-box {
+    background: #f0f7ff; border: 1px solid #bfdbfe;
+    border-left: 3px solid var(--brand);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 12px;
+    font-size: 9.5pt; color: #1e3a5f; line-height: 1.6;
+  }
+  .narr-box p { margin-bottom: 6px; }
+  .narr-box p:last-child { margin-bottom: 0; }
+  .narr-ai {
+    background: #fdf4ff; border: 1px solid #e9d5ff;
+    border-left: 3px solid var(--purple);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px; margin-top: 8px;
+    font-size: 9pt; color: #581c87; line-height: 1.55;
+  }
+  .narr-ai::before { content: "🤖 AI 说明｜"; font-weight: 700; }
+
+  /* AI callout */
+  .ai-section {
+    background: linear-gradient(135deg, #fdf4ff, #eff6ff);
+    border: 1px solid #d8b4fe; border-radius: 10px;
+    padding: 18px 20px; margin-bottom: 20px;
+    break-inside: avoid;
+  }
+  .ai-section h3 { font-size: 11pt; font-weight: 800; color: #5b21b6; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .ai-item { background: rgba(255,255,255,.7); border-radius: 7px; padding: 11px 13px; border: 1px solid rgba(139,92,246,.15); }
+  .ai-item .ai-feat { font-size: 9pt; font-weight: 700; color: #6d28d9; margin-bottom: 4px; }
+  .ai-item .ai-desc { font-size: 8.5pt; color: var(--sub); line-height: 1.5; }
+  .ai-item .ai-boundary { font-size: 8pt; color: #9ca3af; margin-top: 5px; font-style: italic; }
+  .ai-item .ai-boundary::before { content: "边界｜"; font-weight: 600; color: #d97706; }
+
+  /* Boundary box */
+  .boundary-box {
+    background: #fffbeb; border: 1px solid #fde68a;
+    border-left: 4px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 18px; margin-bottom: 20px;
+    break-inside: avoid;
+  }
+  .boundary-box h3 { font-size: 10.5pt; font-weight: 800; color: #92400e; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .boundary-list { list-style: none; }
+  .boundary-list li {
+    font-size: 9.5pt; color: var(--sub); line-height: 1.55;
+    padding: 5px 0; border-bottom: 1px solid #fde68a;
+    display: flex; gap: 8px;
+  }
+  .boundary-list li:last-child { border-bottom: 0; }
+  .boundary-list li::before { content: "✓"; color: var(--green); font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+
+  /* Timeline bar */
+  .timeline {
+    display: flex; gap: 0; border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; margin-bottom: 24px;
+  }
+  .tl-seg {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 9px 10px; border-right: 1px solid rgba(255,255,255,.3);
+    font-size: 8pt; color: rgba(255,255,255,.9);
+  }
+  .tl-seg:last-child { border-right: 0; }
+  .tl-seg .tl-time { font-weight: 800; font-size: 9pt; white-space: nowrap; }
+  .tl-seg .tl-name { font-size: 7.5pt; opacity: .85; white-space: nowrap; }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 32px; padding-top: 14px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8pt; color: var(--muted);
+  }
+
+  /* Anchor fallback illustration */
+  .anchor-flow {
+    display: flex; align-items: center; gap: 10px;
+    background: #f8fafc; border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px; margin-bottom: 10px;
+  }
+  .anchor-flow .af-node {
+    flex: 1; text-align: center; background: #fff;
+    border: 1px solid var(--border); border-radius: 7px; padding: 9px 8px;
+  }
+  .anchor-flow .af-node .af-label { font-size: 7.5pt; color: var(--muted); margin-bottom: 3px; }
+  .anchor-flow .af-node .af-val   { font-size: 9pt; font-weight: 700; color: var(--text); line-height: 1.4; }
+  .anchor-flow .af-node.af-fail   { border-color: #fca5a5; background: #fef2f2; }
+  .anchor-flow .af-node.af-fail .af-val { color: var(--red); }
+  .anchor-flow .af-node.af-ok     { border-color: #6ee7b7; background: #f0fdf4; }
+  .anchor-flow .af-node.af-ok .af-val  { color: var(--green); }
+  .anchor-flow .af-node.af-ai     { border-color: #c4b5fd; background: #fdf4ff; }
+  .anchor-flow .af-node.af-ai .af-val  { color: #7c3aed; }
+  .anchor-flow .af-arrow { color: var(--muted); font-size: 14pt; flex-shrink: 0; }
+
+  /* Color helpers */
+  .c-brand { background: var(--brand); }
+  .c-amber { background: var(--amber); }
+  .c-green { background: var(--green); }
+  .c-red   { background: var(--red); }
+  .c-purple{ background: var(--purple); }
+  .c-teal  { background: #0d9488; }
+  .c-orange { background: #ea580c; }
+</style>
+</head>
+<body>
+
+<!-- Cover -->
+<div class="cover">
+  <div class="cover-tag">Demo Video Script · AnchorNote</div>
+  <h1>AnchorNote<br><em>演示视频脚本</em></h1>
+  <p class="cover-sub">语义书签 × 阅读断点 × AI 意图理解 · 面向 PCG 内容平台场景</p>
+  <div class="cover-meta">
+    <span><strong>时长</strong> ≤ 3 分钟</span>
+    <span><strong>场景数</strong> 6 个核心场景</span>
+    <span><strong>演示平台</strong> 腾讯新闻 / 腾讯研究院 / 腾讯文档</span>
+    <span><strong>版本</strong> Demo v2.3 · 2026-05-04</span>
+  </div>
+</div>
+
+<!-- Overview -->
+<div class="section">
+  <div class="section-title">总览</div>
+  <div class="overview-grid">
+    <div class="ov-box">
+      <div class="ov-label">总时长</div>
+      <div class="ov-val">3 分钟</div>
+      <div class="ov-desc">6 场景 + 开场收尾，共 7 段</div>
+    </div>
+    <div class="ov-box">
+      <div class="ov-label">核心卖点</div>
+      <div class="ov-val">AI 定位兜底</div>
+      <div class="ov-desc">语义重定位 + 懒加载定位，书签永不失效</div>
+    </div>
+    <div class="ov-box">
+      <div class="ov-label">场景数</div>
+      <div class="ov-val">6 个</div>
+      <div class="ov-desc">场景②③均为定位兜底（★ 核心），场景⑤含 AI 笔记导出</div>
+    </div>
+  </div>
+
+  <!-- Timeline bar -->
+  <div class="timeline">
+    <div class="tl-seg c-brand" style="flex:0.8">
+      <div class="tl-time">0:00–0:15</div>
+      <div class="tl-name">开场</div>
+    </div>
+    <div class="tl-seg c-red" style="flex:1.2">
+      <div class="tl-time">0:15–0:45</div>
+      <div class="tl-name">场景①：深度阅读</div>
+    </div>
+    <div class="tl-seg c-orange" style="flex:1.3">
+      <div class="tl-time">0:45–1:20</div>
+      <div class="tl-name">场景②：AI 定位兜底 ★</div>
+    </div>
+    <div class="tl-seg" style="flex:1.5;background:#0d9488">
+      <div class="tl-time">1:20–2:00</div>
+      <div class="tl-name">场景③：懒加载定位 ★</div>
+    </div>
+    <div class="tl-seg c-purple" style="flex:0.8">
+      <div class="tl-time">2:00–2:18</div>
+      <div class="tl-name">场景④：文档模式</div>
+    </div>
+    <div class="tl-seg c-amber" style="flex:1.1">
+      <div class="tl-time">2:18–2:44</div>
+      <div class="tl-name">场景⑤：AI 聚合 + 笔记</div>
+    </div>
+    <div class="tl-seg c-green" style="flex:0.8">
+      <div class="tl-time">2:44–2:54</div>
+      <div class="tl-name">场景⑥：能力边界</div>
+    </div>
+    <div class="tl-seg" style="flex:0.5;background:#6b7280">
+      <div class="tl-time">2:54–3:00</div>
+      <div class="tl-name">收尾</div>
+    </div>
+  </div>
+</div>
+
+<!-- Opening -->
+<div class="section">
+  <div class="section-title">开场白（0:00 – 0:15）</div>
+  <div class="scene">
+    <div class="scene-header">
+      <div class="scene-num c-brand">▶</div>
+      <div class="scene-info">
+        <h3>问题引入：收藏了却再也没打开</h3>
+        <div class="scene-page">画面：空白屏幕 → 黑字逐字出现</div>
+      </div>
+      <div class="scene-time">0:00 – 0:15</div>
+    </div>
+    <div class="scene-body" style="grid-template-columns:1fr;">
+      <div class="narr-box" style="border-left-color:var(--brand)">
+        <p>「你是否也有这样的体验——读到一半的文章，下次再也找不回那个位置；</p>
+        <p>精心收藏的段落，翻开书签才发现完全忘了当时为什么觉得重要。」</p>
+        <p style="margin-top:8px;font-weight:700;color:var(--brand)">「AnchorNote，让每一次阅读都有迹可循。」</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scene 1 -->
+<div class="section">
+  <div class="section-title">场景① · 腾讯新闻科技页（0:15 – 0:45）</div>
+  <div class="scene">
+    <div class="scene-header">
+      <div class="scene-num c-red">1</div>
+      <div class="scene-info">
+        <h3>语义书签：选文即标注，AI 立刻读懂意图</h3>
+        <div class="scene-page">演示页面：tencent-news-deep.html（腾讯新闻科技深度报道）</div>
+      </div>
+      <div class="scene-time">30 秒</div>
+    </div>
+    <div class="scene-body">
+      <div class="steps-col">
+        <div class="col-label">操作步骤</div>
+        <div class="step">
+          <div class="step-num c-red">1</div>
+          <div class="step-text">打开科技页，滚动至正文中段<br><strong>「AI大模型正在重塑内容消费」</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num c-red">2</div>
+          <div class="step-text">选中文字：<em>「各平台的策略分化愈发明显…」</em><br>→ 气泡弹出，选颜色 → 写备注<br>→ 点 <strong>🔖 书签</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num c-red">3</div>
+          <div class="step-text">再选一段，点 <strong>📍 断点</strong><br>（无需备注，直接保存位置）</div>
+        </div>
+        <div class="step">
+          <div class="step-num c-red">4</div>
+          <div class="step-text">点右侧便签条目<br>→ 页面精准滚动 + <strong>黄色高亮脉冲</strong></div>
+        </div>
+      </div>
+      <div class="narr-col">
+        <div class="col-label">视频配文</div>
+        <div class="narr-box">
+          <p>「选中这段文字，AnchorNote 弹出操作面板。」</p>
+          <p>「选一个颜色，加一条备注，点书签——这个阅读状态就被完整保留下来。」</p>
+          <p>「点击右侧的便签条目，页面立刻跳回到刚才那句话，高亮闪烁提示定位成功。」</p>
+        </div>
+        <div class="narr-ai">
+          保存时，AI 自动从选中文字提取关键词，并根据内容判断你的阅读意图——是「竞品分析」还是「政策研究」——无需手动分类。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scene 2: AI Anchor Fallback -->
+<div class="section">
+  <div class="section-title">场景② · AI 定位兜底——书签跨版本依然精准（0:45 – 1:20）</div>
+  <div class="scene">
+    <div class="scene-header">
+      <div class="scene-num c-orange">2</div>
+      <div class="scene-info">
+        <h3>AI 定位兜底：原文更新后，书签仍能找回原位</h3>
+        <div class="scene-page">能力来源：Chrome 插件已实现 · 演示以图示 + 旁白说明</div>
+      </div>
+      <div class="scene-time">35 秒</div>
+    </div>
+    <div class="scene-body">
+      <div class="steps-col">
+        <div class="col-label">场景还原</div>
+        <div class="step">
+          <div class="step-num c-orange">1</div>
+          <div class="step-text">三天前，你在一篇文章里保存了一条书签：<br><em>「各平台的策略分化愈发明显…」</em></div>
+        </div>
+        <div class="step">
+          <div class="step-num c-orange">2</div>
+          <div class="step-text">今天文章被编辑更新，该段落措辞已变更，<strong>精确字符串匹配失败</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num c-orange">3</div>
+          <div class="step-text">AnchorNote 启动 <strong>AI 语义兜底</strong>：<br>对原始书签文本做向量嵌入，遍历当前文章段落，计算余弦相似度，找到最近邻段落</div>
+        </div>
+        <div class="step">
+          <div class="step-num c-orange">4</div>
+          <div class="step-text">页面跳转到相似度最高的段落，提示：<br><em>「原文已更新，已定位到最相似位置 ↓」</em></div>
+        </div>
+      </div>
+      <div class="narr-col">
+        <div class="col-label">视频配文</div>
+        <div class="narr-box">
+          <p>「传统书签靠的是精确字符串——文章一经修改，定位就失效了，这是所有书签工具的通病。」</p>
+          <p>「AnchorNote 的做法是：先做精确匹配，找不到时，自动切换到 AI 语义兜底。」</p>
+          <p>「它把你当时选中的那句话转化成语义向量，在更新后的文章里寻找意思最接近的段落——不是猜，是算。」</p>
+          <p>「跳转后，会有一行小字告诉你：原文已更新，这是最相似的位置。透明，不隐瞒。」</p>
+        </div>
+        <div class="narr-ai">
+          AI 在此环节计算的是：原始书签 selectedText 的语义嵌入 vs 当前文章各段落的嵌入，取余弦相似度 Top-1 段落作为跳转目标。相似度低于阈值时提示用户手动确认，不强制跳转。
+        </div>
+      </div>
+    </div>
+    <!-- Flow diagram -->
+    <div style="padding:0 18px 16px;">
+      <div style="font-size:8pt;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">定位决策流程</div>
+      <div class="anchor-flow">
+        <div class="af-node">
+          <div class="af-label">书签存储</div>
+          <div class="af-val">selectedText<br>+ 段落偏移量</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node af-fail">
+          <div class="af-label">精确匹配</div>
+          <div class="af-val">字符串未找到<br>× 失败</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node af-ai">
+          <div class="af-label">AI 语义兜底</div>
+          <div class="af-val">向量嵌入<br>余弦相似度 Top-1</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node af-ok">
+          <div class="af-label">跳转结果</div>
+          <div class="af-val">最相似段落<br>+ 更新提示</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scene 3: Lazy-load bookmark + cross-page CR -->
+<div class="section">
+  <div class="section-title">场景③ · 要闻信息流 · 懒加载书签定位（1:20 – 2:00）</div>
+  <div class="scene">
+    <div class="scene-header">
+      <div class="scene-num c-teal">3</div>
+      <div class="scene-info">
+        <h3>懒加载定位：书签指向未渲染的内容，自动加载并精准高亮</h3>
+        <div class="scene-page">演示页面：tencent-news-yaowen.html（腾讯要闻信息流）</div>
+      </div>
+      <div class="scene-time">40 秒</div>
+    </div>
+    <div class="scene-body">
+      <div class="steps-col">
+        <div class="col-label">操作步骤</div>
+        <div class="step">
+          <div class="step-num c-teal">1</div>
+          <div class="step-text">切换到 <strong>要闻频道页</strong><br>→ 页面顶部出现蓝色 CR 横幅：<em>「AI 深度报道 · 继续阅读 →」</em><br>（上一场景在深度页保存的断点跨页显示）</div>
+        </div>
+        <div class="step">
+          <div class="step-num c-teal">2</div>
+          <div class="step-text">忽略 CR 横幅，打开右侧书签库<br>→ 其中一条书签标题：<em>「语义向量定位的工程实践」</em><br>→ 该文章卡片<strong>尚未加载到页面中</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num c-teal">3</div>
+          <div class="step-text">点击这条书签<br>→ 底部 Toast 弹出：<em>「⏳ 内容尚未加载，正在自动滚动加载…」</em><br>→ 页面自动滚动至「<strong>加载更多</strong>」按钮</div>
+        </div>
+        <div class="step">
+          <div class="step-num c-teal">4</div>
+          <div class="step-text">按钮进入 <strong>loading 状态</strong><br>→ 6 张新闻卡片依次渐入（CSS 交错动画）<br>→ 目标卡片出现，蓝色轮廓高亮 + <strong>黄色高亮脉冲</strong>精准定位</div>
+        </div>
+      </div>
+      <div class="narr-col">
+        <div class="col-label">视频配文</div>
+        <div class="narr-box">
+          <p>「切换到要闻频道——注意顶部横幅，上一篇文章的断点已经在等你，随时可以续读。」</p>
+          <p>「这次我们来演示另一个场景：书签指向的内容，还没有加载到页面里。」</p>
+          <p>「点击这条书签——系统检测到内容未渲染，自动触发加载流程。」</p>
+          <p>「页面滚动到加载位置，卡片逐一出现……」</p>
+          <p>「目标内容浮现，书签精准落点，黄色高亮脉冲。」</p>
+          <p>「不管内容有没有加载，书签都能找到你。」</p>
+        </div>
+        <div class="narr-ai">
+          懒加载定位机制：embed 引擎在精确文本匹配（hiText）返回 null 时，调用页面注册的 onJumpFail 钩子，由页面代码触发 loadMoreContent() 渲染新卡片，完成后回调 retryJump() 再次执行 hiText 精准定位。Chrome 扩展版使用 MutationObserver 自动监听 DOM 新增节点，无需页面手动注册钩子。
+        </div>
+      </div>
+    </div>
+    <!-- Flow diagram for lazy-load -->
+    <div style="padding:0 18px 16px;">
+      <div style="font-size:8pt;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">懒加载定位决策流程</div>
+      <div class="anchor-flow">
+        <div class="af-node">
+          <div class="af-label">点击书签</div>
+          <div class="af-val">hiText()<br>查找原文</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node af-fail">
+          <div class="af-label">内容未渲染</div>
+          <div class="af-val">返回 null<br>× 定位失败</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node af-ai">
+          <div class="af-label">onJumpFail 钩子</div>
+          <div class="af-val">自动加载<br>loadMoreContent()</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node af-ok">
+          <div class="af-label">retryJump()</div>
+          <div class="af-val">内容渲染后<br>精准高亮 ✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scene 4: Doc mode -->
+<div class="section">
+  <div class="section-title">场景④ · 腾讯文档 Doc 模式（2:00 – 2:18）</div>
+  <div class="scene">
+    <div class="scene-header">
+      <div class="scene-num c-purple">4</div>
+      <div class="scene-info">
+        <h3>持久标注：高亮嵌入正文，边距圆点一眼知密度</h3>
+        <div class="scene-page">演示页面：tencent-doc.html（腾讯文档 · AnchorNote 产品规划 v2.3）</div>
+      </div>
+      <div class="scene-time">18 秒</div>
+    </div>
+    <div class="scene-body">
+      <div class="steps-col">
+        <div class="col-label">操作步骤</div>
+        <div class="step">
+          <div class="step-num c-purple">1</div>
+          <div class="step-text">打开腾讯文档页<br>→ 页面加载后正文立即出现<strong>彩色持久高亮</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num c-purple">2</div>
+          <div class="step-text">注意段落右侧的<strong>彩色圆点</strong><br>→ 不打开右栏也能感知哪些段落已标注</div>
+        </div>
+        <div class="step">
+          <div class="step-num c-purple">3</div>
+          <div class="step-text">点击圆点或右侧便签<br>→ 段落出现<strong>蓝色脉冲边框</strong>（精准定位动画）</div>
+        </div>
+      </div>
+      <div class="narr-col">
+        <div class="col-label">视频配文</div>
+        <div class="narr-box">
+          <p>「这是 AnchorNote 的文档模式。」</p>
+          <p>「书签不只在右侧栏——它们同时嵌入正文，形成持久高亮。」</p>
+          <p>「右侧的小圆点是段落注释密度的视觉锚点，扫一眼就知道哪里值得重读。」</p>
+          <p>「点击圆点，段落闪烁蓝色边框，精准定位。」</p>
+        </div>
+        <div class="narr-ai">
+          Doc 模式在页面加载时自动重建所有高亮——书签不会因刷新而消失，这是 article 模式与 doc 模式最核心的差异。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scene 5: AI aggregation + notes export -->
+<div class="section">
+  <div class="section-title">场景⑤ · AI 全局聚合、回访简报与阅读笔记导出（2:18 – 2:44）</div>
+  <div class="scene">
+    <div class="scene-header">
+      <div class="scene-num c-amber">5</div>
+      <div class="scene-info">
+        <h3>AI 读懂你的阅读轨迹：意图聚类 + 回访简报 + AI 笔记导出 + Dashboard</h3>
+        <div class="scene-page">演示页面：research-report.html 书签库 → dashboard.html</div>
+      </div>
+      <div class="scene-time">26 秒</div>
+    </div>
+    <div class="scene-body">
+      <div class="steps-col">
+        <div class="col-label">操作步骤</div>
+        <div class="step">
+          <div class="step-num c-amber">1</div>
+          <div class="step-text">打开研究报告页，点右侧 <strong>「N 书签」</strong><br>→ 书签库面板滑出，展示 <strong>AI 回访简报</strong>（关注焦点 / 要点 / 建议）</div>
+        </div>
+        <div class="step">
+          <div class="step-num c-amber">2</div>
+          <div class="step-text">切换到 <strong>「AI 聚类」视图</strong><br>→ 书签按意图自动分组（竞品分析 / 政策研究…）</div>
+        </div>
+        <div class="step">
+          <div class="step-num c-amber">3</div>
+          <div class="step-text">点面板顶部 <strong>「📝 AI 笔记」</strong> 按钮<br>→ 弹出阅读笔记弹窗：整页摘要 + 每条书签对应的知识点解析<br>→ 点 <strong>「复制 Markdown」</strong> 一键导出</div>
+        </div>
+        <div class="step">
+          <div class="step-num c-amber">4</div>
+          <div class="step-text">打开 <strong>Dashboard</strong><br>→ 全局搜索书签，点条目跨页跳转</div>
+        </div>
+      </div>
+      <div class="narr-col">
+        <div class="col-label">视频配文</div>
+        <div class="narr-box">
+          <p>「打开书签库，AI 已经帮你整理好这次阅读——回访简报告诉你关注了什么、下一步做什么。」</p>
+          <p>「书签被按意图自动分组，不需要手动打标签。」</p>
+          <p>「点这里——『AI 笔记』。系统根据你保存的所有书签，加上文章的标题结构，生成一份完整的阅读笔记。每条书签变成一个知识点，按意图展开解析。」</p>
+          <p>「写报告或整理素材时，直接复制 Markdown，省掉手动整理的步骤。」</p>
+          <p>「Dashboard 汇聚所有页面的书签，全局搜索，一跳直达原文。」</p>
+        </div>
+        <div class="narr-ai">
+          AI 笔记生成逻辑：articleOverview() 读取页面 h1/h2/h3 结构 + 书签关键词合成整页摘要；buildKnowledgePoint() 按书签 intent 字段选择对应的知识点解析模板（7 种意图各有专属说明角度）；buildNotesMarkdown() 组装可直接复制的 Markdown 格式笔记。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scene 6: AI Boundary -->
+<div class="section">
+  <div class="section-title">场景⑥ · AI 能力边界说明（2:44 – 2:54）</div>
+
+  <div class="ai-section">
+    <h3>🤖 AnchorNote 的 AI 做了什么，没做什么</h3>
+    <div class="ai-grid">
+      <div class="ai-item" style="border-color:rgba(234,88,12,.25);background:rgba(255,237,213,.35);">
+        <div class="ai-feat" style="color:#c2410c;">★ AI 定位兜底（核心）</div>
+        <div class="ai-desc">书签保存的是「原始文本 + 段落偏移」。当文章更新导致精确字符串失配时，AI 将原始 selectedText 做语义嵌入，与当前文章各段落的嵌入做余弦相似度计算，取 Top-1 段落作为跳转目标，并提示用户「原文已更新，已定位到最相似位置」。</div>
+        <div class="ai-boundary">相似度低于设定阈值时不强制跳转，改为提示用户手动确认，避免误定位。</div>
+      </div>
+      <div class="ai-item">
+        <div class="ai-feat">✦ 意图聚类</div>
+        <div class="ai-desc">对你保存的书签文本做语义聚类，自动贴上「竞品分析」「政策研究」等意图标签。</div>
+        <div class="ai-boundary">仅处理已保存书签的 selectedText，不读取整篇文章。</div>
+      </div>
+      <div class="ai-item">
+        <div class="ai-feat">✦ 关键词提取</div>
+        <div class="ai-desc">从书签内容自动提取 2–4 个关键词，作为书签的语义标识，便于后续搜索和回忆。</div>
+        <div class="ai-boundary">关键词在保存时一次性生成，不持续监听页面行为。</div>
+      </div>
+      <div class="ai-item">
+        <div class="ai-feat">✦ 回访简报</div>
+        <div class="ai-desc">当你再次打开一个有书签的页面，AI 汇总所有书签生成「关注焦点 / 要点 / 建议」简报，帮你快速恢复上次的阅读状态。</div>
+        <div class="ai-boundary">简报仅在你主动打开书签库时生成，不在后台运行。</div>
+      </div>
+      <div class="ai-item">
+        <div class="ai-feat">✦ 相关书签联想</div>
+        <div class="ai-desc">保存新书签时，AI 检测与已有书签的语义相似度，如果相似度超过阈值则提示「这条书签与 X 相关」。</div>
+        <div class="ai-boundary">联想仅在当次保存时触发，不做跨会话的持续分析。</div>
+      </div>
+      <div class="ai-item" style="border-color:rgba(13,148,136,.25);background:rgba(204,251,241,.35);">
+        <div class="ai-feat" style="color:#0f766e;">✦ AI 阅读笔记导出</div>
+        <div class="ai-desc">根据当前页面书签集合，结合页面标题层级（h1/h2/h3），生成整页摘要和每条书签的意图驱动知识点解析。支持一键复制 Markdown，可直接用于写报告或素材整理。</div>
+        <div class="ai-boundary">仅在用户主动点击「📝 AI 笔记」时生成，不自动触发，不上传完整页面内容。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="boundary-box">
+    <h3>⚠️ 能力边界：AnchorNote 的 AI 不做什么</h3>
+    <ul class="boundary-list">
+      <li>不读取、扫描或上传用户未选中的文章内容——隐私边界清晰</li>
+      <li>不在页面浏览时持续调用 API——仅在用户主动保存时触发一次</li>
+      <li>不生成、改写或替代原文内容——AI 只帮你管理你自己选的内容</li>
+      <li>不跨用户共享书签数据——书签存储在用户本地 localStorage，不上云</li>
+      <li>不做推荐内容或广告定向——书签数据不用于任何商业化分析</li>
+    </ul>
+  </div>
+
+  <div class="scene">
+    <div class="scene-header">
+      <div class="scene-num c-green">6</div>
+      <div class="scene-info">
+        <h3>画面：能力边界说明卡（静态字幕）</h3>
+        <div class="scene-page">画面：简洁白底，逐条显示边界说明文字</div>
+      </div>
+      <div class="scene-time">10 秒</div>
+    </div>
+    <div class="scene-body" style="grid-template-columns:1fr;">
+      <div class="narr-box">
+        <p>「在这里我们想说清楚 AI 的边界。」</p>
+        <p>「AnchorNote 的 AI 只处理你主动选中并保存的文字，从不扫描全文，不持续监听，不上传原文。」</p>
+        <p>「你的书签，存在你自己的设备上。AI 的作用只有一件事：帮你读懂自己的阅读轨迹。」</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Closing -->
+<div class="section">
+  <div class="section-title">收尾（2:54 – 3:00）</div>
+  <div class="scene">
+    <div class="scene-header">
+      <div class="scene-num" style="background:#6b7280">✓</div>
+      <div class="scene-info">
+        <h3>总结 Slogan</h3>
+        <div class="scene-page">画面：AnchorNote Logo + 一句话</div>
+      </div>
+      <div class="scene-time">10 秒</div>
+    </div>
+    <div class="scene-body" style="grid-template-columns:1fr;">
+      <div class="narr-box" style="text-align:center;padding:20px;">
+        <p style="font-size:14pt;font-weight:800;color:var(--brand);letter-spacing:.03em">
+          「你选的每一句话，都值得被记住。」
+        </p>
+        <p style="margin-top:10px;color:var(--sub);font-size:9.5pt">AnchorNote · 语义书签 · 为 PCG 内容平台而生</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="doc-footer">
+  <span>AnchorNote Demo Script · v1.0 · 2026-05-04</span>
+  <span>内部演示文件 · 请勿外传</span>
+</div>
+
+</body>
+</html>

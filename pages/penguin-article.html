@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>我在腾讯做产品的五年：写给所有在大厂迷失方向的人 — 企鹅号</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --brand: #FF6600;
+  --brand-lt: #FFF0E6;
+  --text: #1a1a1a;
+  --sub: #555;
+  --muted: #999;
+  --border: #e8e8e8;
+  --bg: #f7f7f7;
+  --card: #fff;
+  --max: 680px;
+}
+body { font-family: "PingFang SC", "Noto Serif SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.9; }
+
+/* ── Header ── */
+.site-header { background: #fff; border-bottom: 1px solid var(--border); height: 54px; display: flex; align-items: center; padding: 0 20px; position: sticky; top: 0; z-index: 100; gap: 0; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.site-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.logo-icon { width: 34px; height: 34px; background: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.logo-text { display: flex; flex-direction: column; }
+.logo-text .main { font-size: 16px; font-weight: 800; color: var(--text); }
+.logo-text .sub { font-size: 10px; color: var(--muted); line-height: 1; }
+.header-tabs { display: flex; margin-left: 28px; gap: 0; }
+.header-tabs a { font-size: 14px; color: var(--sub); text-decoration: none; padding: 4px 12px; border-radius: 4px; }
+.header-tabs a.active, .header-tabs a:hover { color: var(--brand); }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.header-right .follow-btn { font-size: 13px; padding: 5px 16px; background: var(--brand); color: #fff; border: none; border-radius: 20px; cursor: pointer; font-weight: 600; }
+.header-right .icon-btn { width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; background: #fff; }
+.read-bar { position: fixed; top: 54px; left: 0; height: 2px; background: var(--brand); z-index: 99; width: 0; transition: width .08s; }
+
+/* ── Article shell ── */
+.article-shell { max-width: 1080px; margin: 0 auto; padding: 32px 20px; display: grid; grid-template-columns: 1fr 300px; gap: 32px; align-items: flex-start; }
+
+/* ── Article ── */
+.article-wrap { min-width: 0; }
+.article-category { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.cat-tag { font-size: 12px; font-weight: 700; color: var(--brand); background: var(--brand-lt); padding: 3px 10px; border-radius: 4px; }
+.cat-breadcrumb { font-size: 12px; color: var(--muted); }
+.article-title { font-size: clamp(20px, 3.5vw, 28px); font-weight: 900; line-height: 1.4; color: var(--text); margin-bottom: 14px; }
+.article-sub { font-size: 16px; color: var(--sub); font-weight: 400; line-height: 1.6; margin-bottom: 20px; }
+.author-meta { display: flex; align-items: center; gap: 12px; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+.author-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #ff6600, #ff9a3c); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 16px; flex-shrink: 0; }
+.author-info .name { font-size: 15px; font-weight: 700; color: var(--text); }
+.author-info .role { font-size: 12px; color: var(--muted); }
+.article-stats { display: flex; gap: 16px; margin-left: auto; font-size: 13px; color: var(--muted); }
+.article-stats span { display: flex; align-items: center; gap: 4px; }
+.follow-inline { font-size: 13px; padding: 4px 14px; border: 1px solid var(--brand); color: var(--brand); background: #fff; border-radius: 14px; cursor: pointer; font-weight: 600; white-space: nowrap; }
+
+/* ── Body text ── */
+.body-text { font-size: 16px; line-height: 1.95; color: var(--text); }
+.body-text p { margin-bottom: 22px; }
+.body-text h2 { font-size: 20px; font-weight: 800; margin: 36px 0 14px; color: var(--text); }
+.body-text h3 { font-size: 17px; font-weight: 700; margin: 28px 0 10px; color: var(--text); }
+.body-text strong { color: var(--text); }
+.body-text em { font-style: italic; color: var(--sub); }
+
+/* Divider */
+.section-divider { display: flex; align-items: center; gap: 12px; margin: 36px 0; }
+.section-divider .line { flex: 1; height: 1px; background: var(--border); }
+.section-divider .marker { width: 6px; height: 6px; background: var(--brand); border-radius: 50%; }
+
+/* Pull quote */
+.article-quote { border-left: 3px solid var(--brand); padding: 16px 20px; margin: 28px 0; background: var(--brand-lt); border-radius: 0 8px 8px 0; }
+.article-quote p { font-size: 17px; font-style: italic; color: var(--text); font-weight: 500; margin: 0; line-height: 1.6; }
+
+/* Tip box */
+.tip-box { background: #f0f7ff; border: 1px solid #c5ddf7; border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
+.tip-box .tip-head { font-size: 13px; font-weight: 700; color: #1d4ed8; margin-bottom: 8px; }
+.tip-box p { font-size: 14px; color: #1e40af; margin: 0; line-height: 1.6; }
+
+/* Numbered takeaway */
+.takeaways { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 22px 24px; margin: 28px 0; }
+.takeaways h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.tk-list { list-style: none; counter-reset: tk; }
+.tk-list li { counter-increment: tk; display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #f3f3f3; font-size: 14px; color: var(--sub); line-height: 1.5; }
+.tk-list li:last-child { border-bottom: none; }
+.tk-list li::before { content: counter(tk); width: 22px; height: 22px; background: var(--brand); color: #fff; border-radius: 50%; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+
+/* Image placeholder */
+.img-block { background: #f0f0f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 28px 0; flex-direction: column; gap: 8px; }
+.img-block.tall { height: 200px; }
+.img-block.short { height: 140px; }
+.img-block .ib-icon { font-size: 28px; opacity: .4; }
+.img-block .ib-cap { font-size: 12px; color: var(--muted); }
+
+/* Tags -->
+.article-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 32px 0 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.tag-item { font-size: 13px; color: var(--sub); background: var(--bg); padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border); cursor: pointer; }
+.tag-item:hover { border-color: var(--brand); color: var(--brand); }
+
+/* Reactions bar */
+.reactions { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+.reaction-btn { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--sub); background: none; border: 1px solid var(--border); border-radius: 20px; padding: 7px 16px; cursor: pointer; }
+.reaction-btn.active { border-color: var(--brand); color: var(--brand); background: var(--brand-lt); }
+.reaction-btn .count { font-weight: 700; }
+.share-btn { margin-left: auto; font-size: 14px; color: var(--sub); background: none; border: 1px solid var(--border); border-radius: 20px; padding: 7px 16px; cursor: pointer; }
+
+/* Comments */
+.comments-section { margin-top: 8px; }
+.comments-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.comments-header h3 { font-size: 17px; font-weight: 800; }
+.comment-sort { font-size: 13px; color: var(--muted); cursor: pointer; }
+.comment-input-row { display: flex; gap: 12px; margin-bottom: 24px; align-items: flex-start; }
+.ci-avatar { width: 36px; height: 36px; border-radius: 50%; background: #e0e0e0; flex-shrink: 0; }
+.ci-input { flex: 1; border: 1px solid var(--border); border-radius: 20px; padding: 9px 16px; font-size: 14px; color: var(--sub); outline: none; background: var(--bg); }
+.ci-input:focus { border-color: var(--brand); background: #fff; }
+.comment-list { display: flex; flex-direction: column; gap: 0; }
+.comment-item { padding: 18px 0; border-bottom: 1px solid var(--border); }
+.comment-item:last-child { border-bottom: none; }
+.ci-row { display: flex; gap: 12px; }
+.ci-body { flex: 1; }
+.ci-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.ci-name { font-size: 14px; font-weight: 700; }
+.ci-badge { font-size: 11px; padding: 1px 6px; background: var(--brand-lt); color: var(--brand); border-radius: 3px; font-weight: 700; }
+.ci-time { font-size: 12px; color: var(--muted); margin-left: auto; }
+.ci-text { font-size: 14px; color: var(--sub); line-height: 1.6; }
+.ci-actions { display: flex; gap: 16px; margin-top: 8px; }
+.ci-action { font-size: 12px; color: var(--muted); cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.ci-action:hover { color: var(--brand); }
+.ci-highlight { background: #fff8f0; border-left: 2px solid var(--brand); padding: 8px 12px; border-radius: 0 6px 6px 0; margin-bottom: 8px; font-size: 13px; color: var(--sub); font-style: italic; }
+.ci-highlight::before { content: '"'; color: var(--brand); font-weight: 900; margin-right: 2px; }
+.ci-highlight::after { content: '"'; color: var(--brand); font-weight: 900; margin-left: 2px; }
+.sub-comment { margin-top: 12px; padding: 12px 16px; background: var(--bg); border-radius: 8px; }
+.sc-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.sc-name { font-size: 13px; font-weight: 700; }
+.sc-time { font-size: 11px; color: var(--muted); }
+.sc-text { font-size: 13px; color: var(--sub); line-height: 1.5; }
+.show-more-comments { text-align: center; padding: 16px; font-size: 14px; color: var(--brand); cursor: pointer; border: 1px solid var(--border); border-radius: 8px; margin-top: 16px; }
+
+/* ── Sidebar ── */
+.article-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 70px; }
+.side-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+.side-box h4 { font-size: 14px; font-weight: 700; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.author-side { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.author-side .av { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #ff6600, #ff9a3c); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 22px; margin-bottom: 10px; }
+.author-side .au-name { font-size: 16px; font-weight: 800; }
+.author-side .au-title { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.author-side .au-bio { font-size: 13px; color: var(--sub); margin: 10px 0; line-height: 1.5; }
+.author-side .au-stats { display: flex; justify-content: center; gap: 24px; margin: 10px 0; }
+.au-stat .sv { font-size: 18px; font-weight: 900; color: var(--text); }
+.au-stat .sl { font-size: 11px; color: var(--muted); }
+.author-side .follow-btn-lg { width: 100%; padding: 9px; background: var(--brand); color: #fff; border: none; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 6px; }
+.related-list { list-style: none; }
+.related-list li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--sub); line-height: 1.4; cursor: pointer; }
+.related-list li:last-child { border-bottom: none; }
+.related-list li:hover { color: var(--brand); }
+.related-list li .rt { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.hot-topics { display: flex; flex-wrap: wrap; gap: 8px; }
+.hot-tag { font-size: 12px; padding: 4px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 14px; color: var(--sub); cursor: pointer; }
+.hot-tag:hover { border-color: var(--brand); color: var(--brand); }
+.reading-tip { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px 14px; margin-top: 4px; }
+.reading-tip .rt-head { font-size: 12px; font-weight: 700; color: #15803d; margin-bottom: 6px; }
+.reading-tip p { font-size: 12px; color: #166534; margin: 0; line-height: 1.5; }
+.demo-goal { background:#fffbeb; border-top:3px solid #f59e0b; border-bottom:1px solid #fde68a; padding:10px 20px; display:flex; align-items:center; gap:14px; font-size:13px; color:#451a03; flex-wrap:wrap; position:sticky; top:54px; z-index:99; }
+.dg-label { background:#f59e0b; color:#fff; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; font-size:12px; flex-shrink:0; }
+.dg-steps { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.dg-step { display:inline-flex; align-items:center; gap:5px; }
+.dg-num { background:#92400e; color:#fff; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+.dg-arrow { color:#d97706; font-weight:700; }
+</style>
+</head>
+<body>
+
+<div class="read-bar" id="readBar"></div>
+
+<header class="site-header">
+  <a class="site-logo" href="#">
+    <div class="logo-icon">🐧</div>
+    <div class="logo-text">
+      <div class="main">企鹅号</div>
+      <div class="sub">创作者平台</div>
+    </div>
+  </a>
+  <div class="header-tabs">
+    <a href="#">推荐</a>
+    <a href="#" class="active">职场</a>
+    <a href="#">科技</a>
+    <a href="#">成长</a>
+    <a href="#">产品</a>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn">🔍</button>
+    <button class="icon-btn">🔔</button>
+    <button class="follow-btn">+ 关注作者</button>
+  </div>
+</header>
+
+<div class="demo-goal">
+  <span class="dg-label">🎯 演示目标 · 个人叙事长文标注</span>
+  <div class="dg-steps">
+    <span class="dg-step"><span class="dg-num">①</span> 选中正文任意文字 → 气泡弹出，点 🔖 书签或 📍 断点</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">②</span> 点右侧便签条目 → 精准跳回原文高亮位置</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">③</span> 打开书签库查看 AI 意图聚类与相关书签联想</span>
+  </div>
+</div>
+
+<div class="article-shell">
+
+  <!-- ── Article ── -->
+  <article class="article-wrap" id="article" data-section="article">
+    <div class="article-category">
+      <span class="cat-tag">职场故事</span>
+      <span class="cat-breadcrumb">企鹅号 / 职场 / 大厂经历</span>
+    </div>
+    <h1 class="article-title">我在腾讯做产品的五年：写给所有在大厂迷失方向的人</h1>
+    <p class="article-sub">从意气风发的校招生，到开始怀疑自己为什么坐在这里——这五年，我想把真实的感受都写出来。</p>
+
+    <div class="author-meta">
+      <div class="author-avatar">林</div>
+      <div class="author-info">
+        <div class="name">林一默</div>
+        <div class="role">前腾讯产品经理 · 现独立写作者</div>
+      </div>
+      <div class="article-stats">
+        <span>👁 14.8万阅读</span>
+        <span>💬 847评论</span>
+        <span>🕐 约16分钟</span>
+      </div>
+      <button class="follow-inline">+ 关注</button>
+    </div>
+
+    <div class="body-text">
+
+      <p>这篇文章我写了很久。删掉了三个版本，因为总觉得自己在替大厂辩护，或者反过来在情绪宣泄。今天这个版本，我尽量只写我真实经历的事情。</p>
+
+      <p>2019年，我以产品培训生的身份入职腾讯。彼时我二十三岁，手里握着一份所有同学都羡慕的offer，脑子里装满了对"做出改变世界的产品"的幻想。第一天坐在工区里，看着屏幕上那些闪烁的数据，我真的觉得——这就是我应该待的地方。</p>
+
+      <p>五年后的今天，我从腾讯离职，在一个小城市的咖啡馆里写这篇文章。</p>
+
+      <div class="section-divider"><div class="line"></div><div class="marker"></div><div class="line"></div></div>
+
+      <h2>第一年：亢奋期</h2>
+
+      <p>第一年的记忆是密集的：密集的培训、密集的产品文档、密集的对齐会。我加入的是一个资讯类产品线，做的是内容分发相关的需求。那时候我完全不觉得辛苦，每天十一点从公司出来，我觉得那是"在做有价值的事情"的疲惫，和在学校熬夜打游戏的疲惫是本质不同的东西。</p>
+
+      <p>我的第一个独立需求，是一个优化文章阅读中断体验的小功能：当用户关闭了一篇读到一半的文章，再次打开时，系统自动把文章滚动到上次阅读的位置。需求很小，但我做得很认真。</p>
+
+      <p>产品上线的那个下午，我在后台看到功能被启用，然后真的打开手机测试了一遍。当文章准确地滚动到我上次停下来的那句话附近时，我感到了一种特别具体的满足感——不是因为我做了一个"伟大的产品"，而是因为我知道这个动作会被数百万用户感受到。</p>
+
+      <div class="article-quote">
+        <p>后来我才明白，这种"真实感"是产品工作里最稀缺的燃料。一旦你开始为了OKR做需求，而不是为了那种燃料做需求，你就开始慢慢耗尽。</p>
+      </div>
+
+      <p>但那时候我还不知道这件事。我只是每天努力完成任务，然后在周报里写"完成了X%的迭代目标"，然后继续向前。</p>
+
+      <h2>第二年：迷雾期</h2>
+
+      <p>第二年开始，一些微妙的变化开始出现。我承接的需求越来越多，但每个需求背后的"为什么"开始变得模糊。我会在需求评审会上问"这个功能对用户的什么痛点有帮助"，得到的回答有时候是一串数据，有时候是一句"这是上面的方向"。</p>
+
+      <p>有一次，我做了一个我私下认为完全没有意义的需求——一个在文章页面某个角落添加悬浮按钮的功能，点击之后可以跳转到另一个内部产品。整个设计的逻辑是"触达用户"，没有任何对阅读体验的考量。</p>
+
+      <p>我写了半页质疑文档，发给了直属leader。他看完之后，只回了我一行字："<strong>你的感受是对的，但这个需求有它的背景，你先做，有问题我们线下聊。</strong>"</p>
+
+      <p>线下聊从来没有发生。需求上线了，数据指标完成了，没有人关心那个角落的按钮是否真的帮助了什么用户。而我，把这一页文档存进了一个叫"放不下的需求"的文件夹，然后继续向前。</p>
+
+      <div class="img-block tall">
+        <div class="ib-icon">🌫️</div>
+        <div class="ib-cap">图：我在那个时期的日记本（某一页）</div>
+      </div>
+
+      <div class="section-divider"><div class="line"></div><div class="marker"></div><div class="line"></div></div>
+
+      <h2>第三年：这是我的问题还是系统的问题？</h2>
+
+      <p>第三年是我在腾讯最混乱的一年。混乱的来源不是工作量，而是一个无法回答的问题：<strong>我在为谁工作？</strong></p>
+
+      <p>表面上，答案很清晰：为用户、为团队、为公司的业务目标。但在日常工作里，这三者并不总是对齐的。为用户做的事情，有时候对业务指标没有贡献。对业务指标有贡献的事情，有时候明显损害了用户体验。团队的局部利益，有时候与公司的整体目标南辕北辙。</p>
+
+      <p>我开始和一个做过多年产品的同事深入聊这个问题。他比我大十岁，经历过微博、百度，然后来到腾讯。他听完我的困惑之后，沉默了一会儿，然后说：</p>
+
+      <div class="article-quote">
+        <p>"大厂系统的复杂度，超过了任何一个个体的理解能力。你感受到的矛盾是真实的，但你试图从一个产品需求里解决它，就好像试图用一杯水去理解海洋的温度。先接受这个尺度的差距，你才能在这个系统里找到你真正能做的事情。"</p>
+      </div>
+
+      <p>这句话我记了很久。我不确定我完全同意它，但它帮助我暂时放下了那种对系统的愤怒，开始更平静地观察自己的处境。</p>
+
+      <div class="tip-box">
+        <div class="tip-head">📌 我在那段时间真正学到的事</div>
+        <p>产品经理的核心能力不是"提出好需求"，而是"在一个不完美的系统里，持续推动比现在更好一点点的决策"。这听起来是在为平庸辩护，但我后来越来越觉得，它其实比"做出改变世界的产品"更难，也更诚实。</p>
+      </div>
+
+      <h2>第四年：找到支点</h2>
+
+      <p>第四年，我做了一个对我来说有点重要的决定：我开始系统性地记录每一个让我感到"这个值得"的产品瞬间。</p>
+
+      <p>不是绩效相关的数据，而是更小的事情：一个用户在应用商店的评价里提到"终于能找到上次读到的地方了"；一次在内部用户访谈中，一个五十多岁的用户反复说"这个书签功能我每天都在用"；一个之前总是觉得文章太长放弃阅读的同事，因为我做的阅读进度功能开始读完了更多文章。</p>
+
+      <p>这些事情没有进入任何一份周报，但它们是我那一年工作的真实支撑。我慢慢理解了，在大机构里做产品，<strong>你需要主动构建自己的意义感，而不是等待系统把意义分配给你</strong>。</p>
+
+      <h3>关于团队的那些事</h3>
+
+      <p>第四年我换了一个团队，做的是更偏向阅读工具类的方向。这个团队的氛围和之前完全不同——leader有一个很明确的产品哲学：不做干扰用户阅读的任何功能，每一个新功能都必须通过"如果没有它，用户会感到缺失吗"的测试。</p>
+
+      <p>这个原则严苛到有点反商业直觉，因为它排除了大量"可以做，数据也会好看"的功能。但它带来了一种难得的清晰感：当你知道自己做的每一件事都在强化"让阅读更好"这件事，而不是"完成各种指标目标"，你的工作状态会变得完全不同。</p>
+
+      <p>我在那年做了一个小功能，至今认为是我在腾讯做过的最好的产品决策之一：<strong>在用户阅读一篇文章超过3分钟时，自动静默保存一个语义书签，记录用户当前阅读到的段落、阅读进度以及当前屏幕可见的具体内容</strong>。用户不需要做任何操作，下一次打开同一篇文章时，系统会提示"上次你读到了第X段，要从这里继续吗？"</p>
+
+      <p>这个功能没有任何花哨的地方，数据也不算惊人。但在上线后的用户访谈里，有人告诉我："以前我经常打开收藏夹里的文章，然后不知道自己当初收藏它是因为什么。现在它会告诉我。"</p>
+
+      <p>那是我在腾讯五年里，离"做了有意义的事情"最近的一次。</p>
+
+      <div class="section-divider"><div class="line"></div><div class="marker"></div><div class="line"></div></div>
+
+      <h2>第五年：决定离开</h2>
+
+      <p>第五年，我花了大概八个月决定离开。这不是一个激烈的决定，没有被压垮的临界点，也没有令我极度失望的事件。更接近的描述是：我慢慢意识到，在腾讯这个系统里，我能做的最好的版本，和我真正想成为的产品人之间，有一段我短时间内无法弥合的距离。</p>
+
+      <p>我想要更清晰地感受到自己做的东西是否真的有用。我想要更快速的反馈回路。我想要在做一个决定时，不需要经过七层流程确认就能看到它的效果。这些需求，在大厂里不是不能满足，但满足的概率与我的等待成本之间，我做了一个我自己的判断。</p>
+
+      <div class="article-quote">
+        <p>离开大厂不是逃跑，留下来也不是妥协。最终都只是一个在特定时间节点做出的、基于自身条件的理性选择。让我觉得遗憾的从来不是选择本身，而是在做选择的时候没有认真问过自己"我真正想要什么"。</p>
+      </div>
+
+      <h2>写给还在大厂里的人</h2>
+
+      <p>如果你正处在我描述的某个阶段，我想说几件我自己想通了很久才明白的事。不一定对你适用，但也许有一句话正好是你需要的。</p>
+
+      <div class="takeaways">
+        <h4>五件想早一点知道的事</h4>
+        <ul class="tk-list">
+          <li>意义感不会从系统里自然流出来，你需要主动找到并保护它。找到那些让你感觉"这个值得"的产品瞬间，记下来，定期回看。</li>
+          <li>分清楚哪些愤怒是针对"系统性问题"的，哪些是针对"可以改变的局部问题"的。前者先放下，后者用全力。</li>
+          <li>找一个真正在产品上有信念的人，不一定是你的直属leader，哪怕只是同频的同事，你们之间的对话会成为你在这个系统里最重要的锚点。</li>
+          <li>当你开始用"这只是工作"来麻痹自己时，不是时候庆幸，而是时候认真审视了。因为"只是工作"的尽头，往往不是稳定，而是虚耗。</li>
+          <li>你在任何时候都可以重新问自己"我在为谁工作"。这个问题没有正确答案，但认真回答它，比回避它，通常会带来更清晰的状态。</li>
+        </ul>
+      </div>
+
+      <p>五年里，我见过在系统里磨平了棱角却做出了极有价值产品的人，也见过保持了全部锋芒却什么也没做成的人。我见过在腾讯找到了终身事业的人，也见过在第二年就知道自己迟早会离开的人。</p>
+
+      <p>大厂不是天堂，也不是地狱。它是一个巨大的、复杂的、真实存在的系统，你在里面能拿到什么、失去什么，大部分取决于你对自己诚不诚实。</p>
+
+      <p>我那个叫"放不下的需求"的文件夹，我在离职前看了最后一次。里面有三十一份文档，大部分是质疑，但也有几份是感激。我把它们全部打包，存到了一个硬盘里。</p>
+
+      <p>它们是我在那个系统里真正的产出。不是数据，不是晋升材料，而是我和这份工作认真对话过的证明。</p>
+
+      <p style="color: var(--muted); font-size: 14px; margin-top: 32px;">— 写于2024年11月，某个南方城市的咖啡馆</p>
+    </div>
+
+    <!-- Tags -->
+    <div class="article-tags">
+      <span class="tag-item"># 腾讯</span>
+      <span class="tag-item"># 大厂</span>
+      <span class="tag-item"># 产品经理</span>
+      <span class="tag-item"># 职场故事</span>
+      <span class="tag-item"># 离职</span>
+      <span class="tag-item"># 职业规划</span>
+      <span class="tag-item"># 意义感</span>
+    </div>
+
+    <!-- Reactions -->
+    <div class="reactions">
+      <button class="reaction-btn active">👍 赞同 <span class="count">3,841</span></button>
+      <button class="reaction-btn">❤️ 感动 <span class="count">2,109</span></button>
+      <button class="reaction-btn">💡 有启发 <span class="count">1,762</span></button>
+      <button class="reaction-btn">🤔 有疑问 <span class="count">234</span></button>
+      <button class="share-btn">↗ 分享</button>
+    </div>
+
+    <!-- Comments -->
+    <div class="comments-section">
+      <div class="comments-header">
+        <h3>评论 847</h3>
+        <span class="comment-sort">按热度排列 ▾</span>
+      </div>
+      <div class="comment-input-row">
+        <div class="ci-avatar"></div>
+        <input class="ci-input" placeholder="发表你的看法，与作者和读者交流..." />
+      </div>
+
+      <div class="comment-list">
+
+        <div class="comment-item">
+          <div class="ci-row">
+            <div class="ci-avatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);flex-shrink:0;"></div>
+            <div class="ci-body">
+              <div class="ci-head">
+                <span class="ci-name">Mia·在读研究生</span>
+                <span class="ci-badge">🔖 已书签</span>
+                <span class="ci-time">2小时前</span>
+              </div>
+              <div class="ci-highlight">你需要主动构建自己的意义感，而不是等待系统把意义分配给你</div>
+              <div class="ci-text">这句话我要存下来，每隔一段时间回来看一遍。我现在在准备大厂实习，很多朋友都在跟我说"进去了就自然知道怎么做了"，但我总觉得有什么是需要提前想清楚的。这篇文章帮我定位到了是什么。</div>
+              <div class="ci-actions">
+                <span class="ci-action">👍 892</span>
+                <span class="ci-action">↩ 回复</span>
+              </div>
+              <div class="sub-comment">
+                <div class="sc-head"><span class="sc-name">林一默（作者）</span><span class="sc-time">1小时前</span></div>
+                <div class="sc-text">提前想清楚是对的。我当时是进去了才慢慢想，花了两年多。你现在想，会省很多力气。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment-item">
+          <div class="ci-row">
+            <div class="ci-avatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f093fb,#f5576c);flex-shrink:0;"></div>
+            <div class="ci-body">
+              <div class="ci-head">
+                <span class="ci-name">陈阳光</span>
+                <span class="ci-time">3小时前</span>
+              </div>
+              <div class="ci-text">同为前大厂产品，在里面做了四年，最后一年我的状态跟你第三年很像。"我在为谁工作"这个问题，我是在离职后的第三个月才真的想清楚的。现在回头看，我觉得那段迷雾不是坏事，它在强迫你真正想清楚自己要什么，只是当时太难受了。</div>
+              <div class="ci-actions">
+                <span class="ci-action">👍 614</span>
+                <span class="ci-action">↩ 回复</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment-item">
+          <div class="ci-row">
+            <div class="ci-avatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4facfe,#00f2fe);flex-shrink:0;"></div>
+            <div class="ci-body">
+              <div class="ci-head">
+                <span class="ci-name">产品新人小K</span>
+                <span class="ci-badge">📍 断点</span>
+                <span class="ci-time">4小时前</span>
+              </div>
+              <div class="ci-highlight">在用户阅读一篇文章超过3分钟时，自动静默保存一个语义书签，记录用户当前阅读到的段落</div>
+              <div class="ci-text">这个功能的设计思路真的很好。我研究过几家平台的阅读中断恢复，大部分都是靠滚动位置坐标来实现的，页面一变动就全乱了。如果能记录到段落语义层面，准确率会高很多。请问当时实现这个功能的技术路径是怎样的，是纯前端还是有后端语义处理？</div>
+              <div class="ci-actions">
+                <span class="ci-action">👍 387</span>
+                <span class="ci-action">↩ 回复</span>
+              </div>
+              <div class="sub-comment">
+                <div class="sc-head"><span class="sc-name">林一默（作者）</span><span class="sc-time">3小时前</span></div>
+                <div class="sc-text">前端记录DOM结构锚点（CSS选择器 + 选中文字）+ 后端存储 + 回访时的文本匹配重定位。AI语义校验当时是简单版，主要靠精确文本匹配打底。现在外面有一些做这个方向的工具比我们当时做得完整很多了。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment-item">
+          <div class="ci-row">
+            <div class="ci-avatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#43e97b,#38f9d7);flex-shrink:0;"></div>
+            <div class="ci-body">
+              <div class="ci-head">
+                <span class="ci-name">一个在读MBA的前程序员</span>
+                <span class="ci-time">5小时前</span>
+              </div>
+              <div class="ci-text">看完了全文，我最感触的是"假完读"这件事。我以前以为我读了很多，后来发现我只是滚动了很多。现在我读长文之前会先做一个小仪式：定一个问题，告诉自己今天要在这篇文章里找到什么。这让我读完之后至少能说清楚一件新的事情。</div>
+              <div class="ci-actions">
+                <span class="ci-action">👍 1,203</span>
+                <span class="ci-action">↩ 回复</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment-item">
+          <div class="ci-row">
+            <div class="ci-avatar" style="width:36px;height:36px;border-radius:50%;background:#e0e0e0;flex-shrink:0;"></div>
+            <div class="ci-body">
+              <div class="ci-head">
+                <span class="ci-name">匿名用户</span>
+                <span class="ci-time">6小时前</span>
+              </div>
+              <div class="ci-text">在大厂做了八年了，感觉你说的很多东西我都经历过，但我和你的结论不太一样。我觉得大厂的复杂性本身就是一种训练，你在里面学会在不完美的条件下做决策，这是其他地方学不到的。当然这不代表要待一辈子，只是我觉得第三年那种"我在为谁工作"的困惑，可以用另一种方式解读：你在为一个复杂系统的某一个局部问题工作，而这个局部问题是真实的。</div>
+              <div class="ci-actions">
+                <span class="ci-action">👍 298</span>
+                <span class="ci-action">↩ 回复</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="show-more-comments">查看更多 842 条评论</div>
+    </div>
+  </article>
+
+  <!-- ── Sidebar ── -->
+  <aside class="article-sidebar">
+    <div class="side-box">
+      <div class="author-side">
+        <div class="av">林</div>
+        <div class="au-name">林一默</div>
+        <div class="au-title">前腾讯产品经理 · 独立写作者</div>
+        <div class="au-bio">在大厂做了五年产品，现在写关于工作、产品和人的长文。相信"慢慢看清楚"比"快速成功"更有价值。</div>
+        <div class="au-stats">
+          <div class="au-stat"><div class="sv">38</div><div class="sl">篇文章</div></div>
+          <div class="au-stat"><div class="sv">7.2万</div><div class="sl">关注者</div></div>
+          <div class="au-stat"><div class="sv">94万</div><div class="sl">总阅读</div></div>
+        </div>
+        <button class="follow-btn-lg">+ 关注作者</button>
+      </div>
+    </div>
+
+    <div class="side-box">
+      <div class="reading-tip">
+        <div class="rt-head">💡 AnchorNote 使用提示</div>
+        <p>这篇文章有很多值得保存的句子。选中任意文字，即可创建书签或阅读断点，下次回来时 AI 会帮你找到那句话。</p>
+      </div>
+    </div>
+
+    <div class="side-box">
+      <h4>相关阅读</h4>
+      <ul class="related-list">
+        <li>我为什么从字节跳到了一家30人的公司<div class="rt">林一默 · 4.3万阅读</div></li>
+        <li>产品经理的"意义感"究竟从哪里来<div class="rt">陈阳光 · 2.8万阅读</div></li>
+        <li>为什么越来越多大厂人开始写长文<div class="rt">企鹅号编辑部 · 8.1万阅读</div></li>
+        <li>和十位前大厂PM聊了聊：他们在想什么<div class="rt">产品100人 · 6.5万阅读</div></li>
+      </ul>
+    </div>
+
+    <div class="side-box">
+      <h4>热门话题</h4>
+      <div class="hot-topics">
+        <span class="hot-tag">#大厂生存指南</span>
+        <span class="hot-tag">#产品经理</span>
+        <span class="hot-tag">#职场故事</span>
+        <span class="hot-tag">#离职</span>
+        <span class="hot-tag">#意义感</span>
+        <span class="hot-tag">#腾讯</span>
+        <span class="hot-tag">#转型</span>
+        <span class="hot-tag">#工作哲学</span>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+const bar = document.getElementById('readBar');
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  bar.style.width = (total > 0 ? (window.scrollY / total) * 100 : 0) + '%';
+}, { passive: true });
+
+document.querySelectorAll('.reaction-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const wasActive = this.classList.contains('active');
+    document.querySelectorAll('.reaction-btn').forEach(b => b.classList.remove('active'));
+    if (!wasActive) this.classList.add('active');
+  });
+});
+</script>
+<script>
+window.ANCHORNOTE_CONFIG = {
+  pageId:          'penguin-article-dachang',
+  pageTitle:       '我在腾讯做产品的五年：写给所有在大厂迷失方向的人',
+  pageUrl:         'penguin.qq.com/创作者/林一默/大厂五年',
+  articleSelector: '#article',
+  seedBookmarks: [
+    {
+      type: 'checkpoint',
+      selectedText: '你需要主动构建自己的意义感，而不是等待系统把意义分配给你',
+      section: 'article',
+      note: '这句话对我很重要，下次从这里继续读',
+      contextText: '我慢慢理解了，在大机构里做产品，你需要主动构建自己的意义感，而不是等待系统把意义分配给你。'
+    },
+    {
+      type: 'mark',
+      selectedText: '大厂不是天堂，也不是地狱',
+      section: 'article',
+      note: '结论句，写得很准确',
+      contextText: '大厂不是天堂，也不是地狱。它是一个巨大的、复杂的、真实存在的系统，你在里面能拿到什么、失去什么，大部分取决于你对自己诚不诚实。'
+    },
+    {
+      type: 'mark',
+      selectedText: '在用户阅读一篇文章超过3分钟时，自动静默保存一个语义书签',
+      section: 'article',
+      note: '作者自己做的产品设计，和 AnchorNote 高度相关',
+      contextText: '我做了一个小功能：在用户阅读一篇文章超过3分钟时，自动静默保存一个语义书签，记录用户当前阅读到的段落、阅读进度以及当前屏幕可见的具体内容。'
+    }
+  ]
+};
+</script>
+<script src="../anchornote-embed.js"></script>
+</body>
+</html>

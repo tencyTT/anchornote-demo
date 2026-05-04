@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>竞品调研素材板 · AI阅读助手 · 内容运营工作台</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --brand: #7c3aed;
+  --brand-dark: #6d28d9;
+  --brand-light: #f5f3ff;
+  --accent: #0ea5e9;
+  --text: #1e1b4b;
+  --sub: #4b5563;
+  --muted: #9ca3af;
+  --border: #e5e7eb;
+  --bg: #f8f7ff;
+}
+body {
+  font-family: "PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.7;
+}
+
+/* ── top bar ── */
+.wb-topbar {
+  position: sticky; top: 0; z-index: 100;
+  height: 52px; display: flex; align-items: center; gap: 0;
+  background: #fff; border-bottom: 1px solid var(--border);
+  padding: 0 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.wb-logo { display:flex; align-items:center; gap:9px; flex-shrink:0; }
+.wb-logo .icon {
+  width:30px; height:30px; border-radius:6px;
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:14px; font-weight:900;
+}
+.wb-logo .name { font-size:14px; font-weight:700; color:var(--text); }
+.wb-logo .sub  { font-size:11px; color:var(--muted); }
+.wb-sep { width:1px; height:26px; background:var(--border); margin:0 16px; }
+.wb-breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+.wb-breadcrumb .cur { color:var(--text); font-weight:600; }
+.wb-actions { margin-left:auto; display:flex; align-items:center; gap:8px; }
+.wb-btn { height:32px; padding:0 14px; border-radius:6px; border:1px solid var(--border); background:#fff; color:var(--sub); font:inherit; font-size:13px; cursor:pointer; white-space:nowrap; }
+.wb-btn.primary { background:var(--brand); color:#fff; border-color:var(--brand); }
+.wb-btn:hover { background:var(--brand-light); color:var(--brand); border-color:var(--brand); }
+.wb-btn.primary:hover { background:var(--brand-dark); color:#fff; }
+
+/* ── page layout ── */
+.wb-layout { max-width: 1160px; margin: 0 auto; padding: 28px 20px; }
+.demo-goal { background:#fffbeb; border-top:3px solid #f59e0b; border-bottom:1px solid #fde68a; padding:10px 20px; display:flex; align-items:center; gap:14px; font-size:13px; color:#451a03; flex-wrap:wrap; position:sticky; top:52px; z-index:99; }
+.dg-label { background:#f59e0b; color:#fff; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; font-size:12px; flex-shrink:0; }
+.dg-steps { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.dg-step { display:inline-flex; align-items:center; gap:5px; }
+.dg-num { background:#92400e; color:#fff; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+.dg-arrow { color:#d97706; font-weight:700; }
+.wb-header { margin-bottom: 28px; }
+.wb-header h1 { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.wb-header-meta { display:flex; align-items:center; gap:16px; flex-wrap:wrap; font-size:13px; color:var(--muted); }
+.wb-tag {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 10px; border-radius:99px; font-size:12px; font-weight:600;
+}
+.wb-tag-purple { background:var(--brand-light); color:var(--brand); }
+.wb-tag-blue   { background:#e0f2fe; color:#0369a1; }
+.wb-tag-green  { background:#dcfce7; color:#15803d; }
+
+.wb-main { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* ── source card ── */
+.src-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 12px;
+  overflow: hidden; display: flex; flex-direction: column;
+  box-shadow: 0 2px 12px rgba(0,0,0,.05);
+  transition: box-shadow .2s;
+}
+.src-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.10); }
+.src-card-head {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to right, #fafafe, #fff);
+}
+.src-card-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; padding: 3px 9px;
+  border-radius: 6px; margin-bottom: 8px;
+}
+.src-card-title { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 5px; }
+.src-card-meta  { font-size: 11px; color: var(--muted); display:flex; gap:10px; flex-wrap:wrap; }
+.src-card-body  { padding: 16px 18px; flex: 1; }
+.src-card-body p { color: var(--sub); font-size: 13px; margin-bottom: 10px; line-height: 1.7; }
+.src-card-body p:last-child { margin-bottom: 0; }
+
+/* source color themes */
+.src-tencent  .src-card-badge { background:#eff6ff; color:#1d4ed8; }
+.src-tencent  .src-card-head  { border-left: 3px solid #1d4ed8; }
+.src-huxiu    .src-card-badge { background:#fff7ed; color:#c2410c; }
+.src-huxiu    .src-card-head  { border-left: 3px solid #f97316; }
+.src-36kr     .src-card-badge { background:#fdf2f8; color:#9d174d; }
+.src-36kr     .src-card-head  { border-left: 3px solid #ec4899; }
+.src-sspai    .src-card-badge { background:#f0fdf4; color:#15803d; }
+.src-sspai    .src-card-head  { border-left: 3px solid #22c55e; }
+
+/* insight panel */
+.insight-panel {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4c1d95 100%);
+  border-radius: 12px; padding: 28px 32px;
+  color: #fff;
+}
+.insight-panel h3 { font-size:17px; font-weight:800; margin-bottom:6px; }
+.insight-panel .ip-meta { font-size:12px; color:rgba(255,255,255,.6); margin-bottom:20px; }
+.insight-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:14px; }
+.insight-item {
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  border-radius:10px; padding:16px;
+}
+.insight-item .ii-label { font-size:11px; color:rgba(255,255,255,.6); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.05em; }
+.insight-item .ii-text  { font-size:13px; color:rgba(255,255,255,.92); line-height:1.6; }
+
+/* progress bar at bottom */
+.wb-footer { margin-top:32px; text-align:center; font-size:12px; color:var(--muted); padding-bottom:40px; }
+</style>
+</head>
+<body>
+
+<div class="wb-topbar">
+  <div class="wb-logo">
+    <div class="icon">运</div>
+    <div>
+      <div class="name">内容运营工作台</div>
+      <div class="sub">Content Operations</div>
+    </div>
+  </div>
+  <div class="wb-sep"></div>
+  <div class="wb-breadcrumb">
+    <span>调研项目</span>
+    <span>›</span>
+    <span>AI 阅读助手竞品研究</span>
+    <span>›</span>
+    <span class="cur">素材板 · 用户痛点与产品路径</span>
+  </div>
+  <div class="wb-actions">
+    <span class="wb-tag wb-tag-purple">进行中</span>
+    <button class="wb-btn">📎 导出报告</button>
+    <button class="wb-btn primary">+ 新建书签</button>
+  </div>
+</div>
+
+<div class="demo-goal">
+  <span class="dg-label">🎯 演示目标 · 多来源书签自动分组</span>
+  <div class="dg-steps">
+    <span class="dg-step"><span class="dg-num">①</span> 点右侧「N 书签」按钮打开书签库</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">②</span> 查看书签按来源自动分组：腾讯新闻 / 虎嗅 / 36Kr / 少数派</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">③</span> 试试搜索框，输入关键词跨所有来源过滤书签</span>
+  </div>
+</div>
+
+<div class="wb-layout">
+
+  <div class="wb-header">
+    <h1>竞品调研素材板：AI 阅读助手用户痛点与产品路径</h1>
+    <div class="wb-header-meta">
+      <span>负责人：<strong>产品运营组</strong></span>
+      <span>更新：<strong>2024-11-20</strong></span>
+      <span class="wb-tag wb-tag-blue">4 篇来源</span>
+      <span class="wb-tag wb-tag-green">已提炼 5 条书签观点</span>
+      <span style="color:var(--muted)">选中任意段落 → 保存书签观点</span>
+    </div>
+  </div>
+
+  <!-- source cards + insight panel -->
+  <div class="wb-main" id="article">
+
+    <!-- card 1: 腾讯新闻深度报道 -->
+    <div class="src-card src-tencent" data-section="src-tencent">
+      <div class="src-card-head">
+        <div class="src-card-badge">📰 腾讯新闻深度</div>
+        <div class="src-card-title">《为什么你的收藏夹成了垃圾桶》</div>
+        <div class="src-card-meta">
+          <span>作者：林晓璐</span>
+          <span>2024年10月</span>
+          <span>阅读量 82万</span>
+        </div>
+      </div>
+      <div class="src-card-body">
+        <p>微信收藏夹在 2023 年的月均打开次数中位数为 0.3 次，95% 的收藏内容在保存后 14 天内不会再被访问。用户把"稍后再看"变成了一种心理安慰——收藏的瞬间获得了短暂的焦虑缓解，但内容本身已被大脑判定为"不那么紧迫的事"。</p>
+        <p>真正影响用户是否回来的，不是内容有多好，而是<strong>回来的成本够不够低</strong>。当用户需要花 20 秒找到那篇文章、再花 2 分钟找到上次读到哪里，大多数人会选择放弃。</p>
+        <p>研究者将这种现象命名为"收藏-遗忘循环"，估计中国互联网平台每年因此损失的有效阅读时长超过 420 亿分钟。</p>
+      </div>
+    </div>
+
+    <!-- card 2: 虎嗅分析 -->
+    <div class="src-card src-huxiu" data-section="src-huxiu">
+      <div class="src-card-head">
+        <div class="src-card-badge">🔥 虎嗅分析</div>
+        <div class="src-card-title">《字节的阅读焦虑：当效率成为枷锁》</div>
+        <div class="src-card-meta">
+          <span>作者：张伟良</span>
+          <span>2024年9月</span>
+          <span>阅读量 54万</span>
+        </div>
+      </div>
+      <div class="src-card-body">
+        <p>今日头条的"一句话读懂"功能上线后，文章完读率下降了 11 个百分点。摘要太好用，反而让用户觉得"读摘要就够了"，原文的访问深度持续降低。这是一个产品自噬的悖论。</p>
+        <p>字节跳动内部将这一现象称为"摘要替代效应"。问题的根源在于：<strong>效率型 AI 工具优化的是"获取信息"，而不是"理解信息"</strong>。用户在效率上省下来的时间，被新一轮刷新消费掉了，而非用于更深的思考。</p>
+        <p>真正有价值的 AI 阅读工具，应当降低的是"回来继续读"的成本，而不是"首次消费"的成本。后者的竞争已经饱和，前者几乎是空白市场。</p>
+      </div>
+    </div>
+
+    <!-- card 3: 36氪独家 -->
+    <div class="src-card src-36kr" data-section="src-36kr">
+      <div class="src-card-head">
+        <div class="src-card-badge">💎 36氪独家</div>
+        <div class="src-card-title">《微信读书的护城河：为什么它是唯一留下来的阅读APP》</div>
+        <div class="src-card-meta">
+          <span>作者：程思远</span>
+          <span>2024年8月</span>
+          <span>阅读量 91万</span>
+        </div>
+      </div>
+      <div class="src-card-body">
+        <p>微信读书的核心护城河不是书库，而是<strong>阅读数据的网络效应</strong>。每一条划线、每一条笔记都在强化用户与这本书的绑定关系，也在强化用户与平台的绑定关系。离开微信读书意味着离开自己积累了数年的阅读轨迹。</p>
+        <p>与此形成对比的是，即便用户在腾讯新闻阅读了一篇文章 5 遍，平台对这一行为的记录也几乎为零——没有笔记、没有划线、没有返回锚点，只有一个已读标记。这意味着用户在内容平台上几乎无法积累阅读资产。</p>
+        <p>36氪获悉，微信读书 2024 年的 DAU 中，有约 23% 的用户每天打开 App 的主要目的是"查看自己之前的笔记和划线"，而非阅读新内容。这是任何其他阅读产品都不具备的使用粘性。</p>
+      </div>
+    </div>
+
+    <!-- card 4: 少数派产品分析 -->
+    <div class="src-card src-sspai" data-section="src-sspai">
+      <div class="src-card-head">
+        <div class="src-card-badge">🌿 少数派产品分析</div>
+        <div class="src-card-title">《Readwise 为什么值 60 美元一年》</div>
+        <div class="src-card-meta">
+          <span>作者：Kyth</span>
+          <span>2024年7月</span>
+          <span>阅读量 38万</span>
+        </div>
+      </div>
+      <div class="src-card-body">
+        <p>Readwise 解决的核心问题不是"如何更快地阅读"，而是"如何让读过的东西真正进入长期记忆"。它的核心功能是每日回顾（Daily Review）：每天推送你 5 条过去的划线，通过间隔重复让高亮真正内化。</p>
+        <p>Readwise 的用户流失率远低于同类工具，原因在于它建立了一种<strong>阅读资产的复利效应</strong>——你用得越久，它对你的价值越高。这与社交媒体的即时满足逻辑截然相反。</p>
+        <p>对国内产品的启示：如果 AI 书签只是帮用户"记住去过哪"，上限有限；如果它能帮用户"把读过的变成真正理解的"，就具备了用户生命周期价值层面的商业想象空间。</p>
+      </div>
+    </div>
+
+    <!-- insight panel -->
+    <div class="insight-panel" data-section="insight-synthesis">
+      <h3>✨ AI 运营助手：素材观点聚合</h3>
+      <p class="ip-meta">基于你在 4 篇素材中的书签，AI 提炼了以下核心论断</p>
+      <div class="insight-grid">
+        <div class="insight-item">
+          <div class="ii-label">🔍 共同痛点</div>
+          <div class="ii-text">现有工具优化"首次获取"成本，却完全忽视"回来继续读"这一关键场景。用户每天被打断数十次，却没有一款产品帮他们低成本地续上上下文。</div>
+        </div>
+        <div class="insight-item">
+          <div class="ii-label">📊 数据支撑</div>
+          <div class="ii-text">微信读书 23% 的 DAU 是为查阅历史笔记而来；字节"摘要替代效应"导致完读率下降 11pp；收藏内容 14 天未读率高达 95%。三个数据共同指向同一个用户行为空洞。</div>
+        </div>
+        <div class="insight-item">
+          <div class="ii-label">🎯 差异化方向</div>
+          <div class="ii-text">AnchorNote 的定位应在"获取效率"（字节）与"深度笔记"（微信读书）之间开辟第三路径：零摩擦的阅读现场恢复——不需要用户主动整理，AI 自动保存语义锚点。</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .wb-main / #article -->
+
+</div><!-- .wb-layout -->
+
+<div class="wb-footer">内容运营工作台 · 竞品研究专项 · 2024 · 数据仅供内部参考</div>
+
+<script>
+window.ANCHORNOTE_CONFIG = {
+  pageId:          'content-research-ai-reader-2024',
+  pageTitle:       'AI阅读助手竞品调研素材板',
+  pageUrl:         'ops.tencent.com/research/ai-reader-2024',
+  articleSelector: '#article',
+  seedBookmarks: [
+    {
+      type: 'checkpoint',
+      selectedText: '研究者将这种现象命名为"收藏-遗忘循环"，估计中国互联网平台每年因此损失的有效阅读时长超过 420 亿分钟',
+      section: 'src-tencent',
+      source: '腾讯新闻深度',
+      note: '核心数据，回答"收藏不等于阅读"',
+      contextText: '研究者将这种现象命名为"收藏-遗忘循环"，估计中国互联网平台每年因此损失的有效阅读时长超过 420 亿分钟。'
+    },
+    {
+      type: 'mark',
+      selectedText: '效率型 AI 工具优化的是"获取信息"，而不是"理解信息"',
+      section: 'src-huxiu',
+      source: '虎嗅分析',
+      note: '竞品批判角度，字节路径的局限',
+      contextText: '效率型 AI 工具优化的是"获取信息"，而不是"理解信息"。用户在效率上省下来的时间，被新一轮刷新消费掉了，而非用于更深的思考。'
+    },
+    {
+      type: 'mark',
+      selectedText: '离开微信读书意味着离开自己积累了数年的阅读轨迹',
+      section: 'src-36kr',
+      source: '36氪独家',
+      note: '阅读资产锁定效应，我们要建立类似的资产积累',
+      contextText: '微信读书的核心护城河不是书库，而是阅读数据的网络效应。每一条划线、每一条笔记都在强化用户与这本书的绑定关系。离开微信读书意味着离开自己积累了数年的阅读轨迹。'
+    },
+    {
+      type: 'mark',
+      selectedText: '如果 AI 书签只是帮用户"记住去过哪"，上限有限',
+      section: 'src-sspai',
+      source: '少数派产品分析',
+      note: '产品上限讨论，需在提案中正面回应',
+      contextText: '如果 AI 书签只是帮用户"记住去过哪"，上限有限；如果它能帮用户"把读过的变成真正理解的"，就具备了用户生命周期价值层面的商业想象空间。'
+    },
+    {
+      type: 'mark',
+      selectedText: 'AnchorNote 的定位应在"获取效率"（字节）与"深度笔记"（微信读书）之间开辟第三路径',
+      section: 'insight-synthesis',
+      source: 'AI运营助手聚合',
+      note: '这是 AI 聚合出的差异化定位，可直接写进提案',
+      contextText: 'AnchorNote 的定位应在"获取效率"（字节）与"深度笔记"（微信读书）之间开辟第三路径：零摩擦的阅读现场恢复——不需要用户主动整理，AI 自动保存语义锚点。'
+    }
+  ]
+};
+</script>
+<script src="../anchornote-embed.js"></script>
+</body>
+</html>

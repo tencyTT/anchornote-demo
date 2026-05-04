@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI大模型正在重塑内容消费：从推荐算法到阅读助手 · 腾讯新闻</title>
+  <style>
+    :root {
+      --red: #c1281b;
+      --text: #1a1a1a;
+      --text2: #555;
+      --text3: #888;
+      --border: #e8e8e8;
+      --bg: #f6f6f6;
+      --surface: #fff;
+      --blue: #0052d9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.75; }
+
+    /* Header */
+    .site-header { background: var(--red); color: #fff; padding: 0 20px; display: flex; align-items: center; gap: 20px; height: 50px; position: sticky; top: 0; z-index: 100; }
+    .site-logo { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; white-space: nowrap; }
+    .site-logo em { font-style: normal; background: #fff; color: var(--red); padding: 1px 5px; border-radius: 3px; font-size: 13px; margin-left: 3px; }
+    .site-nav { display: flex; gap: 0; }
+    .site-nav a { color: rgba(255,255,255,0.88); text-decoration: none; padding: 0 12px; font-size: 14px; line-height: 50px; display: block; }
+    .site-nav a.active, .site-nav a:hover { color: #fff; background: rgba(0,0,0,0.15); }
+    .header-search { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .header-search input { padding: 5px 12px; border: none; border-radius: 14px; font-size: 13px; width: 180px; outline: none; }
+    .header-search button { background: rgba(255,255,255,0.2); color: #fff; border: none; border-radius: 14px; padding: 5px 14px; font-size: 13px; cursor: pointer; }
+
+    /* Layout */
+    .page-wrap { max-width: 1120px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr 296px; gap: 20px; }
+    .demo-goal { background:#fffbeb; border-top:3px solid #f59e0b; border-bottom:1px solid #fde68a; padding:10px 20px; display:flex; align-items:center; gap:14px; font-size:13px; color:#451a03; flex-wrap:wrap; position:sticky; top:50px; z-index:99; }
+    .dg-label { background:#f59e0b; color:#fff; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; font-size:12px; flex-shrink:0; }
+    .dg-steps { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .dg-step { display:inline-flex; align-items:center; gap:5px; }
+    .dg-num { background:#92400e; color:#fff; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+    .dg-arrow { color:#d97706; font-weight:700; }
+
+    /* Main article */
+    .article-main { background: var(--surface); border-radius: 6px; overflow: hidden; }
+    .article-header { padding: 28px 32px 0; }
+    .breadcrumb { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
+    .breadcrumb a { color: var(--red); text-decoration: none; }
+    .article-category { display: inline-block; background: var(--red); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 3px; margin-bottom: 12px; letter-spacing: 0.5px; }
+    .article-title { font-size: 26px; font-weight: 900; line-height: 1.3; color: var(--text); margin-bottom: 14px; }
+    .article-deck { font-size: 16px; color: var(--text2); line-height: 1.6; border-left: 3px solid var(--red); padding-left: 14px; margin-bottom: 20px; }
+    .article-meta { display: flex; align-items: center; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text3); }
+    .author-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #c1281b, #e84c3d); display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+    .meta-author strong { color: var(--text); font-size: 14px; font-weight: 700; }
+    .meta-author span { display: block; }
+    .meta-dot { color: var(--border); }
+    .article-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .tag { padding: 3px 10px; border-radius: 14px; font-size: 12px; border: 1px solid var(--border); color: var(--text2); }
+    .tag.hot { border-color: #fda4a4; color: var(--red); background: #fff5f5; }
+
+    /* Article body */
+    .article-body { padding: 28px 32px 40px; }
+    .article-body h2 { font-size: 20px; font-weight: 800; margin: 36px 0 14px; color: var(--text); padding-left: 12px; border-left: 4px solid var(--red); }
+    .article-body h3 { font-size: 17px; font-weight: 700; margin: 28px 0 10px; color: var(--text); }
+    .article-body p { margin-bottom: 16px; color: #333; }
+    .article-body ul, .article-body ol { padding-left: 22px; margin-bottom: 16px; }
+    .article-body li { margin-bottom: 8px; color: #333; }
+
+    /* Pull quote */
+    .pull-quote { margin: 28px 0; padding: 20px 24px; background: #fffbf0; border: 1px solid #fde68a; border-radius: 8px; position: relative; }
+    .pull-quote::before { content: "\201C"; font-size: 48px; color: #f59e0b; position: absolute; top: 6px; left: 14px; line-height: 1; font-family: Georgia, serif; }
+    .pull-quote p { font-size: 16px; color: #92400e; line-height: 1.65; font-style: italic; padding-left: 28px; margin: 0; }
+    .pull-quote cite { display: block; font-size: 13px; color: #b45309; margin-top: 8px; padding-left: 28px; font-style: normal; }
+
+    /* Data callout */
+    .data-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+    .data-card { background: #f8f9fa; border-radius: 8px; padding: 16px; text-align: center; border: 1px solid var(--border); }
+    .data-card .num { font-size: 30px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 4px; }
+    .data-card .label { font-size: 12px; color: var(--text3); }
+
+    /* Section divider */
+    .section-divider { text-align: center; margin: 32px 0; color: var(--border); font-size: 20px; letter-spacing: 8px; }
+
+    /* Note box */
+    .note-box { background: #f0f7ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin: 20px 0; font-size: 13.5px; color: #1e40af; line-height: 1.65; }
+    .note-box strong { color: #1d4ed8; }
+
+    /* Image placeholder */
+    .img-placeholder { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border-radius: 8px; margin: 24px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 220px; color: var(--text3); font-size: 13px; gap: 8px; }
+    .img-placeholder .icon { font-size: 32px; }
+    .img-caption { font-size: 12px; color: var(--text3); text-align: center; margin-top: -16px; margin-bottom: 20px; }
+
+    /* Article footer */
+    .article-footer { padding: 20px 32px; border-top: 1px solid var(--border); background: #fafafa; }
+    .author-bio { display: flex; gap: 16px; align-items: flex-start; }
+    .author-bio-info strong { font-size: 15px; color: var(--text); display: block; margin-bottom: 4px; }
+    .author-bio-info p { font-size: 13px; color: var(--text2); margin: 0; }
+    .article-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .action-btn { display: flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text2); }
+    .action-btn.like { border-color: #fca5a5; color: var(--red); }
+    .action-btn.follow { background: var(--red); color: #fff; border-color: var(--red); }
+
+    /* Related articles */
+    .related-section { padding: 0 32px 32px; }
+    .related-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .related-title::before { content: ""; display: block; width: 4px; height: 16px; background: var(--red); border-radius: 2px; }
+    .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .related-card { display: flex; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: box-shadow 0.15s; }
+    .related-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .related-thumb { width: 80px; height: 60px; border-radius: 4px; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); flex-shrink: 0; display: grid; place-items: center; font-size: 20px; }
+    .related-info strong { font-size: 13.5px; color: var(--text); display: block; line-height: 1.4; margin-bottom: 4px; }
+    .related-info span { font-size: 12px; color: var(--text3); }
+
+    /* Sidebar */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .sidebar-card { background: var(--surface); border-radius: 6px; overflow: hidden; }
+    .sidebar-head { padding: 12px 16px; font-size: 14px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .sidebar-head a { font-size: 12px; color: var(--text3); text-decoration: none; font-weight: 400; }
+    .hot-list { padding: 6px 0; }
+    .hot-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 16px; cursor: pointer; }
+    .hot-item:hover { background: var(--bg); }
+    .hot-rank { width: 20px; height: 20px; border-radius: 4px; background: #e5e7eb; color: var(--text3); font-size: 12px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0; }
+    .hot-rank.top { background: var(--red); color: #fff; }
+    .hot-item p { font-size: 13px; color: var(--text); line-height: 1.4; }
+    .hot-item span { font-size: 11px; color: var(--text3); display: block; margin-top: 2px; }
+
+    .topic-list { padding: 10px 16px 6px; }
+    .topic-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .topic-item:last-child { border-bottom: none; }
+    .topic-item strong { font-size: 13px; color: var(--text); }
+    .topic-item span { font-size: 12px; color: var(--text3); }
+
+    /* Progress indicator */
+    .reading-progress { position: fixed; top: 50px; left: 0; right: 0; height: 3px; background: var(--border); z-index: 99; }
+    .reading-progress-bar { height: 100%; background: var(--red); width: 0; transition: width 0.1s; }
+
+    @media (max-width: 768px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .data-row { grid-template-columns: 1fr 1fr; }
+      .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<header class="site-header">
+  <div class="site-logo">腾讯新闻 <em>深度</em></div>
+  <nav class="site-nav">
+    <a href="../index.html">推荐</a>
+    <a href="./tencent-news-yaowen.html">要闻</a>
+    <a href="./tencent-news-deep.html" class="active">科技</a>
+    <a href="#">AI</a>
+    <a href="#">产业</a>
+    <a href="#">国际</a>
+  </nav>
+  <div class="header-search">
+    <input placeholder="搜索腾讯新闻" />
+    <button>搜索</button>
+  </div>
+</header>
+
+<div class="demo-goal">
+  <span class="dg-label">🎯 演示目标 · 语义书签 + 断点跳回 + 频道页联动</span>
+  <div class="dg-steps">
+    <span class="dg-step"><span class="dg-num">①</span> 选中正文文字 → 点 🔖 书签 或 📍 断点保存</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">②</span> 点右侧便签条目 → 精准跳回原文位置</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">③</span> 点顶部导航「要闻」切换频道页 → 顶部出现「继续阅读」横幅</span>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <main>
+    <article class="article-main">
+      <div class="article-header">
+        <p class="breadcrumb"><a href="./tencent-news-yaowen.html">要闻</a> › <a href="./tencent-news-deep.html">科技</a> › <a href="#">AI</a> › 正文</p>
+        <div class="article-category">深度报道</div>
+        <h1 class="article-title">AI大模型正在重塑内容消费：从推荐算法到阅读助手</h1>
+        <p class="article-deck">
+          当大语言模型从"生成工具"变成"阅读伴侣"，内容平台正在经历一场关于"用户注意力"的深层变革——谁能帮用户真正读懂内容，谁就拥有下一代内容平台的核心竞争力。
+        </p>
+        <div class="article-meta">
+          <div class="author-avatar">郑</div>
+          <div class="meta-author">
+            <strong>郑子航 · 腾讯科技深度组</strong>
+            <span>2025-05-02 10:30 · 深圳</span>
+          </div>
+          <span class="meta-dot">·</span>
+          <span>阅读约 18 分钟</span>
+          <span class="meta-dot">·</span>
+          <span>4.2万人已阅读</span>
+        </div>
+        <div class="article-tags">
+          <span class="tag hot">AI大模型</span>
+          <span class="tag hot">内容生态</span>
+          <span class="tag">腾讯</span>
+          <span class="tag">阅读工具</span>
+          <span class="tag">信息管理</span>
+        </div>
+      </div>
+
+      <div class="article-body" id="article" data-section="article">
+
+        <h2>一、从"信息过载"到"注意力危机"</h2>
+        <p>
+          2024年，中国互联网日均内容产出量突破80亿条，短视频、图文、播客、长文并驾齐驱。腾讯研究院的一项调查显示，有效信息消费率——即用户真正"读懂并能复述"的内容比例——已从2019年的34%跌至不足18%。换言之，超过八成的内容在用户的视野中"滑过"却没有留下任何认知印记。
+        </p>
+        <p>
+          这不是用户的错。人类大脑处理有意义信息的带宽本就有限。当推荐算法以每秒数百次的频率向用户推送刺激性内容时，大脑会进入一种"快速浅扫"模式——滑动、停留、再滑动，却鲜有真正的"深读"发生。
+        </p>
+        <p>
+          "我们在帮用户找到了很多内容，但我们没有帮助他们真正消化这些内容。"腾讯内容平台某产品负责人在内部分享中如此反思。这句话折射出整个内容行业一个未被充分重视的矛盾：平台的核心指标（DAU、时长、点击率）与用户的核心需求（理解、积累、应用）正在背道而驰。
+        </p>
+
+        <div class="data-row">
+          <div class="data-card">
+            <div class="num">80亿</div>
+            <div class="label">中国互联网日均内容产出（2024）</div>
+          </div>
+          <div class="data-card">
+            <div class="num">18%</div>
+            <div class="label">用户有效信息消费率（较5年前下降近半）</div>
+          </div>
+          <div class="data-card">
+            <div class="num">6.2次</div>
+            <div class="label">用户平均每天中断阅读的次数</div>
+          </div>
+        </div>
+
+        <h2>二、大模型的"第二战场"：从生成到理解</h2>
+        <p>
+          过去两年，大语言模型（LLM）的应用想象空间主要集中在内容"生成"端——写文章、做摘要、翻译语料。但随着模型能力的成熟，一个新的应用方向正在悄然崛起：帮助用户更好地<strong>理解和管理</strong>他们消费的内容。
+        </p>
+        <p>
+          这一转变的信号出现在多个维度。国内外主流AI公司——包括 Anthropic、Google DeepMind 和国内的几家头部大模型公司——均在2024年底至2025年初陆续推出了"阅读助手"相关能力：对话式文档理解、智能书签、语义搜索等。
+        </p>
+
+        <div class="pull-quote">
+          <p>大模型最有价值的应用，不是帮人写内容，而是帮人读懂内容——这是一个正在从理论走向产品的命题。</p>
+          <cite>—— 某国内顶级AI实验室研究员，2025腾讯全球数字生态大会</cite>
+        </div>
+
+        <p>
+          这个命题在内容平台上具有特殊意义。不同于单篇文档处理，内容平台面对的是用户跨平台、跨时间、跨设备的海量阅读行为。如何把用户在数百个网页上的阅读轨迹整合成有意义的知识图谱，是下一代内容平台的核心技术挑战。
+        </p>
+
+        <div class="img-placeholder">
+          <div class="icon">🗺️</div>
+          <span>用户阅读行为追踪示意图（腾讯研究院 2025）</span>
+        </div>
+        <p class="img-caption">图：跨设备、跨时段的用户阅读轨迹，传统收藏夹仅记录 URL，无法还原阅读现场</p>
+
+        <h2>三、"断点恢复"：被严重低估的用户需求</h2>
+        <p>
+          在腾讯内容产品团队2024年Q4的用研报告中，"继续上次读到的地方"被用户列为排名第一的痛点，超越了"推荐内容不够准确"和"广告过多"。
+        </p>
+        <p>
+          问题在于，这个需求表面上已经被各类产品解决了——浏览器有收藏夹，各平台有"稍后读"，甚至有专门的稍后读应用。但用户真正反馈的问题远比"记住网址"更深：
+        </p>
+        <ol>
+          <li><strong>位置失效</strong>：回到一篇长文，保存的位置因广告加载、页面改版或动态内容插入而偏移，往往需要重新找到读到哪里。</li>
+          <li><strong>上下文丢失</strong>：时隔数天后回来，往往忘了"为什么标记这里"，以及"这里接下来说了什么"。</li>
+          <li><strong>碎片化记录</strong>：在不同网页上标记的内容分散在各处，无法形成连贯的知识结构。</li>
+        </ol>
+        <p>
+          这三个问题叠加，导致用户实际上很少真正"回去读完"——根据腾讯看点的内部数据，用户点击"继续阅读"后实际完成文章的比例不足23%。
+        </p>
+
+        <div class="note-box">
+          <strong>数据说明：</strong>以上数据来自腾讯内容产品2024年Q4用研报告（样本量12,000人，覆盖一、二、三线城市），以及腾讯看点平台匿名化行为数据。数据仅供行业参考，不代表公开发布。
+        </div>
+
+        <h2>四、语义书签：一个可能改变游戏规则的解法</h2>
+        <p>
+          "语义书签"的概念并不新鲜——学术界早在2010年代就有相关研究。但让它走向产品化，需要三个条件同时成熟：足够强大的自然语言理解模型、足够低的推理成本，以及足够便捷的用户交互入口。
+        </p>
+        <p>
+          2025年，这三个条件正在同时满足。
+        </p>
+        <p>
+          所谓语义书签，本质上是把用户标记的文字片段、标记时的上下文、标记的意图（这是一个问题？一个解决方案？一个关键数据点？）以及页面的语义结构，一起打包成一个"可理解的锚点"。当用户日后回访时，系统不仅能定位到这段文字，还能提供一份简短的"阅读恢复简报"——你读到哪里了、这里讲了什么、接下来说什么、你当初为什么标记这里。
+        </p>
+
+        <div class="pull-quote">
+          <p>传统书签是 URL 的快捷方式；语义书签是阅读现场的快照——它存储的不是位置，而是理解。</p>
+        </div>
+
+        <h3>4.1 语义定位的技术挑战</h3>
+        <p>
+          实现语义书签面临的最大技术挑战，是如何在动态变化的页面上精准还原标记位置。现代互联网内容天然是"易变的"：新闻网站的首页每隔几分钟就会更新，CMS 驱动的文章可能被编辑修改，JavaScript 渲染的单页应用（SPA）在路由切换时会完全重绘 DOM。
+        </p>
+        <p>
+          纯粹依赖 DOM 位置（如 XPath 或 CSS 选择器）来定位书签，在内容更新后会立即失效。依赖滚动位置（scrollY）则更不可靠——一条广告的插入就足以让保存的像素坐标偏移数百像素。
+        </p>
+        <p>
+          腾讯技术研究团队提出的解法是一种"多层容灾"架构：
+        </p>
+        <ul>
+          <li><strong>第一层：文本指纹匹配</strong>。先在当前页面 DOM 中搜索保存的文字片段，精确匹配成功则直接定位。</li>
+          <li><strong>第二层：上下文扩展消歧</strong>。若同一文字出现多次，用保存的前后文（contextText）确定唯一位置。</li>
+          <li><strong>第三层：AI语义重定位</strong>。若文字已从页面消失（内容被大幅修改），提取当前页面内容块，让大模型判断哪一段最接近用户当初标记的语义位置。</li>
+        </ul>
+
+        <div class="section-divider">· · ·</div>
+
+        <h2>五、从工具到生态：内容平台的机遇窗口</h2>
+        <p>
+          对腾讯这样的内容平台来说，语义书签不只是一个"好用的工具"，它可能是重建用户深度黏性的战略入口。
+        </p>
+        <p>
+          当前，内容平台的竞争主要在"供给端"（更多内容、更准的推荐）和"消费端"（更流畅的播放、更好的排版）展开。但很少有平台在"积累端"——帮助用户把消费的内容转化为可复用的知识资产——做出实质性投入。
+        </p>
+        <p>
+          这恰恰是语义书签系统的价值所在。如果一个用户在腾讯新闻上有200条语义书签，记录了他过去两年关注某个技术方向的全部阅读轨迹，那么他迁移到其他平台的成本将极高。这种"知识沉淀"带来的用户粘性，是算法推荐无法复制的。
+        </p>
+
+        <div class="data-row">
+          <div class="data-card">
+            <div class="num">74%</div>
+            <div class="label">用户表示愿为"阅读现场恢复"功能付费（月付≤15元）</div>
+          </div>
+          <div class="data-card">
+            <div class="num">3.8倍</div>
+            <div class="label">使用语义书签用户的内容完读率（vs 普通用户）</div>
+          </div>
+          <div class="data-card">
+            <div class="num">+47%</div>
+            <div class="label">语义书签用户7日留存率提升（A/B测试初步结论）</div>
+          </div>
+        </div>
+
+        <h3>5.1 从"个人工具"到"知识社区"</h3>
+        <p>
+          更进一步的想象空间在于：语义书签的"社交化"。当用户可以看到某篇文章中哪些段落被最多人标注为"关键论据"或"技术痛点"时，这份集体智慧本身就成为了内容的一部分——一种动态的、众包生成的"编辑推荐"。
+        </p>
+        <p>
+          这一构想在学术界被称为"集体注解"（collective annotation），已有维基百科、Genius（歌词注解平台）等成功先例。在内容消费平台上，它意味着内容的价值不再仅由作者决定，也由读者的集体阅读行为共同定义。
+        </p>
+
+        <h2>六、竞争格局：谁在布局这个赛道</h2>
+        <p>
+          在国际市场，Readwise 凭借"阅读高亮同步+AI回顾"功能积累了超过150万付费用户；Omnivore、Instapaper 等工具也在不断强化语义层能力。
+        </p>
+        <p>
+          国内市场目前仍相对空白。微信读书已在书本阅读场景下实现了高亮与笔记功能，但尚未延伸至网页内容。印象笔记、Notion等工具定位于结构化笔记而非动态网页阅读。
+        </p>
+        <p>
+          这意味着，在"动态网页语义书签"这个细分赛道上，现在仍处于早期阶段。率先在此形成用户规模的平台，将可能在内容消费领域建立新的护城河。
+        </p>
+        <p>
+          腾讯的优势在于：拥有腾讯新闻、腾讯看点、QQ浏览器等横跨内容消费全链路的产品矩阵，以及承载着数亿用户阅读习惯的内容生态。如果语义书签能在这个矩阵内无缝落地，其网络效应将是其他独立工具难以匹敌的。
+        </p>
+
+        <h2>七、结语：阅读工具是内容平台的下一个主战场</h2>
+        <p>
+          我们正处于内容平台演化的一个关键节点：海量供给已经解决，但深度消费还没有。大语言模型提供了技术基础，用户需求已经充分积压，市场窗口就在眼前。
+        </p>
+        <p>
+          未来三年，谁能在"帮用户真正读懂和记住内容"这件事上率先形成产品闭环，谁就很可能在下一轮内容平台竞争中取得先发优势。这不是一个功能点，而是一个关于"内容平台价值主张"的根本性选择。
+        </p>
+        <p>
+          阅读，才刚刚开始被认真对待。
+        </p>
+
+      </div>
+
+      <div class="article-footer">
+        <div class="author-bio">
+          <div class="author-avatar" style="width:48px;height:48px;font-size:16px;">郑</div>
+          <div class="author-bio-info">
+            <strong>郑子航</strong>
+            <p>腾讯科技深度报道组记者，长期关注AI与内容产业交叉领域。曾报道腾讯混元大模型、微信读书AI功能、企鹅号内容生态等重要议题。</p>
+          </div>
+        </div>
+        <div class="article-actions">
+          <button class="action-btn like">👍 1.2万</button>
+          <button class="action-btn">💬 评论 847</button>
+          <button class="action-btn">↗ 分享</button>
+          <button class="action-btn follow">关注作者</button>
+        </div>
+      </div>
+
+      <div class="related-section">
+        <h3 class="related-title">相关深度报道</h3>
+        <div class="related-grid">
+          <div class="related-card">
+            <div class="related-thumb">📊</div>
+            <div class="related-info">
+              <strong>腾讯看点2025年内容消费趋势：深度阅读用户增长42%</strong>
+              <span>腾讯科技 · 3小时前</span>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-thumb">🤖</div>
+            <div class="related-info">
+              <strong>混元大模型新能力：从问答助手到阅读理解引擎</strong>
+              <span>AI前线 · 5小时前</span>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-thumb">📱</div>
+            <div class="related-info">
+              <strong>微信读书AI划线功能内测：用AI代替人工推荐金句</strong>
+              <span>产品壹佰 · 1天前</span>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-thumb">🔬</div>
+            <div class="related-info">
+              <strong>Readwise如何用"间隔复习"重构阅读记忆——对国内产品的启示</strong>
+              <span>NEXT产品思维 · 2天前</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-head">今日热榜 <a href="#">更多 ›</a></div>
+      <div class="hot-list">
+        <div class="hot-item"><span class="hot-rank top">1</span><div><p>国产AI大模型年中评测：谁的阅读理解能力最强</p><span>87.3万热度</span></div></div>
+        <div class="hot-item"><span class="hot-rank top">2</span><div><p>腾讯混元3.0发布：内容理解能力提升60%</p><span>64.1万热度</span></div></div>
+        <div class="hot-item"><span class="hot-rank top">3</span><div><p>字节跳动内部文件曝光：今日头条AI阅读助手计划</p><span>52.8万热度</span></div></div>
+        <div class="hot-item"><span class="hot-rank">4</span><div><p>深度阅读正在成为新中产的"知识焦虑"出口</p><span>41.2万热度</span></div></div>
+        <div class="hot-item"><span class="hot-rank">5</span><div><p>浏览器扩展还是原生功能？AI阅读工具的落地路径之争</p><span>38.9万热度</span></div></div>
+        <div class="hot-item"><span class="hot-rank">6</span><div><p>从RAG到Agent：AI信息检索的三代进化</p><span>32.1万热度</span></div></div>
+        <div class="hot-item"><span class="hot-rank">7</span><div><p>2025内容行业白皮书：注意力经济进入下半场</p><span>28.7万热度</span></div></div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-head">专题追踪</div>
+      <div class="topic-list">
+        <div class="topic-item"><strong>AI×内容产业</strong><span>追踪中 · 284篇</span></div>
+        <div class="topic-item"><strong>大模型应用落地</strong><span>追踪中 · 1,024篇</span></div>
+        <div class="topic-item"><strong>腾讯产品动态</strong><span>追踪中 · 567篇</span></div>
+        <div class="topic-item"><strong>信息管理工具</strong><span>追踪中 · 89篇</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-head">作者近期文章</div>
+      <div class="hot-list">
+        <div class="hot-item"><span style="color:#888;font-size:13px;">04-28</span><div><p>腾讯看点创作者生态：从流量分发到知识服务</p></div></div>
+        <div class="hot-item"><span style="color:#888;font-size:13px;">04-21</span><div><p>企鹅号2025：深度内容消费者的增长密码</p></div></div>
+        <div class="hot-item"><span style="color:#888;font-size:13px;">04-14</span><div><p>QQ浏览器AI功能全测评：阅读助手够用吗？</p></div></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = Math.min(100, (window.scrollY / scrollable) * 100);
+    document.getElementById('progressBar').style.width = progress + '%';
+  });
+</script>
+<script>
+window.ANCHORNOTE_CONFIG = {
+  pageId:          'tencent-news-deep',
+  pageTitle:       'AI大模型正在重塑内容消费：从推荐算法到阅读助手',
+  pageUrl:         'news.qq.com/深度报道/AI大模型与内容消费',
+  articleSelector: '#article',
+  seedBookmarks: [
+    {
+      type: 'checkpoint',
+      selectedText: '被用户列为排名第一的痛点，超越了',
+      section: 'article',
+      note: '用户最真实的需求，断点恢复比推荐算法更痛',
+      contextText: '在腾讯内容产品团队2024年Q4的用研报告中，"继续上次读到的地方"被用户列为排名第一的痛点，超越了"推荐内容不够准确"和"广告过多"。'
+    },
+    {
+      type: 'mark',
+      selectedText: '语义书签是阅读现场的快照',
+      section: 'article',
+      note: '这句话可以直接用作产品 slogan',
+      contextText: '传统书签是 URL 的快捷方式；语义书签是阅读现场的快照——它存储的不是位置，而是理解。'
+    },
+    {
+      type: 'mark',
+      selectedText: '超过八成的内容在用户的视野中',
+      section: 'article',
+      note: '信息消费率数据，有力支撑项目立项理由',
+      contextText: '超过八成的内容在用户的视野中"滑过"却没有留下任何认知印记。'
+    }
+  ]
+};
+</script>
+<script src="../anchornote-embed.js"></script>
+</body>
+</html>

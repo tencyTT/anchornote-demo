@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>腾讯网 — 要闻</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #1259c3;
+      --blue-light: #e8f0fe;
+      --red: #d43030;
+      --text: #1a1a1a;
+      --sub: #555;
+      --muted: #999;
+      --border: #e8e8e8;
+      --bg: #f5f5f5;
+    }
+    body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: var(--blue); }
+
+    /* ── Top ticker ── */
+    .ticker { background: #1a1a1a; color: rgba(255,255,255,.82); font-size: 12px; padding: 5px 0; overflow: hidden; white-space: nowrap; }
+    .ticker-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; gap: 18px; }
+    .ticker-label { color: #ff9800; font-weight: 700; flex-shrink: 0; }
+    .ticker-items { display: flex; gap: 24px; overflow: hidden; }
+    .ticker-items a { color: rgba(255,255,255,.75); }
+    .ticker-items a:hover { color: #fff; }
+
+    /* ── Header: same style as Tencent News tech page ── */
+    .site-header { background: #c1281b; color: #fff; position: sticky; top: 0; z-index: 100; height: 50px; }
+    .head-inner { width: 100%; height: 50px; padding: 0 20px; display: flex; align-items: center; gap: 20px; }
+    .logo { display: flex; align-items: center; color: #fff; font-size: 18px; font-weight: 900; letter-spacing: -0.5px; white-space: nowrap; flex-shrink: 0; }
+    .logo:hover { color: #fff; }
+    .logo em { font-style: normal; background: #fff; color: #c1281b; padding: 1px 5px; border-radius: 3px; font-size: 13px; margin-left: 6px; }
+    .site-nav { display: flex; height: 50px; }
+    .site-nav a { display: block; height: 50px; line-height: 50px; padding: 0 12px; color: rgba(255,255,255,0.88); font-size: 14px; white-space: nowrap; }
+    .site-nav a.active,
+    .site-nav a:hover { color: #fff; background: rgba(0,0,0,0.15); }
+    .head-search { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .search-bar { display: flex; align-items: center; gap: 8px; background: transparent; height: 50px; width: auto; padding: 0; }
+    .search-bar input { width: 180px; padding: 5px 12px; border: none; border-radius: 14px; background: #fff; font-size: 13px; outline: none; color: #333; }
+    .search-bar input::placeholder { color: #888; }
+    .search-bar button { background: rgba(255,255,255,0.2); color: #fff; border: none; border-radius: 14px; padding: 5px 14px; font-size: 13px; cursor: pointer; }
+    .head-links { display: none; }
+
+    /* ── Page layout ── */
+    .page { max-width: 1200px; margin: 14px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 300px; gap: 16px; }
+    .main-col { min-width: 0; }
+    .demo-goal { background:#fffbeb; border-top:3px solid #f59e0b; border-bottom:1px solid #fde68a; padding:10px 20px; display:flex; align-items:center; gap:14px; font-size:13px; color:#451a03; flex-wrap:wrap; position:sticky; top:50px; z-index:99; }
+    .dg-label { background:#f59e0b; color:#fff; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; font-size:12px; flex-shrink:0; }
+    .dg-steps { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .dg-step { display:inline-flex; align-items:center; gap:5px; }
+    .dg-num { background:#92400e; color:#fff; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+    .dg-arrow { color:#d97706; font-weight:700; }
+    /* continue-reading bar */
+    .cr-bar { display:none; background:#e8f4ff; border-bottom:2px solid #1259c3; padding:9px 20px; }
+    .cr-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:14px; }
+    .cr-tag { background:#1259c3; color:#fff; font-size:12px; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+    .cr-body { flex:1; min-width:0; }
+    .cr-page { font-size:11px; color:#1259c3; font-weight:700; margin-bottom:2px; }
+    .cr-text { font-size:13px; color:#1a1a1a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cr-btn { background:#1259c3; color:#fff; font-size:13px; font-weight:700; padding:6px 16px; border-radius:6px; text-decoration:none; white-space:nowrap; flex-shrink:0; }
+    .cr-close { background:none; border:none; color:#999; font-size:18px; cursor:pointer; flex-shrink:0; line-height:1; }
+
+    /* ── Headline list ── */
+    .headline-area { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; background: #fff; padding: 14px 18px 16px; margin-bottom: 12px; border: 1px solid var(--border); }
+    .hl-main { font-size: 16px; font-weight: 700; line-height: 1.55; margin-bottom: 10px; color: var(--text); display: block; }
+    .hl-main:hover { color: var(--blue); }
+    .hl-sub { display: flex; align-items: baseline; gap: 5px; padding: 5px 0; border-bottom: 1px solid #f0f0f0; font-size: 13.5px; color: #333; line-height: 1.5; }
+    .hl-sub:last-child { border-bottom: 0; }
+    .hl-sub:hover { color: var(--blue); }
+    .hl-sub .dot { color: #ccc; font-size: 10px; flex-shrink: 0; }
+
+    /* ── Hero ── */
+    .hero-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 12px; border: 1px solid var(--border); background: #fff; height: 240px; }
+    .hero-left { position: relative; overflow: hidden; }
+    .hero-img {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #1c2b4a 0%, #2c4b7c 40%, #1a3a6a 70%, #0f2240 100%);
+      position: relative;
+    }
+    .hero-img::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 40%, rgba(255,120,0,.25) 0%, transparent 55%),
+        radial-gradient(ellipse at 20% 80%, rgba(100,160,255,.2) 0%, transparent 50%);
+    }
+    /* Ship silhouette */
+    .hero-img::after {
+      content: "";
+      position: absolute;
+      bottom: 30px; left: 40px;
+      width: 180px; height: 55px;
+      background: rgba(255,255,255,.08);
+      border-radius: 4px 40px 0 0;
+      box-shadow:
+        -30px 10px 0 -8px rgba(255,255,255,.07),
+        60px -18px 0 -10px rgba(255,255,255,.09),
+        90px -5px 0 -12px rgba(255,255,255,.06);
+    }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 60%); }
+    .hero-tag { position: absolute; top: 12px; left: 12px; background: var(--red); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 2px; }
+    .hero-title { position: absolute; bottom: 14px; left: 14px; right: 14px; color: #fff; font-size: 16px; font-weight: 700; line-height: 1.45; }
+    .hero-source { display: block; font-size: 11px; color: rgba(255,255,255,.65); margin-top: 5px; }
+    .hero-right { display: flex; flex-direction: column; }
+    .hero-sub-item { flex: 1; padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; overflow: hidden; }
+    .hero-sub-item:last-child { border-bottom: 0; }
+    .hero-sub-thumb {
+      width: 88px; height: 62px; border-radius: 3px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--c1, #ddd), var(--c2, #bbb));
+      position: relative; overflow: hidden;
+    }
+    .hero-sub-thumb::after { content: attr(data-label); position: absolute; inset: 0; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: rgba(255,255,255,.85); background: rgba(0,0,0,.18); }
+    .hero-sub-body { flex: 1; min-width: 0; }
+    .hero-sub-title { font-size: 13.5px; font-weight: 600; line-height: 1.4; color: var(--text); margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .hero-sub-meta { font-size: 11px; color: var(--muted); }
+
+    /* ── Category tabs ── */
+    .cat-tabs { display: flex; align-items: center; gap: 0; background: #fff; border: 1px solid var(--border); border-bottom: 0; }
+    .cat-tab { padding: 8px 14px; font-size: 13px; color: #555; cursor: pointer; border-bottom: 2px solid transparent; }
+    .cat-tab.active { color: var(--blue); font-weight: 700; border-bottom-color: var(--blue); }
+
+    /* ── News grid ── */
+    .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .news-card { background: #fff; padding: 12px; }
+    .news-card:hover .nc-title { color: var(--blue); }
+    .nc-img {
+      height: 150px; border-radius: 3px; margin-bottom: 10px; overflow: hidden; position: relative;
+      background: linear-gradient(135deg, var(--c1, #c8d6e8), var(--c2, #8fa8c8));
+    }
+    .nc-img::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,.35) 100%);
+    }
+    .nc-img-label { position: absolute; bottom: 6px; left: 8px; font-size: 10px; color: rgba(255,255,255,.9); font-weight: 700; letter-spacing: .5px; }
+    .nc-tag { position: absolute; top: 6px; left: 6px; background: var(--red); color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 1px; font-weight: 700; }
+    .nc-title { font-size: 14px; font-weight: 600; line-height: 1.5; color: var(--text); margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .nc-title .topic { color: var(--blue); font-size: 12px; margin-right: 4px; }
+    .nc-meta { font-size: 12px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+    .nc-actions { display: flex; gap: 10px; }
+    .nc-actions span { display: flex; align-items: center; gap: 2px; }
+
+    /* ── Load more ── */
+    .load-more { text-align: center; padding: 16px; background: #fff; border: 1px solid var(--border); border-top: 0; font-size: 13px; color: var(--blue); cursor: pointer; transition: color .2s; }
+    .load-more.lm-loading { color: #999; cursor: default; }
+    .load-more.lm-done    { color: #bbb; cursor: default; }
+    /* new card fade-in */
+    @keyframes ncFadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    /* lazy-target highlight ring */
+    .nc-lazy-target { outline: 2px solid var(--blue); outline-offset: -2px; }
+
+    /* ── Sidebar ── */
+    .sidebar { display: flex; flex-direction: column; gap: 12px; }
+    .side-block { background: #fff; border: 1px solid var(--border); }
+    .side-head { padding: 10px 14px; font-size: 14px; font-weight: 700; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .side-head a { font-size: 12px; color: var(--muted); font-weight: 400; }
+
+    /* App list */
+    .app-list { padding: 8px 0; }
+    .app-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px; }
+    .app-item:hover { background: #f9f9f9; }
+    .app-icon { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; font-size: 13px; font-weight: 900; color: #fff; flex-shrink: 0; }
+    .app-body { flex: 1; min-width: 0; }
+    .app-name { font-size: 13px; font-weight: 700; color: var(--text); }
+    .app-desc { font-size: 11px; color: var(--muted); }
+    .app-btn { background: #e8f0fe; color: var(--blue); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; white-space: nowrap; }
+
+    /* Video */
+    .video-thumb {
+      height: 160px; position: relative; overflow: hidden; display: block;
+      background: linear-gradient(150deg, #243b55 0%, #141e30 100%);
+    }
+    .video-thumb::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 60% 30%, rgba(80,120,200,.4) 0%, transparent 60%);
+    }
+    /* Anchor person silhouette */
+    .anchor { position: absolute; bottom: 0; right: 60px; width: 80px; height: 120px; }
+    .anchor::before { content: ""; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 90px; background: #2a5da8; border-radius: 8px 8px 0 0; }
+    .anchor::after { content: ""; position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); width: 36px; height: 36px; background: #f2c4a0; border-radius: 50%; }
+    .video-station { position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 900; color: rgba(255,255,255,.85); background: rgba(0,0,0,.3); padding: 2px 7px; border-radius: 2px; }
+    .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; background: rgba(255,255,255,.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; padding-left: 3px; }
+    .video-caption { padding: 10px 12px; font-size: 13px; font-weight: 700; color: var(--blue); line-height: 1.4; border-bottom: 1px solid var(--border); }
+    .video-list { padding: 4px 0; }
+    .video-list a { display: block; padding: 7px 12px; font-size: 12.5px; color: #444; line-height: 1.45; border-bottom: 1px solid #f5f5f5; }
+    .video-list a:hover { color: var(--blue); background: #f9f9f9; }
+    .video-list a:last-child { border-bottom: 0; }
+
+    /* Hot topics */
+    .hot-list { padding: 6px 0; }
+    .hot-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 14px; cursor: pointer; }
+    .hot-item:hover { background: #f9f9f9; }
+    .hot-rank { width: 18px; height: 18px; border-radius: 3px; background: #e5e7eb; color: var(--muted); font-size: 11px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0; margin-top: 2px; }
+    .hot-rank.top3 { background: var(--red); color: #fff; }
+    .hot-text { font-size: 13px; color: var(--text); line-height: 1.45; }
+    .hot-heat { font-size: 11px; color: var(--muted); display: block; margin-top: 2px; }
+
+    /* Morning brief */
+    .morning { padding: 12px 14px; }
+    .morning-date { font-size: 12px; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .morning-date .badge { background: #fff3dc; color: #b07000; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 10px; }
+    .morning-list { display: flex; flex-direction: column; gap: 0; }
+    .morning-list li { font-size: 13px; color: #444; line-height: 1.55; padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; gap: 7px; }
+    .morning-list li:last-child { border-bottom: 0; }
+    .morning-list li::before { content: "•"; color: var(--blue); font-size: 14px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="head-inner">
+    <a class="logo" href="./tencent-news-yaowen.html">
+      <span class="logo-name">腾讯新闻</span><em>深度</em>
+    </a>
+    <nav class="site-nav">
+      <a href="../index.html">推荐</a>
+      <a href="./tencent-news-yaowen.html" class="active">要闻</a>
+      <a href="./tencent-news-deep.html">科技</a>
+      <a href="#">AI</a>
+      <a href="#">产业</a>
+      <a href="#">国际</a>
+    </nav>
+    <div class="head-search">
+      <div class="search-bar">
+        <input placeholder="搜索腾讯新闻" />
+        <button>搜索</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="demo-goal">
+  <span class="dg-label">🎯 演示目标 · 频道页入口</span>
+  <div class="dg-steps">
+    <span class="dg-step"><span class="dg-num">①</span> 点击「AI大模型正在重塑内容消费…」进入深度页，保存书签后返回</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">②</span> 顶部出现「继续阅读」横幅，点击跳回原位</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">③</span> 点右侧「语义向量…」便签 → 自动加载未展示内容并精准高亮定位</span>
+  </div>
+</div>
+
+<div class="cr-bar" id="cr-bar">
+  <div class="cr-inner">
+    <span class="cr-tag">📖 继续阅读</span>
+    <div class="cr-body">
+      <div class="cr-page">AI 深度报道 · 上次阅读断点</div>
+      <div class="cr-text" id="cr-text"></div>
+    </div>
+    <a class="cr-btn" id="cr-link" href="#">继续阅读 →</a>
+    <button class="cr-close" onclick="document.getElementById('cr-bar').style.display='none'">×</button>
+  </div>
+</div>
+
+<div class="page">
+  <main class="main-col" id="article" data-section="article">
+
+    <!-- Headline area -->
+    <div class="headline-area" data-section="lead">
+      <div>
+        <a class="hl-main" href="#">习近平总书记引领青年志愿者挺膺担当、矢志奋斗</a>
+        <a class="hl-sub" href="#"><span class="dot">▪</span>"十五五"开局首季 中国经济交出亮眼答卷</a>
+        <a class="hl-sub" href="#"><span class="dot">▪</span>独龙江水，听见每一个心愿</a>
+        <a class="hl-sub" href="#"><span class="dot">▪</span>供需两旺，"五一"假期彰显"流动中国"澎湃活力</a>
+        <a class="hl-sub" href="#"><span class="dot">▪</span>【经济来谈】打开"花花世界"解锁经济发展新图景</a>
+      </div>
+      <div>
+        <a class="hl-main" href="#">让投身基础研究成为更多青少年的人生追求</a>
+        <a class="hl-sub" href="#"><span class="dot">▪</span>绿色出行热度攀升 多举措保障充电需求</a>
+        <a class="hl-sub" href="#"><span class="dot">▪</span>好物可期！我国对53个非洲建交国全面实施零关税</a>
+        <a class="hl-sub" href="./tencent-news-deep.html"><span class="dot">▪</span><strong>AI大模型正在重塑内容消费：从推荐算法到阅读助手</strong></a>
+        <a class="hl-sub" href="#"><span class="dot">▪</span>关注新就业群体｜让网约家政从业者有保障、有技能、有认同</a>
+      </div>
+    </div>
+
+    <!-- Hero + sub items -->
+    <div class="hero-row" data-section="hero">
+      <div class="hero-left">
+        <a href="#" style="display:block;height:100%">
+          <div class="hero-img">
+            <div class="hero-overlay"></div>
+          </div>
+          <span class="hero-tag">焦点精选</span>
+          <div class="hero-title">
+            伊朗一超大型油轮"驶过"美海军追踪，正驶向印度尼西亚群岛
+            <span class="hero-source">央视新闻 · 2小时前</span>
+          </div>
+        </a>
+      </div>
+      <div class="hero-right">
+        <a class="hero-sub-item" href="#">
+          <div class="hero-sub-thumb" style="--c1:#2b5ea8;--c2:#4a8fd4" data-label="经济要闻"></div>
+          <div class="hero-sub-body">
+            <div class="hero-sub-title">"十五五"开局首季 中国经济主要指标向好</div>
+            <div class="hero-sub-meta">新华社 · 1小时前</div>
+          </div>
+        </a>
+        <a class="hero-sub-item" href="#">
+          <div class="hero-sub-thumb" style="--c1:#4c7a3a;--c2:#82b86a" data-label="绿色出行"></div>
+          <div class="hero-sub-body">
+            <div class="hero-sub-title">全国多地充电桩保障力度加大 新能源车出行创新高</div>
+            <div class="hero-sub-meta">人民日报 · 3小时前</div>
+          </div>
+        </a>
+        <a class="hero-sub-item" href="#">
+          <div class="hero-sub-thumb" style="--c1:#7a3a3a;--c2:#d46a4a" data-label="国际关注"></div>
+          <div class="hero-sub-body">
+            <div class="hero-sub-title">外交部就东京审判开庭80周年发表声明</div>
+            <div class="hero-sub-meta">央视新闻 · 4小时前</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="cat-tabs">
+      <div class="cat-tab active">推荐</div>
+      <div class="cat-tab">热门</div>
+      <div class="cat-tab">时政</div>
+      <div class="cat-tab">社会</div>
+      <div class="cat-tab">国际</div>
+      <div class="cat-tab">财经</div>
+      <div class="cat-tab">科技</div>
+      <div class="cat-tab">体育</div>
+    </div>
+
+    <!-- News grid -->
+    <div class="news-grid" data-section="feed">
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#1e3a6e;--c2:#3d7ac8" href="#">
+          <span class="nc-img-label">能源工程</span>
+        </a>
+        <a class="nc-title" href="#">我国首个算电协同绿色直供项目5月2日正式投运</a>
+        <div class="nc-meta"><span>央视新闻 · 6小时前</span><div class="nc-actions"><span>💬 125</span><span>⭐ 293</span><span>↗ 348</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#607080;--c2:#9ab0c0" href="#">
+          <span class="nc-tag">突发</span>
+          <span class="nc-img-label">国际新闻</span>
+        </a>
+        <a class="nc-title" href="#">以色列拦截向加沙运送人道援助的船队</a>
+        <div class="nc-meta"><span>央视新闻 · 10小时前</span><div class="nc-actions"><span>💬 63</span><span>⭐ 28</span><span>↗ 42</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#2a2f38;--c2:#506070" href="#">
+          <span class="nc-img-label">财经观察</span>
+        </a>
+        <a class="nc-title" href="#"><span class="topic">专题</span>巴菲特传奇难复制，阿贝尔迎来伯克希尔投资人</a>
+        <div class="nc-meta"><span>财新网 · 40分钟前</span><div class="nc-actions"><span>↗ 315</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#c04040;--c2:#70aad8" href="#">
+          <span class="nc-img-label">体育现场</span>
+        </a>
+        <a class="nc-title" href="#"><span class="topic">专题</span>张雪：我们拿冠军了！邻桌的客人纷纷举杯祝贺</a>
+        <div class="nc-meta"><span>1小时前</span><div class="nc-actions"><span>↗ 819</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#b03020;--c2:#c8c0b0" href="#">
+          <span class="nc-img-label">政治新闻</span>
+        </a>
+        <a class="nc-title" href="#">郭宁宁最新署名文章：在新的历史起点上奋勇前行</a>
+        <div class="nc-meta"><span>政事儿 · 2小时前</span><div class="nc-actions"><span>💬 7</span><span>⭐ 51</span><span>↗ 59</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#282828;--c2:#686868" href="#">
+          <span class="nc-img-label">历史影像</span>
+        </a>
+        <a class="nc-title" href="#">日本战犯集体不认罪，中国检察官质问：什么才是战争？</a>
+        <div class="nc-meta"><span>环球网 · 1小时前</span><div class="nc-actions"><span>💬 19</span><span>⭐ 25</span><span>↗ 13</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#d0d8e0;--c2:#e8ecf0" href="#">
+          <span class="nc-img-label">白宫连线</span>
+        </a>
+        <a class="nc-title" href="#">特朗普宣称美国行事像"海盗"，伊朗外交部发言人回应</a>
+        <div class="nc-meta"><span>中国新闻网 · 2小时前</span><div class="nc-actions"><span>💬 25</span><span>⭐ 13</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#c8a840;--c2:#e8d080" href="#">
+          <span class="nc-img-label">黄金市场</span>
+        </a>
+        <a class="nc-title" href="#">女子15年前购买金条检测仅9克，商场就"0黄金"事件回应</a>
+        <div class="nc-meta"><span>北京青年报 · 2小时前</span><div class="nc-actions"><span>💬 756</span><span>⭐ 362</span><span>↗ 1752</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#1a3040;--c2:#305068" href="#">
+          <span class="nc-img-label">消费维权</span>
+        </a>
+        <a class="nc-title" href="#">消费者投诉后账户被封禁，律师称顺丰封禁行为涉嫌违约</a>
+        <div class="nc-meta"><span>澎湃新闻 · 2小时前</span><div class="nc-actions"><span>💬 198</span><span>⭐ 14</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#203050;--c2:#405880" href="#">
+          <span class="nc-img-label">校园科技</span>
+        </a>
+        <a class="nc-title" href="#">从课程群到招聘平台，学生真正需要的是能回到任务现场的阅读断点</a>
+        <div class="nc-meta"><span>腾讯新闻 · 2小时前</span><div class="nc-actions"><span>💬 88</span><span>⭐ 35</span><span>↗ 61</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#a0c8f0;--c2:#4080c8" href="#">
+          <span class="nc-img-label">AI阅读</span>
+        </a>
+        <a class="nc-title" href="#">AI摘要不能替代原文，精准定位仍是长内容阅读的关键体验</a>
+        <div class="nc-meta"><span>腾讯科技 · 3小时前</span><div class="nc-actions"><span>💬 166</span><span>⭐ 72</span><span>↗ 90</span></div></div>
+      </article>
+      <article class="news-card">
+        <a class="nc-img" style="--c1:#7030b0;--c2:#b080e0" href="#">
+          <span class="nc-img-label">产品观察</span>
+        </a>
+        <a class="nc-title" href="#">大模型应用进入校园场景，轻量插件成为低成本验证路径</a>
+        <div class="nc-meta"><span>产品观察 · 3小时前</span><div class="nc-actions"><span>💬 91</span><span>⭐ 47</span><span>↗ 58</span></div></div>
+      </article>
+    </div>
+    <div class="load-more" id="load-more-btn">加载更多</div>
+
+  </main>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+    <!-- App recommendations -->
+    <div class="side-block">
+      <div class="side-head">热门应用推荐 <a href="#">更多 ›</a></div>
+      <div class="app-list">
+        <div class="app-item">
+          <div class="app-icon" style="background:conic-gradient(#3b6ef5 0 28%,#25c16f 28% 56%,#f5c231 56% 76%,#e84040 76% 100%)">新</div>
+          <div class="app-body">
+            <div class="app-name">腾讯新闻·电脑版</div>
+            <div class="app-desc">全网热点早知道</div>
+          </div>
+          <a class="app-btn" href="#">点击下载</a>
+        </div>
+        <div class="app-item">
+          <div class="app-icon" style="background:linear-gradient(135deg,#8fb8ff,#2d6bf4 50%,#f46c41)">王</div>
+          <div class="app-body">
+            <div class="app-name">王者荣耀·世界</div>
+            <div class="app-desc">下载赢Q币红包</div>
+          </div>
+          <a class="app-btn" href="#">点击下载</a>
+        </div>
+        <div class="app-item">
+          <div class="app-icon" style="background:conic-gradient(#4785ff,#5ee6dc,#4785ff);border-radius:50%">Q</div>
+          <div class="app-body">
+            <div class="app-name">QQ浏览器</div>
+            <div class="app-desc">4亿人的AI浏览神器</div>
+          </div>
+          <a class="app-btn" href="#">点击下载</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video -->
+    <div class="side-block">
+      <div class="side-head">精选视频</div>
+      <a class="video-thumb" href="#">
+        <span class="video-station">CCTV 13</span>
+        <div class="anchor"></div>
+        <div class="play-btn">▶</div>
+      </a>
+      <div class="video-caption">▮ 伊朗向美国转交最新谈判方案 细节未公布</div>
+      <div class="video-list">
+        <a href="#">英海军：美以伊战事致霍尔木兹海峡航运量骤降九成</a>
+        <a href="#">我国首个算电协同绿色直供项目5月2日投运</a>
+        <a href="#">以色列拦截向加沙运送人道援助的船队</a>
+        <a href="#">中东局势扰动全球市场 中东冲突波及巴西咖啡</a>
+      </div>
+    </div>
+
+    <!-- Hot topics -->
+    <div class="side-block">
+      <div class="side-head">热搜榜 <a href="#">完整榜单 ›</a></div>
+      <div class="hot-list">
+        <div class="hot-item"><span class="hot-rank top3">1</span><div><div class="hot-text">五一假期全国旅游出行创历史新高</div><span class="hot-heat">🔥 892万讨论</span></div></div>
+        <div class="hot-item"><span class="hot-rank top3">2</span><div><div class="hot-text">巴菲特正式宣布接班人</div><span class="hot-heat">🔥 441万讨论</span></div></div>
+        <div class="hot-item"><span class="hot-rank top3">3</span><div><div class="hot-text">国产大模型发布新版本</div><span class="hot-heat">🔥 318万讨论</span></div></div>
+        <div class="hot-item"><span class="hot-rank">4</span><div><div class="hot-text">女子购买黄金检测含量为零</div><span class="hot-heat">209万讨论</span></div></div>
+        <div class="hot-item"><span class="hot-rank">5</span><div><div class="hot-text">东京审判80周年外交部发声</div><span class="hot-heat">178万讨论</span></div></div>
+      </div>
+    </div>
+
+    <!-- Morning brief -->
+    <div class="side-block">
+      <div class="morning">
+        <div class="morning-date">05月03日 <span class="badge">Morning Brief 早报</span></div>
+        <ul class="morning-list">
+          <li>一文读懂伯克希尔股东会：巴菲特接班人畅聊核心重仓股、AI策略</li>
+          <li>美国制裁5家中国企业，中方：不得承认、不得执行</li>
+          <li>AI阅读助手进入校园，语义书签成高频信息管理新入口</li>
+        </ul>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<script>
+// ── 继续阅读：读取深度长文页的阅读断点 ──
+function initContinueReading() {
+  try {
+    var raw = localStorage.getItem('anchornote.embed.tencent-news-deep');
+    var bar = document.getElementById('cr-bar');
+    if (!raw) { bar.style.display = 'none'; return; }
+    var bms = JSON.parse(raw);
+    var cp = bms.find(function(b) { return b.type === 'checkpoint'; });
+    if (!cp) { bar.style.display = 'none'; return; }
+    document.getElementById('cr-text').textContent =
+      cp.selectedText ? cp.selectedText.slice(0, 90) + (cp.selectedText.length > 90 ? '…' : '') : '（断点已保存）';
+    document.getElementById('cr-link').href = './tencent-news-deep.html#an-jump=' + cp.id;
+    bar.style.display = 'block';
+  } catch(e) {}
+}
+initContinueReading();
+window.addEventListener('storage', function(e) {
+  if (e.key === 'anchornote.embed.tencent-news-deep') initContinueReading();
+});
+
+// ── 加载更多：batch-2 内容（未加载内容演示） ──
+var _batch2Loaded = false;
+
+var BATCH2_CARDS = [
+  { label:'AI技术',  c1:'#1d3557', c2:'#457b9d',
+    title:'国产大模型首次通过专业工程师认证测试，技术能力全面对标国际一线',
+    source:'腾讯科技 · 5小时前', actions:'💬 312  ⭐ 289  ↗ 574' },
+  { label:'数据洞察', c1:'#2d6a4f', c2:'#74c69d',
+    title:'全球互联网用户突破60亿，深度内容消费时长同比增长23%',
+    source:'新媒体研究院 · 6小时前', actions:'💬 89  ⭐ 141  ↗ 203' },
+  { label:'技术深度', c1:'#1a3a6e', c2:'#2d6fbf', isTarget: true,
+    title:'阅读断点跨版本精准还原：语义向量定位的工程实践',
+    source:'腾讯技术 · 4小时前', actions:'💬 43  ⭐ 128  ↗ 219' },
+  { label:'财报解读', c1:'#3d2b1f', c2:'#8b5e3c',
+    title:'腾讯Q1财报：广告收入超预期，AI应用渗透率达31%',
+    source:'财新网 · 7小时前', actions:'💬 156  ↗ 445' },
+  { label:'消费趋势', c1:'#4a1a6e', c2:'#8b4fbf',
+    title:'五一假期内容消费报告：长文完读率同比提升18%，AI摘要带来的是浅读而非深读',
+    source:'内容实验室 · 8小时前', actions:'💬 67  ⭐ 94' },
+  { label:'产品深度', c1:'#1a4a3a', c2:'#2d8a6f',
+    title:'2025内容平台年度报告：用户平均深度阅读时长突破47分钟',
+    source:'产品观察 · 9小时前', actions:'↗ 318  ⭐ 201' }
+];
+
+function createNewsCard(data, staggerMs) {
+  var article = document.createElement('article');
+  article.className = 'news-card';
+  if (data.isTarget) article.classList.add('nc-lazy-target');
+  article.style.opacity = '0';
+  article.style.transform = 'translateY(10px)';
+  article.innerHTML =
+    '<a class="nc-img" style="--c1:' + data.c1 + ';--c2:' + data.c2 + '" href="#">' +
+      '<span class="nc-img-label">' + data.label + '</span>' +
+    '</a>' +
+    '<a class="nc-title" href="#">' + data.title + '</a>' +
+    '<div class="nc-meta"><span>' + data.source + '</span>' +
+      '<div class="nc-actions"><span>' + data.actions + '</span></div>' +
+    '</div>';
+  setTimeout(function() {
+    article.style.transition = 'opacity .38s ease, transform .38s ease';
+    article.style.opacity = '1';
+    article.style.transform = 'translateY(0)';
+  }, staggerMs);
+  return article;
+}
+
+function loadMoreContent() {
+  if (_batch2Loaded) return;
+  _batch2Loaded = true;
+  var grid = document.querySelector('.news-grid');
+  var btn  = document.getElementById('load-more-btn');
+  BATCH2_CARDS.forEach(function(data, i) {
+    grid.appendChild(createNewsCard(data, i * 90 + 30));
+  });
+  if (btn) {
+    btn.textContent = '没有更多了';
+    btn.className = 'load-more lm-done';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('load-more-btn');
+  if (!btn) return;
+  btn.addEventListener('click', function() {
+    if (_batch2Loaded) return;
+    btn.textContent = '⏳ 加载中…';
+    btn.className = 'load-more lm-loading';
+    setTimeout(loadMoreContent, 1000);
+  });
+});
+
+// ── AnchorNote 配置 ──
+window.ANCHORNOTE_CONFIG = {
+  pageId:          'tencent-news-yaowen',
+  pageTitle:       '腾讯新闻要闻',
+  pageUrl:         'news.qq.com/要闻',
+  articleSelector: '#article',
+
+  // 当书签文本在当前 DOM 中找不到时，由此钩子触发懒加载并重试定位
+  onJumpFail: function(bm, retryJump) {
+    var btn = document.getElementById('load-more-btn');
+    // 内容已加载过，直接重试（正常不应到这里，作为兜底）
+    if (_batch2Loaded || !btn) { retryJump(); return; }
+
+    // ① 先滚动到「加载更多」按钮，让用户看到过程
+    btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    setTimeout(function() {
+      // ② 显示加载状态并触发加载
+      btn.textContent = '⏳ 加载中…';
+      btn.className = 'load-more lm-loading';
+      loadMoreContent();
+
+      // ③ 等卡片渐入动画完成后，重新定位书签
+      setTimeout(function() {
+        retryJump();
+      }, 1600);
+    }, 700);
+  },
+
+  seedBookmarks: [
+    {
+      type: 'checkpoint',
+      selectedText: '供需两旺，"五一"假期彰显"流动中国"澎湃活力',
+      section: 'lead',
+      note: '要闻页断点：从顶部标题区继续读',
+      contextText: '"十五五"开局首季 中国经济交出亮眼答卷。供需两旺，"五一"假期彰显"流动中国"澎湃活力。'
+    },
+    {
+      type: 'mark',
+      selectedText: 'AI大模型正在重塑内容消费：从推荐算法到阅读助手',
+      section: 'lead',
+      note: '点击标题可切换到腾讯新闻深度页',
+      contextText: 'AI大模型正在重塑内容消费：从推荐算法到阅读助手。'
+    },
+    {
+      type: 'mark',
+      selectedText: '学生真正需要的是能回到任务现场的阅读断点',
+      section: 'feed',
+      note: '和 AnchorNote 校园场景直接对齐',
+      contextText: '从课程群到招聘平台，学生真正需要的是能回到任务现场的阅读断点。'
+    },
+    {
+      type: 'mark',
+      selectedText: '阅读断点跨版本精准还原：语义向量定位的工程实践',
+      section: 'feed',
+      note: '点击自动加载并定位',
+      contextText: '腾讯技术深度文章：阅读断点跨版本精准还原——语义向量定位的工程实践，分析主流内容平台阅读位置存储的技术路径差异。'
+    }
+  ]
+};
+</script>
+<script src="../anchornote-embed.js"></script>
+</body>
+</html>

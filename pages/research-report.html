@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2024年中国AI内容产业发展白皮书 — 腾讯研究院</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --brand: #006EFF;
+  --brand-dark: #0052CC;
+  --accent: #FF6900;
+  --text: #1a1a2e;
+  --sub: #555e70;
+  --muted: #8a94a6;
+  --border: #dde3ef;
+  --bg: #f4f6fb;
+  --card: #fff;
+  --toc-w: 240px;
+  --content-max: 780px;
+}
+body { font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.8; }
+
+/* ── Top bar ── */
+.topbar { background: #fff; border-bottom: 2px solid var(--brand); position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 0; height: 52px; padding: 0 24px; box-shadow: 0 1px 6px rgba(0,110,255,.1); }
+.topbar-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.topbar-logo .mark { width: 32px; height: 32px; background: var(--brand); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 16px; }
+.topbar-logo .name { font-size: 15px; font-weight: 700; color: var(--text); }
+.topbar-logo .sub { font-size: 11px; color: var(--muted); }
+.topbar-divider { width: 1px; height: 28px; background: var(--border); margin: 0 18px; }
+.topbar-nav { display: flex; gap: 4px; }
+.topbar-nav a { font-size: 13px; color: var(--sub); text-decoration: none; padding: 4px 10px; border-radius: 4px; transition: background .15s; }
+.topbar-nav a:hover, .topbar-nav a.active { background: rgba(0,110,255,.08); color: var(--brand); }
+.topbar-actions { margin-left: auto; display: flex; gap: 8px; }
+.topbar-btn { font-size: 13px; padding: 5px 14px; border-radius: 4px; border: 1px solid var(--border); background: #fff; color: var(--sub); cursor: pointer; }
+.topbar-btn.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+.read-progress { position: fixed; top: 52px; left: 0; width: 0; height: 3px; background: var(--brand); z-index: 99; transition: width .1s; }
+
+/* ── Hero ── */
+.report-hero { background: linear-gradient(135deg, #0a1628 0%, #0d2454 60%, #1a3a8f 100%); color: #fff; padding: 60px 24px 52px; text-align: center; position: relative; overflow: hidden; }
+.report-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 30%, rgba(0,110,255,.3) 0%, transparent 60%); }
+.report-hero-inner { position: relative; max-width: 820px; margin: 0 auto; }
+.report-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 20px; padding: 4px 14px; font-size: 12px; color: rgba(255,255,255,.85); margin-bottom: 24px; }
+.report-badge .dot { width: 6px; height: 6px; background: #4fc3f7; border-radius: 50%; }
+.report-hero h1 { font-size: clamp(22px, 4vw, 36px); font-weight: 800; line-height: 1.3; margin-bottom: 16px; }
+.report-hero h1 em { font-style: normal; color: #7dd3fc; }
+.report-desc { font-size: 15px; color: rgba(255,255,255,.7); max-width: 600px; margin: 0 auto 32px; }
+.report-meta { display: flex; justify-content: center; flex-wrap: wrap; gap: 24px; font-size: 13px; color: rgba(255,255,255,.6); }
+.report-meta span { display: flex; align-items: center; gap: 5px; }
+.report-meta strong { color: #fff; }
+
+/* ── Layout ── */
+.page-body { display: flex; max-width: 1200px; margin: 0 auto; gap: 0; padding: 32px 24px; align-items: flex-start; }
+.toc-aside { width: var(--toc-w); flex-shrink: 0; position: sticky; top: 70px; margin-right: 32px; }
+.toc-card { background: var(--card); border-radius: 10px; border: 1px solid var(--border); padding: 20px; }
+.toc-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 14px; }
+.toc-list { list-style: none; }
+.toc-list li { margin-bottom: 2px; }
+.toc-list a { display: block; font-size: 13px; color: var(--sub); text-decoration: none; padding: 5px 8px; border-radius: 5px; border-left: 2px solid transparent; transition: all .15s; line-height: 1.4; }
+.toc-list a:hover { background: rgba(0,110,255,.05); color: var(--brand); }
+.toc-list a.active { background: rgba(0,110,255,.07); color: var(--brand); border-left-color: var(--brand); }
+.toc-list li.toc-h3 a { padding-left: 20px; font-size: 12px; }
+.toc-download { margin-top: 16px; width: 100%; padding: 9px; background: var(--brand); color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 600; }
+
+/* ── Article ── */
+.article-main { flex: 1; min-width: 0; }
+.report-section { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 36px 40px; margin-bottom: 24px; }
+.section-label { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.section-num { width: 28px; height: 28px; background: var(--brand); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 800; flex-shrink: 0; }
+.section-tag { font-size: 11px; color: var(--brand); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.report-section h2 { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 20px; line-height: 1.35; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.report-section h3 { font-size: 17px; font-weight: 700; color: var(--text); margin: 28px 0 12px; }
+.report-section p { color: var(--sub); margin-bottom: 14px; }
+.report-section p:last-child { margin-bottom: 0; }
+
+/* Exec summary */
+.exec-summary { background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fd 100%); border: 1px solid #c5ddf7; border-radius: 10px; padding: 24px 28px; margin-bottom: 24px; }
+.exec-summary .es-title { font-size: 13px; font-weight: 700; color: var(--brand); margin-bottom: 14px; text-transform: uppercase; letter-spacing: .05em; }
+.exec-points { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.exec-point { background: #fff; border-radius: 8px; padding: 14px 16px; border: 1px solid #d4e8fb; }
+.exec-point .ep-num { font-size: 20px; font-weight: 900; color: var(--brand); line-height: 1; }
+.exec-point .ep-text { font-size: 13px; color: var(--sub); margin-top: 4px; line-height: 1.5; }
+
+/* Data cards row */
+.data-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 24px 0; }
+.data-card { background: var(--bg); border-radius: 10px; padding: 18px 16px; text-align: center; border: 1px solid var(--border); }
+.data-card .dc-value { font-size: 28px; font-weight: 900; color: var(--brand); line-height: 1.1; }
+.data-card .dc-value sup { font-size: 14px; }
+.data-card .dc-label { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+.data-card .dc-change { font-size: 12px; color: #16a34a; font-weight: 600; margin-top: 3px; }
+.data-card .dc-change.down { color: #dc2626; }
+
+/* Chart placeholder */
+.chart-box { background: linear-gradient(135deg, #f8faff 0%, #eef3fc 100%); border: 1px dashed #b8cff0; border-radius: 10px; padding: 32px 24px; text-align: center; margin: 20px 0; }
+.chart-box .cb-title { font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 20px; }
+.chart-bars { display: flex; align-items: flex-end; justify-content: center; gap: 16px; height: 120px; margin-bottom: 10px; }
+.bar-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar { width: 36px; background: var(--brand); border-radius: 4px 4px 0 0; opacity: .85; }
+.bar.accent { background: var(--accent); }
+.bar-label { font-size: 11px; color: var(--muted); }
+.bar-val { font-size: 11px; font-weight: 700; color: var(--brand); }
+.chart-note { font-size: 12px; color: var(--muted); }
+
+/* Table */
+.data-table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 8px; border: 1px solid var(--border); }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { background: #f0f5ff; padding: 10px 14px; text-align: left; font-weight: 700; color: var(--text); border-bottom: 1px solid var(--border); white-space: nowrap; }
+.data-table td { padding: 10px 14px; color: var(--sub); border-bottom: 1px solid #edf0f7; vertical-align: top; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: #f8faff; }
+.badge-cell { display: inline-flex; align-items: center; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.badge-blue { background: #dbeafe; color: #1d4ed8; }
+.badge-green { background: #dcfce7; color: #15803d; }
+.badge-orange { background: #ffedd5; color: #c2410c; }
+
+/* Pull quote */
+.pull-quote { border-left: 4px solid var(--brand); background: #f0f7ff; padding: 18px 22px; border-radius: 0 8px 8px 0; margin: 24px 0; }
+.pull-quote blockquote { font-size: 16px; font-style: italic; color: var(--text); line-height: 1.6; font-weight: 500; }
+.pull-quote cite { display: block; font-size: 12px; color: var(--muted); margin-top: 8px; font-style: normal; }
+
+/* Finding box */
+.finding-box { background: #fff8ed; border: 1px solid #fcd34d; border-radius: 10px; padding: 18px 22px; margin: 20px 0; }
+.finding-box .fb-head { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #92400e; margin-bottom: 10px; }
+.finding-box p { font-size: 14px; color: #78350f; margin: 0; }
+
+/* Recommendation box */
+.rec-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 18px 22px; margin: 20px 0; }
+.rec-box .rb-head { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #15803d; margin-bottom: 12px; }
+.rec-list { list-style: none; }
+.rec-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: #166534; margin-bottom: 8px; line-height: 1.5; }
+.rec-list li::before { content: '→'; color: #16a34a; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+/* Case study */
+.case-study { background: #faf5ff; border: 1px solid #d8b4fe; border-radius: 10px; padding: 22px 24px; margin: 20px 0; }
+.case-study .cs-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.case-study .cs-icon { width: 32px; height: 32px; background: #7c3aed; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 800; }
+.case-study .cs-title { font-size: 15px; font-weight: 700; color: #4c1d95; }
+.case-study .cs-sub { font-size: 12px; color: #7c3aed; }
+.case-study p { font-size: 14px; color: #5b21b6; margin-bottom: 8px; }
+
+/* Sidebar */
+.sidebar { width: 280px; flex-shrink: 0; margin-left: 24px; position: sticky; top: 70px; display: flex; flex-direction: column; gap: 16px; }
+.side-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+.side-card h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.side-report-list { list-style: none; }
+.side-report-list li { padding: 8px 0; border-bottom: 1px solid #f0f3f9; font-size: 13px; color: var(--sub); line-height: 1.4; }
+.side-report-list li:last-child { border-bottom: none; }
+.side-report-list span { display: block; font-size: 11px; color: var(--muted); margin-top: 3px; }
+.side-stat { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-item { text-align: center; padding: 12px 8px; background: var(--bg); border-radius: 8px; }
+.stat-item .sv { font-size: 20px; font-weight: 900; color: var(--brand); }
+.stat-item .sl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.author-box { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.author-avatar { width: 38px; height: 38px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; }
+.author-info .name { font-size: 14px; font-weight: 700; }
+.author-info .role { font-size: 12px; color: var(--muted); }
+.author-bio { font-size: 12px; color: var(--sub); line-height: 1.5; }
+.cite-block { background: var(--bg); border-radius: 8px; padding: 12px; margin-top: 10px; }
+.cite-block .cb-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+.cite-block .cite-item { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+.cite-block .cite-item span { color: var(--muted); }
+
+/* Chapter divider */
+.chapter-div { display: flex; align-items: center; gap: 14px; margin: 8px 0 24px; }
+.chapter-div .cd-line { flex: 1; height: 1px; background: var(--border); }
+.chapter-div .cd-label { font-size: 11px; color: var(--muted); white-space: nowrap; font-weight: 600; letter-spacing: .08em; }
+
+/* Footer */
+.report-footer { background: #0d1a36; color: rgba(255,255,255,.6); text-align: center; padding: 32px 24px; font-size: 13px; margin-top: 40px; }
+.report-footer strong { color: rgba(255,255,255,.9); }
+.demo-goal { background:#fffbeb; border-top:3px solid #f59e0b; border-bottom:1px solid #fde68a; padding:10px 24px; display:flex; align-items:center; gap:14px; font-size:13px; color:#451a03; flex-wrap:wrap; position:sticky; top:52px; z-index:99; }
+.dg-label { background:#f59e0b; color:#fff; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; font-size:12px; flex-shrink:0; }
+.dg-steps { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.dg-step { display:inline-flex; align-items:center; gap:5px; }
+.dg-num { background:#92400e; color:#fff; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+.dg-arrow { color:#d97706; font-weight:700; }
+</style>
+</head>
+<body>
+
+<div class="read-progress" id="readProgress"></div>
+
+<nav class="topbar">
+  <a class="topbar-logo" href="#">
+    <div class="mark">研</div>
+    <div>
+      <div class="name">腾讯研究院</div>
+      <div class="sub">Tencent Research Institute</div>
+    </div>
+  </a>
+  <div class="topbar-divider"></div>
+  <div class="topbar-nav">
+    <a href="#" class="active" data-tab="report">研究报告</a>
+    <a href="#" data-tab="insight">产业洞察</a>
+    <a href="#" data-tab="policy">政策研究</a>
+    <a href="#" data-tab="data">数据中心</a>
+    <a href="#" data-tab="about">关于我们</a>
+  </div>
+  <div class="topbar-actions">
+    <button class="topbar-btn">订阅报告</button>
+    <button class="topbar-btn primary">PDF 下载</button>
+  </div>
+</nav>
+
+<div class="demo-goal">
+  <span class="dg-label">🎯 演示目标 · 长报告阅读 + AI 回访简报</span>
+  <div class="dg-steps">
+    <span class="dg-step"><span class="dg-num">①</span> 点右侧「N 书签」打开书签库，查看 AI 回访简报（关注焦点 / 关键要点 / 建议）</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">②</span> 点书签条目精准跳转到白皮书对应章节</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">③</span> 切换顶部标签（产业洞察 / 政策研究…），书签跨标签页保留</span>
+  </div>
+</div>
+
+<div class="report-hero">
+  <div class="report-hero-inner">
+    <div class="report-badge"><span class="dot"></span>2024 年度旗舰报告</div>
+    <h1>2024年中国<em>AI内容产业</em>发展白皮书<br>从推荐算法到智能阅读助手</h1>
+    <p class="report-desc">深度解析 AI 大模型如何重塑内容分发、创作与消费的完整链路，以及内容平台在智能化转型中的关键机遇与挑战。</p>
+    <div class="report-meta">
+      <span><strong>腾讯研究院</strong> · 产业数字化研究中心</span>
+      <span>发布时间：<strong>2024年12月</strong></span>
+      <span>字数：<strong>约 42,000 字</strong></span>
+      <span>引用文献：<strong>186 篇</strong></span>
+    </div>
+  </div>
+</div>
+
+<div class="page-body" id="tab-panel-report">
+
+  <!-- TOC -->
+  <aside class="toc-aside">
+    <div class="toc-card">
+      <div class="toc-title">目录</div>
+      <ul class="toc-list" id="tocList">
+        <li><a href="#exec" class="active">执行摘要</a></li>
+        <li><a href="#ch1">一、行业现状</a></li>
+        <li class="toc-h3"><a href="#ch1-1">1.1 市场规模</a></li>
+        <li class="toc-h3"><a href="#ch1-2">1.2 竞争格局</a></li>
+        <li><a href="#ch2">二、AI 重塑路径</a></li>
+        <li class="toc-h3"><a href="#ch2-1">2.1 推荐算法升级</a></li>
+        <li class="toc-h3"><a href="#ch2-2">2.2 内容理解层</a></li>
+        <li class="toc-h3"><a href="#ch2-3">2.3 阅读助手场景</a></li>
+        <li><a href="#ch3">三、用户行为变迁</a></li>
+        <li class="toc-h3"><a href="#ch3-1">3.1 深度阅读需求</a></li>
+        <li class="toc-h3"><a href="#ch3-2">3.2 信息焦虑问题</a></li>
+        <li><a href="#ch4">四、关键技术路径</a></li>
+        <li><a href="#ch5">五、战略建议</a></li>
+        <li><a href="#ref">参考文献</a></li>
+      </ul>
+      <button class="toc-download">↓ 下载完整报告 PDF</button>
+    </div>
+  </aside>
+
+  <!-- Article -->
+  <main class="article-main" id="article">
+
+    <!-- Exec summary -->
+    <div class="report-section" id="exec" data-section="exec">
+      <div class="section-label">
+        <div class="section-num">摘</div>
+        <span class="section-tag">Executive Summary</span>
+      </div>
+      <h2>执行摘要</h2>
+      <p>2024年，生成式AI在内容产业的渗透已从"辅助创作"阶段跃升至"智能内容基础设施"阶段。本报告基于对23家头部内容平台的深度访谈、覆盖15万用户的问卷调研，以及对超过80亿条内容消费数据的分析，系统梳理了AI技术对内容分发、阅读体验与用户留存的影响机制。</p>
+      <p>核心结论指向一个尚未被充分重视的方向：<strong>内容消费的"回访问题"正在成为平台留存的隐性瓶颈</strong>。用户在移动端的单次阅读完成率不足37%，而能够准确回到中断位置的用户其30日留存率比普通用户高出62%。AI语义书签技术提供了一条可量化的解法路径。</p>
+      <div class="exec-points">
+        <div class="exec-point">
+          <div class="ep-num">37%</div>
+          <div class="ep-text">移动端长文单次阅读完成率，低于PC端的61%</div>
+        </div>
+        <div class="exec-point">
+          <div class="ep-num">+62%</div>
+          <div class="ep-text">成功回访用户的30日留存率提升幅度</div>
+        </div>
+        <div class="exec-point">
+          <div class="ep-num">4.2倍</div>
+          <div class="ep-text">用户对AI理解书签的使用频次高于传统收藏夹</div>
+        </div>
+        <div class="exec-point">
+          <div class="ep-num">¥318亿</div>
+          <div class="ep-text">2024年中国AI内容工具市场规模预测（增速43%）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter 1 -->
+    <div class="report-section" id="ch1" data-section="ch1">
+      <div class="section-label">
+        <div class="section-num">1</div>
+        <span class="section-tag">Industry Overview</span>
+      </div>
+      <h2>第一章：中国AI内容产业现状</h2>
+      <p>内容产业在经历了2018—2021年流量红利期与2022年的增速放缓之后，正在以AI技术重构为核心驱动力进入第三个发展周期。这一周期的核心特征不是内容数量的进一步扩张，而是内容质量、消费效率与用户留存的系统性提升。</p>
+
+      <div id="ch1-1"></div>
+      <h3>1.1 市场规模与增速</h3>
+      <p>2024年，中国内容产业整体市场规模预计达到2.8万亿元，其中数字内容占比约为71%，AI相关基础设施与工具服务的市场规模约为318亿元，同比增速达43%，远高于内容产业整体9.2%的增速。</p>
+
+      <div class="data-row">
+        <div class="data-card">
+          <div class="dc-value">2.8<sup>万亿</sup></div>
+          <div class="dc-label">内容产业整体市场规模</div>
+          <div class="dc-change">↑ 9.2% YoY</div>
+        </div>
+        <div class="data-card">
+          <div class="dc-value">318<sup>亿</sup></div>
+          <div class="dc-label">AI内容工具市场</div>
+          <div class="dc-change">↑ 43% YoY</div>
+        </div>
+        <div class="data-card">
+          <div class="dc-value">71<sup>%</sup></div>
+          <div class="dc-label">数字内容占产业总量比重</div>
+          <div class="dc-change">↑ 4.1pp YoY</div>
+        </div>
+        <div class="data-card">
+          <div class="dc-value">14.6<sup>亿</sup></div>
+          <div class="dc-label">数字内容月活跃用户数</div>
+          <div class="dc-change dc-change down">↓ 0.3% YoY</div>
+        </div>
+      </div>
+
+      <p>值得关注的是，月活跃用户数出现微幅下滑，这是2015年以来首次出现的负增长信号。分析师普遍认为，这标志着内容产业从"获客竞争"转向"留存竞争"的临界点已经到来。在用户总量见顶的背景下，提升单用户消费深度与回访质量的重要性被提升到了战略层面。</p>
+
+      <div class="chart-box">
+        <div class="cb-title">图1-1：2019—2024年中国内容产业 AI 工具市场规模（亿元）</div>
+        <div class="chart-bars">
+          <div class="bar-item"><div class="bar-val">38</div><div class="bar" style="height:38px"></div><div class="bar-label">2019</div></div>
+          <div class="bar-item"><div class="bar-val">67</div><div class="bar" style="height:58px"></div><div class="bar-label">2020</div></div>
+          <div class="bar-item"><div class="bar-val">94</div><div class="bar" style="height:76px"></div><div class="bar-label">2021</div></div>
+          <div class="bar-item"><div class="bar-val">142</div><div class="bar" style="height:95px"></div><div class="bar-label">2022</div></div>
+          <div class="bar-item"><div class="bar-val">222</div><div class="bar accent" style="height:108px"></div><div class="bar-label">2023</div></div>
+          <div class="bar-item"><div class="bar-val">318</div><div class="bar accent" style="height:120px"></div><div class="bar-label">2024E</div></div>
+        </div>
+        <div class="chart-note">数据来源：腾讯研究院、艾瑞咨询，2024年为预测值</div>
+      </div>
+
+      <div id="ch1-2"></div>
+      <h3>1.2 主要平台竞争格局</h3>
+      <p>从主要内容平台的AI布局来看，各平台的策略分化愈发明显。以腾讯新闻、今日头条为代表的资讯平台在推荐算法的AI化改造方面投入最大；以微信读书为代表的深度阅读平台则更加侧重AI辅助理解功能；以知乎为代表的问答社区平台开始强调AI生成内容的质量管控。</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>平台</th>
+              <th>AI布局重点</th>
+              <th>月活用户（亿）</th>
+              <th>AI留存提升</th>
+              <th>阶段</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>腾讯新闻</strong></td>
+              <td>推荐个性化 + 语义书签</td>
+              <td>3.2</td>
+              <td>+18%</td>
+              <td><span class="badge badge-blue">规模化</span></td>
+            </tr>
+            <tr>
+              <td><strong>微信读书</strong></td>
+              <td>AI划线 + 阅读笔记助手</td>
+              <td>0.9</td>
+              <td>+31%</td>
+              <td><span class="badge badge-blue">规模化</span></td>
+            </tr>
+            <tr>
+              <td><strong>今日头条</strong></td>
+              <td>内容理解 + 摘要生成</td>
+              <td>4.1</td>
+              <td>+12%</td>
+              <td><span class="badge badge-green">验证中</span></td>
+            </tr>
+            <tr>
+              <td><strong>知乎</strong></td>
+              <td>内容质量评估 + AI回答</td>
+              <td>1.1</td>
+              <td>+8%</td>
+              <td><span class="badge badge-orange">探索</span></td>
+            </tr>
+            <tr>
+              <td><strong>企鹅号</strong></td>
+              <td>创作助手 + 读者互动</td>
+              <td>2.8</td>
+              <td>+22%</td>
+              <td><span class="badge badge-green">验证中</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Chapter 2 -->
+    <div class="report-section" id="ch2" data-section="ch2">
+      <div class="section-label">
+        <div class="section-num">2</div>
+        <span class="section-tag">AI Transformation Path</span>
+      </div>
+      <h2>第二章：AI 重塑内容消费的三条路径</h2>
+      <p>本章通过对23家平台的案例分析，归纳出AI在内容产业中发挥作用的三条主要路径，它们分别作用于内容分发的前端、内容理解的中间层，以及用户阅读体验的终端。</p>
+
+      <div id="ch2-1"></div>
+      <h3>2.1 推荐算法的范式升级</h3>
+      <p>第一条路径也是最成熟的路径：用大模型替代或增强传统协同过滤推荐系统。与传统推荐算法相比，基于大模型的推荐系统在处理"冷启动"问题、长尾内容分发和用户意图理解上有显著优势。</p>
+      <p>腾讯新闻在2023年底完成的"混元推荐"改造是国内平台中较为完整的案例。该系统将用户的<strong>阅读轨迹、停留时长、滚动行为和回访记录</strong>作为统一的语义序列输入大模型，而非分别建立行为特征工程，从而实现了对用户阅读意图的整体理解，而非对单次行为信号的叠加。</p>
+
+      <div class="pull-quote">
+        <blockquote>传统推荐算法告诉你"用户点击了什么"，而语义推荐系统试图理解"用户在读什么之后，最可能想接着读什么"。这是一个从行为预测到意图推断的根本性转变。</blockquote>
+        <cite>— 腾讯新闻算法负责人，访谈，2024年8月</cite>
+      </div>
+
+      <div id="ch2-2"></div>
+      <h3>2.2 内容理解中间层</h3>
+      <p>第二条路径是为内容消费链路增加一个AI驱动的"理解层"——即在内容到达用户之前，先由AI完成结构化解析：提取关键论点、标注数据来源、识别立场倾向，并生成不同粒度的摘要。</p>
+      <p>这一中间层的价值主要体现在三个方面：一是帮助用户在打开全文之前完成"值不值得读"的判断；二是为深度阅读提供导航性的结构框架；三是在用户回访时快速重建阅读上下文。</p>
+
+      <div class="finding-box">
+        <div class="fb-head">▲ 关键发现 2-1</div>
+        <p>在受访平台中，部署了AI内容理解层的平台，其深度文章（阅读时长超过5分钟）的完读率平均提升了28%，而用户对"此类内容的信息密度过高"的投诉比例下降了41%。这表明AI中间层有效降低了深度内容的认知摩擦成本。</p>
+      </div>
+
+      <div id="ch2-3"></div>
+      <h3>2.3 阅读助手：从辅助工具到阅读伴侣</h3>
+      <p>第三条路径是目前发展最不均衡、但潜力最为显著的方向：将AI嵌入用户的实时阅读过程，提供标注、书签、问答和回访辅助等功能，形成一个贯穿"读前—读中—读后—回访"全链路的智能阅读助手。</p>
+      <p>目前行业的实践主要停留在两个层次：一是简单的AI摘要（本质上是对内容理解层产出的前端展示）；二是结合选中文本的AI解释功能。真正意义上的"阅读伴侣"——能够记住用户读到哪里、理解用户标记某段内容的原因、在用户回访时帮助恢复阅读现场——仍处于产品探索阶段。</p>
+
+      <div class="case-study">
+        <div class="cs-head">
+          <div class="cs-icon">案</div>
+          <div>
+            <div class="cs-title">案例：微信读书 AI 划线系统</div>
+            <div class="cs-sub">规模化验证阶段 · 日活用户超800万</div>
+          </div>
+        </div>
+        <p>微信读书的AI划线系统允许用户在任意位置创建带有AI注释的书签，注释内容包括：当前段落的核心主张、与全书其他章节的关联、以及一条"为什么值得回来看"的理由。</p>
+        <p>根据微信读书公开的数据，使用AI划线功能的用户，其月均读书时长比不使用的用户高出74%，书籍完读率高出53%。这是目前国内内容平台中AI阅读助手功能最完整的数据验证案例。</p>
+        <p><strong>核心洞察：</strong>AI书签的价值不在于"记录"，而在于"恢复上下文"。用户回访时需要的不是文字记录，而是重新进入当时阅读状态的能力。</p>
+      </div>
+
+      <div class="finding-box">
+        <div class="fb-head">▲ 关键发现 2-2：阅读断点是留存的隐性杀手</div>
+        <p>本次调研发现，在发生过至少一次"找不到之前读到哪里"的用户中，有38%的人选择放弃该文章，其中17%的人在当周减少了对该平台的使用频次。这意味着一次阅读断点恢复失败，可能触发一条从"放弃文章"到"流失用户"的负向链路。</p>
+      </div>
+    </div>
+
+    <!-- Chapter 3 -->
+    <div class="report-section" id="ch3" data-section="ch3">
+      <div class="section-label">
+        <div class="section-num">3</div>
+        <span class="section-tag">User Behavior Shift</span>
+      </div>
+      <h2>第三章：AI时代的用户阅读行为变迁</h2>
+
+      <div id="ch3-1"></div>
+      <h3>3.1 深度阅读需求的结构性增长</h3>
+      <p>与关于"注意力碎片化"的普遍叙事相反，本报告的数据揭示了一个更加复杂的图景：用户的平均单次阅读时长在整体上确实有所缩短，但愿意进行深度长文阅读的用户比例在过去两年中呈现出结构性增长。这两个趋势并不矛盾——它们描述的是同一批用户在不同场景下的不同行为。</p>
+      <p>关键变量是<strong>内容质量信号的可及性</strong>。当用户能够在进入全文之前，通过AI摘要、结构导图或关键论点提取快速判断内容价值时，他们愿意投入更长时间进行深度阅读的概率会显著提升。</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>用户群体</th><th>月均深度阅读（≥5分钟/篇）次数</th><th>完读率</th><th>回访率</th><th>30日留存</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>使用AI书签用户</td><td><strong>18.3次</strong></td><td><strong>62%</strong></td><td><strong>71%</strong></td><td><strong>68%</strong></td></tr>
+            <tr><td>使用传统收藏夹用户</td><td>9.1次</td><td>44%</td><td>39%</td><td>51%</td></tr>
+            <tr><td>不使用任何书签用户</td><td>6.7次</td><td>37%</td><td>22%</td><td>42%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="ch3-2"></div>
+      <h3>3.2 信息焦虑与"假完读"现象</h3>
+      <p>调研发现了一个此前较少被量化研究的现象：<strong>"假完读"行为</strong>。指用户滚动到文章底部，但实际上并未理解核心内容，随后在试图向他人转述或应用时遭遇困难，进而产生更强烈的信息焦虑感。</p>
+      <p>这种行为在学习类、职场提升类和科技资讯类内容中尤为突出。AI辅助理解工具的价值在此场景下不仅是"帮助完读"，更是"帮助真正理解"，从而构建知识获取的正向反馈循环，降低信息焦虑水平。</p>
+
+      <div class="pull-quote">
+        <blockquote>我刷完了那篇关于大模型的文章，但转头就跟同事说不清楚混合专家架构到底是什么。这种感觉比没读还糟糕。如果当时有个工具告诉我"你对这段话做了标记，这是它真正想说的意思"，我觉得我会真的记住它。</blockquote>
+        <cite>— 调研用户 U-2871，26岁，产品经理</cite>
+      </div>
+    </div>
+
+    <!-- Chapter 4 -->
+    <div class="report-section" id="ch4" data-section="ch4">
+      <div class="section-label">
+        <div class="section-num">4</div>
+        <span class="section-tag">Technology Roadmap</span>
+      </div>
+      <h2>第四章：关键技术路径分析</h2>
+
+      <h3>4.1 语义锚点技术：让书签理解上下文</h3>
+      <p>传统书签技术的核心局限在于它保存的是位置（URL + 滚动坐标），而不是语义（用户在这个位置的阅读意图和上下文状态）。当页面内容更新、结构重排或广告动态插入时，基于坐标的书签定位会大幅失准。</p>
+      <p>语义锚点技术通过以下四层信息构建一个可恢复的阅读现场：</p>
+      <p><strong>（1）选中文本层：</strong>用户明确标记的原文字符串，是最高优先级的匹配依据。<br>
+      <strong>（2）DOM结构层：</strong>包含文本的元素路径（CSS选择器），用于快速定位候选元素。<br>
+      <strong>（3）上下文语义层：</strong>选中文本前后各约200字的上下文，用于AI重定位时的语义相似度比较。<br>
+      <strong>（4）用户意图层：</strong>用户添加的备注、标记类型（书签vs.断点）、标记时的页面滚动位置，用于辅助理解标记原因。</p>
+
+      <div class="finding-box">
+        <div class="fb-head">▲ 技术关键点：回访重定位的准确率瓶颈</div>
+        <p>在标准的CMS类网站上，基于精确文本匹配的重定位准确率可以达到92%以上。但在React/Vue等现代前端框架构建的SPA应用中，由于DOM在水合（Hydration）阶段可能发生结构变化，重定位准确率会降至74%。引入AI语义相似度校验后，SPA场景的准确率可以恢复至87%。</p>
+      </div>
+
+      <h3>4.2 AI辅助重定位：大模型的比较优势</h3>
+      <p>在精确文本匹配失败的情况下（约占回访场景的13%），大模型的比较优势才得以充分体现。大模型通过理解保存的上下文语义，在候选元素列表中找到"最可能是用户当时标记的位置"，而非单纯匹配字符串。</p>
+      <p>这一能力对于以下三类场景尤为重要：<br>
+      · 文章被编辑后，选中文字有轻微改动<br>
+      · 文章增加了新段落，导致相似内容位置迁移<br>
+      · 用户跨设备回访，本地DOM快照与当前页面存在差异</p>
+
+      <h3>4.3 成本与性能的平衡</h3>
+      <p>语义书签系统的核心工程挑战不是算法设计，而是成本控制。AI调用应当是最后的兜底手段，而非默认路径。本报告推荐的三层降级策略如下：</p>
+
+      <div class="rec-box">
+        <div class="rb-head">◎ 推荐技术架构：三层降级策略</div>
+        <ul class="rec-list">
+          <li>第一层：精确文本匹配（O(n)扫描，无需AI，覆盖约87%场景）</li>
+          <li>第二层：DOM选择器定位 + 文本范围二次确认（中等计算量，覆盖约8%场景）</li>
+          <li>第三层：AI语义相似度重定位（调用大模型，仅在前两层失败时触发，约5%场景）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Chapter 5 -->
+    <div class="report-section" id="ch5" data-section="ch5">
+      <div class="section-label">
+        <div class="section-num">5</div>
+        <span class="section-tag">Strategic Recommendations</span>
+      </div>
+      <h2>第五章：战略建议</h2>
+
+      <h3>5.1 面向平台运营者</h3>
+      <p>内容平台应将"阅读断点恢复"视为独立的产品指标体系加以度量，而非将其归并为泛化的"留存指标"。建议建立以下专项监控体系：回访尝试次数、回访成功率（用户是否在回访后继续阅读超过2分钟）、断点触发的流失漏斗。</p>
+
+      <div class="rec-box">
+        <div class="rb-head">◎ 平台运营建议清单</div>
+        <ul class="rec-list">
+          <li>将阅读断点恢复成功率纳入内容产品KPI，目标：回访成功率≥75%</li>
+          <li>为深度文章（预计阅读时长>4分钟）默认启用自动断点记录，无需用户主动操作</li>
+          <li>在内容编辑系统中增加语义稳定性评分，提示编辑团队修改文章可能影响书签定位准确率</li>
+          <li>建立AI重定位质量评估数据集，持续迭代模型精度</li>
+          <li>将"真实完读"（用户能够向AI助手准确描述文章核心论点）设为内容质量的北极星指标</li>
+        </ul>
+      </div>
+
+      <h3>5.2 面向技术团队</h3>
+      <p>建议以"最小可用语义单元"为书签颗粒度的设计原则，而非以段落或章节为单位。用户的阅读关注点往往集中在特定的一句话或一个数据点上，而非整个段落。支持精确到句子级别的书签，是语义书签系统相对传统收藏夹最核心的差异化能力。</p>
+
+      <div class="finding-box">
+        <div class="fb-head">▲ 重要结论：用户真正需要的是"当时那句话"</div>
+        <p>在对8,200名用户的深度访谈中，我们要求用户描述"最理想的书签应该能记住什么"。87%的用户提到了"具体的那句话"或"那个数据"，只有11%的用户提到了"大概在哪个位置"。这表明当前大多数平台提供的"位置书签"与用户的真实需求之间存在显著的功能错位。</p>
+      </div>
+
+      <h3>5.3 面向内容创作者</h3>
+      <p>AI阅读助手的普及将深刻改变内容创作的价值评估维度。"可书签性"（Bookmarkability）——即内容中包含多少值得标记和回访的语义锚点——将成为继阅读量、完读率之后，衡量内容质量的第三个核心维度。创作者应更加重视每篇文章中"关键论点的密度与可提取性"，而非仅仅追求内容的信息量。</p>
+    </div>
+
+    <!-- References -->
+    <div class="report-section" id="ref" style="padding: 28px 40px;">
+      <h2 style="font-size:18px; margin-bottom: 16px;">参考文献（部分）</h2>
+      <div style="font-size:13px; color: var(--sub); line-height: 2;">
+        <p>[1] 艾瑞咨询. (2024). 2024年中国数字内容产业研究报告. 艾瑞咨询研究院.</p>
+        <p>[2] 腾讯研究院. (2023). 生成式AI在媒体行业的应用现状与趋势. 腾讯研究院产业数字化中心.</p>
+        <p>[3] Zhang, W., Liu, H., & Chen, M. (2024). Semantic Bookmarking for Long-form Content: A Large-Scale Study. WWW '24. ACM.</p>
+        <p>[4] 微信读书产品团队. (2024). AI划线功能效果分析（内部报告）. 腾讯阅文集团.</p>
+        <p>[5] Brown, T., et al. (2020). Language Models are Few-Shot Learners. NeurIPS 2020.</p>
+        <p>[6] 国家互联网信息办公室. (2024). 互联网用户阅读行为调查报告（第六版）.</p>
+        <p style="color: var(--muted)">[7–186]（完整参考文献列表见PDF附录）</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="side-card">
+      <h4>报告核心数据</h4>
+      <div class="side-stat">
+        <div class="stat-item"><div class="sv">23家</div><div class="sl">平台访谈</div></div>
+        <div class="stat-item"><div class="sv">15万</div><div class="sl">用户调研</div></div>
+        <div class="stat-item"><div class="sv">80亿</div><div class="sl">条数据分析</div></div>
+        <div class="stat-item"><div class="sv">186篇</div><div class="sl">参考文献</div></div>
+      </div>
+    </div>
+    <div class="side-card">
+      <h4>研究团队</h4>
+      <div class="author-box">
+        <div class="author-avatar">张</div>
+        <div class="author-info">
+          <div class="name">张文远</div>
+          <div class="role">首席研究员 · 产业数字化</div>
+        </div>
+      </div>
+      <p class="author-bio">腾讯研究院产业数字化研究中心负责人，专注内容产业与AI融合方向，参与撰写腾讯研究院年度报告7部。</p>
+    </div>
+    <div class="side-card">
+      <h4>相关报告</h4>
+      <ul class="side-report-list">
+        <li>2024年中国大模型应用落地报告<span>腾讯研究院 · 2024年10月</span></li>
+        <li>内容创作者收入结构白皮书<span>腾讯研究院 · 2024年7月</span></li>
+        <li>短视频与长图文协同消费研究<span>腾讯研究院 · 2024年3月</span></li>
+        <li>2023年中国内容产业年度报告<span>腾讯研究院 · 2024年1月</span></li>
+      </ul>
+    </div>
+    <div class="side-card">
+      <h4>引用说明</h4>
+      <div class="cite-block">
+        <div class="cb-label">标准引用格式</div>
+        <div class="cite-item">腾讯研究院. (2024). <em>2024年中国AI内容产业发展白皮书</em>. <span>腾讯研究院产业数字化研究中心.</span></div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ── 产业洞察 ── -->
+<div id="tab-panel-insight" class="page-body" hidden>
+  <div style="flex:1;min-width:0">
+    <div class="report-section" data-section="insight-intro">
+      <div class="section-label"><div class="section-num">洞</div><span class="section-tag">Industry Insight</span></div>
+      <h2>产业洞察：内容平台的 AI 转型路径</h2>
+      <p>2024年，内容平台正在经历一轮深度 AI 化改造。本期洞察重点梳理头部平台在推荐算法、内容理解与用户留存三个维度的差异化布局。</p>
+      <h3>腾讯新闻：从分发到陪伴</h3>
+      <p>腾讯新闻在 2024 年将"智能阅读助手"提升为独立产品线，核心逻辑是将 AI 能力从推荐分发前置到阅读过程中，通过实时理解文章语义为用户提供阅读锚点。内部测试数据显示，具有语义书签功能的版本，长文完读率提升约 28%，用户次日留存提升 19%。</p>
+      <h3>字节跳动：效率优先的阅读压缩</h3>
+      <p>今日头条延续其效率至上的产品哲学，AI 功能以"一句话读懂"为主要形态——自动生成 50 字摘要附在文章头部。这一方案在降低阅读门槛上效果显著，但批评者认为它进一步压缩了深度阅读的空间，导致用户更难对内容产生长期记忆。</p>
+      <h3>微信读书：知识沉淀的先行者</h3>
+      <p>微信读书的 AI 划线与笔记功能是目前最成熟的书写式阅读助手。其多维笔记体系（AI 书签 + 手写批注 + 思维导图）覆盖了从精读到复盘的完整场景。数据显示，使用 AI 划线功能的用户月均阅读时长比不使用的用户高出 74%，书籍完读率高出 53%。</p>
+      <div class="finding-box" style="margin-top:24px">
+        <div class="fb-head">📌 核心洞察</div>
+        <p>三条路径的本质差异在于：字节看重"降低进入门槛"，腾讯在探索"阅读过程中的 AI 陪伴"，而微信读书则已深入"阅读结束后的知识沉淀"。这三个阶段构成了内容 AI 助手的完整演进路线图。</p>
+      </div>
+    </div>
+    <div class="report-section" data-section="insight-prediction">
+      <h2>未来12个月关键趋势预测</h2>
+      <p>基于当前技术与商业化进展，我们预判以下三个方向在 2025 年将出现明显突破：</p>
+      <h3>① 多模态阅读助手</h3>
+      <p>图文混排内容中，AI 将开始理解图表、图片与正文的语义关系，书签不再只能锚定到文字段落，而是可以精确标记某个数据图中的某条折线。</p>
+      <h3>② 跨设备阅读上下文同步</h3>
+      <p>用户在手机上阅读的断点、在 PC 上保存的书签、在平板上批注的笔记，将通过统一的语义索引服务在设备间同步。这依赖于平台级的知识图谱基础设施。</p>
+      <h3>③ 书签作为社交货币</h3>
+      <p>书签的分享与聚合将成为内容社区的新互动形态——"这篇文章里 1.2 万人书签了同一段话"将成为内容价值的新型量化指标。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── 政策研究 ── -->
+<div id="tab-panel-policy" class="page-body" hidden>
+  <div style="flex:1;min-width:0">
+    <div class="report-section" data-section="policy-intro">
+      <div class="section-label"><div class="section-num">政</div><span class="section-tag">Policy Research</span></div>
+      <h2>政策研究：生成式 AI 内容监管框架</h2>
+      <p>2024年，中国 AI 内容监管政策持续细化，形成了以《生成式人工智能服务管理暂行办法》为核心、多项配套规范为支撑的监管体系。本节梳理对内容平台影响最直接的政策要点。</p>
+      <h3>一、标注义务与溯源机制</h3>
+      <p>《暂行办法》第 12 条明确要求，使用生成式 AI 产生的内容应以显著方式标注。对于内容平台而言，这意味着 AI 自动生成的摘要、书签说明文字需添加"AI 生成"标识。部分平台已率先推出水印与元数据标注方案。</p>
+      <h3>二、个人信息保护与阅读行为数据</h3>
+      <p>用户的阅读轨迹、停留时长、书签位置属于《个人信息保护法》框架下的个人行为数据。2024 年第三季度，国家网信办对多家平台的阅读数据使用情况进行专项检查，要求平台在隐私协议中明确披露阅读数据的使用范围与保存期限。</p>
+      <h3>三、算法推荐透明度新要求</h3>
+      <p>《互联网信息服务算法推荐管理规定》实施两周年回顾显示，头部内容平台的算法透明度报告发布率已达 86%，但具体实现方式存在较大差异。监管机构明确信号：2025 年将进一步要求平台提供算法可解释性接口，允许用户查询内容为何被推荐。</p>
+      <div class="rec-box">
+        <div class="rb-head">→ 合规建议</div>
+        <ul class="rec-list">
+          <li>在 AI 书签功能的用户协议中明确区分"用户创建内容"与"AI 辅助生成内容"的数据权属。</li>
+          <li>阅读行为数据的存储周期建议不超过 6 个月，超期数据须匿名化处理。</li>
+          <li>向用户提供"查看我的数据"入口，满足《个保法》第 45 条的可访问性要求。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 数据中心 ── -->
+<div id="tab-panel-data" class="page-body" hidden>
+  <div style="flex:1;min-width:0">
+    <div class="report-section" data-section="data-overview">
+      <div class="section-label"><div class="section-num">数</div><span class="section-tag">Data Center</span></div>
+      <h2>数据中心：内容消费核心指标 2024</h2>
+      <p>以下数据来源于腾讯研究院 2024 年度内容产业追踪调研，覆盖 15 万用户样本，数据采集周期为 2024 年 1—10 月。</p>
+      <div class="data-row">
+        <div class="data-card"><div class="dc-value">37<sup>%</sup></div><div class="dc-label">移动端长文单次完读率</div><div class="dc-change down">↓4pp vs 2023</div></div>
+        <div class="dc-value" style="display:none"></div>
+        <div class="data-card"><div class="dc-value">74<sup>%</sup></div><div class="dc-label">AI书签用户月均阅读时长增幅</div><div class="dc-change">↑ vs 非使用者</div></div>
+        <div class="data-card"><div class="dc-value">318<sup>亿</sup></div><div class="dc-label">AI内容工具市场规模（2024预测）</div><div class="dc-change">↑43% YoY</div></div>
+        <div class="data-card"><div class="dc-value">4.2<sup>x</sup></div><div class="dc-label">AI书签使用频次/传统收藏夹</div><div class="dc-change">↑ 用户偏好</div></div>
+      </div>
+      <h3>关键发现：回访行为是留存的真正驱动因素</h3>
+      <p>本年度调研最核心的结论是：用户是否会主动回到已中断的内容，是预测 30 日留存率的最强单一指标，比"收藏行为"的预测力高出 2.3 倍，比"点赞行为"高出 4.1 倍。</p>
+      <div class="chart-box">
+        <div class="cb-title">各类行为对 30 日留存率的预测力对比</div>
+        <div class="chart-bars">
+          <div class="bar-item"><div class="bar" style="height:115px"></div><div class="bar-val">2.3x</div><div class="bar-label">回访行为</div></div>
+          <div class="bar-item"><div class="bar" style="height:50px"></div><div class="bar-val">1.0x</div><div class="bar-label">收藏行为</div></div>
+          <div class="bar-item"><div class="bar accent" style="height:28px"></div><div class="bar-val">0.6x</div><div class="bar-label">点赞行为</div></div>
+          <div class="bar-item"><div class="bar" style="height:38px"></div><div class="bar-val">0.8x</div><div class="bar-label">评论行为</div></div>
+          <div class="bar-item"><div class="bar" style="height:20px"></div><div class="bar-val">0.4x</div><div class="bar-label">分享行为</div></div>
+        </div>
+        <div class="chart-note">数据基准：收藏行为留存预测力 = 1.0x</div>
+      </div>
+      <h3>平台对比数据表</h3>
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead><tr><th>平台</th><th>长文完读率</th><th>回访率</th><th>AI功能渗透率</th><th>30日留存</th></tr></thead>
+          <tbody>
+            <tr><td>微信读书</td><td>58%</td><td>41%</td><td>67%</td><td>72%</td></tr>
+            <tr><td>腾讯新闻</td><td>34%</td><td>28%</td><td>38%</td><td>61%</td></tr>
+            <tr><td>今日头条</td><td>29%</td><td>19%</td><td>51%</td><td>57%</td></tr>
+            <tr><td>知乎</td><td>47%</td><td>33%</td><td>22%</td><td>65%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 关于我们 ── -->
+<div id="tab-panel-about" class="page-body" hidden>
+  <div style="flex:1;min-width:0">
+    <div class="report-section" data-section="about">
+      <div class="section-label"><div class="section-num">关</div><span class="section-tag">About Us</span></div>
+      <h2>关于腾讯研究院</h2>
+      <p>腾讯研究院（Tencent Research Institute）成立于 2011 年，是腾讯公司从事前沿技术与产业政策研究的专业机构，聚焦互联网、人工智能、数字内容与平台经济等方向。</p>
+      <h3>产业数字化研究中心</h3>
+      <p>本报告由产业数字化研究中心出品。该中心专注于数字技术与内容产业融合趋势研究，年均发布研究报告 12 部，与政府机构、高校及产业伙伴开展联合课题逾 40 项。</p>
+      <h3>研究方法说明</h3>
+      <p>本报告数据来源包括：腾讯平台内部脱敏数据、第三方公开数据、针对用户的问卷调研（n=150,000）及平台高管深度访谈（n=47）。所有数据均已通过数据伦理审查委员会审核。</p>
+      <h3>版权与引用</h3>
+      <p>本报告版权归腾讯研究院所有。欢迎在注明来源的前提下引用报告中的数据与观点。如需获取完整数据集或开展联合研究，请通过官方渠道联系。</p>
+      <div class="pull-quote">
+        <blockquote>我们相信，理解内容产业的规律，比预测它更重要。数据告诉我们用户在哪里停下；研究帮助我们理解他们为什么停下。</blockquote>
+        <cite>— 腾讯研究院院长 · 序言</cite>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="report-footer">
+  <p><strong>腾讯研究院</strong> · 产业数字化研究中心 · 2024</p>
+  <p style="margin-top:8px">本报告内容仅供研究参考，不构成任何投资或商业建议。转载请注明来源。</p>
+</footer>
+
+<script>
+/* ── nav tab switching ── */
+const tabLinks  = document.querySelectorAll('[data-tab]');
+const tabPanels = document.querySelectorAll('[id^="tab-panel-"]');
+tabLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    tabLinks.forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    const id = 'tab-panel-' + link.dataset.tab;
+    tabPanels.forEach(p => { p.hidden = p.id !== id; });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+const progress = document.getElementById('readProgress');
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  progress.style.width = (total > 0 ? (window.scrollY / total) * 100 : 0) + '%';
+});
+
+const tocLinks = document.querySelectorAll('.toc-list a');
+const sections = [];
+tocLinks.forEach(a => {
+  const id = a.getAttribute('href').replace('#', '');
+  const el = document.getElementById(id);
+  if (el) sections.push({ id, el, a });
+});
+window.addEventListener('scroll', () => {
+  let current = sections[0];
+  sections.forEach(s => {
+    if (window.scrollY + 100 >= s.el.offsetTop) current = s;
+  });
+  tocLinks.forEach(a => a.classList.remove('active'));
+  if (current) current.a.classList.add('active');
+}, { passive: true });
+</script>
+<script>
+window.ANCHORNOTE_CONFIG = {
+  pageId:          'research-report-2024',
+  pageTitle:       '2024年中国AI内容产业发展白皮书',
+  pageUrl:         'research.tencent.com/白皮书/AI内容产业2024',
+  articleSelector: '#article',
+  seedBookmarks: [
+    {
+      type: 'checkpoint',
+      selectedText: 'AI语义书签技术提供了一条可量化的解法路径',
+      section: 'exec',
+      source: '腾讯研究院白皮书',
+      note: '执行摘要核心结论，下次从这里继续读',
+      contextText: '用户在移动端的单次阅读完成率不足37%，而能够准确回到中断位置的用户其30日留存率比普通用户高出62%。AI语义书签技术提供了一条可量化的解法路径。'
+    },
+    {
+      type: 'mark',
+      selectedText: '使用AI划线功能的用户，其月均读书时长比不使用的用户高出74%',
+      section: 'ch2',
+      source: '微信读书公开数据',
+      note: '竞品验证数据，可与腾讯内部数据交叉',
+      contextText: '根据微信读书公开的数据，使用AI划线功能的用户，其月均读书时长比不使用的用户高出74%，书籍完读率高出53%。'
+    },
+    {
+      type: 'mark',
+      selectedText: '在对8,200名用户的深度访谈中',
+      section: 'ch5',
+      source: '腾讯研究院用户调研',
+      note: '用户研究结论：需要"当时那句话"而非位置',
+      contextText: '在对8,200名用户的深度访谈中，我们要求用户描述"最理想的书签应该能记住什么"。87%的用户提到了"具体的那句话"或"那个数据"。'
+    },
+    {
+      type: 'mark',
+      selectedText: '各平台的策略分化愈发明显。以腾讯新闻、今日头条为代表的资讯平台在推荐算法的AI化改造方面投入最大',
+      section: 'ch1',
+      source: '腾讯研究院产业洞察',
+      note: '竞品路径对比，支撑差异化叙事',
+      contextText: '从主要内容平台的AI布局来看，各平台的策略分化愈发明显。以腾讯新闻、今日头条为代表的资讯平台在推荐算法的AI化改造方面投入最大；以微信读书为代表的深度阅读平台则更加侧重AI辅助理解功能。'
+    }
+  ]
+};
+</script>
+<script src="../anchornote-embed.js"></script>
+</body>
+</html>

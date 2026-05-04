@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AnchorNote 产品功能规划 v2.3 — 腾讯文档</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --brand: #0052d9;
+  --brand-light: #e8f0fe;
+  --text: #1a1a2e;
+  --sub: #4a5568;
+  --muted: #8896aa;
+  --border: #e2e8f0;
+  --bg: #f7f8fa;
+  --sidebar-w: 220px;
+}
+body {
+  font-family: "PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+
+/* ── top bar ── */
+.doc-topbar {
+  position: sticky; top: 0; z-index: 200;
+  height: 50px; display: flex; align-items: center; gap: 0;
+  background: #fff; border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.doc-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; flex-shrink: 0; }
+.doc-logo .icon { width: 28px; height: 28px; background: var(--brand); border-radius: 5px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:900; }
+.doc-logo .name { font-size:14px; font-weight:700; color:var(--text); }
+.doc-logo .sub  { font-size:11px; color:var(--muted); }
+.doc-divider { width:1px; height:24px; background:var(--border); margin: 0 14px; }
+.doc-title-area { flex:1; min-width:0; }
+.doc-filename { font-size:14px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.doc-meta { font-size:11px; color:var(--muted); }
+.doc-topbar-right { display:flex; align-items:center; gap:8px; margin-left:auto; }
+.doc-btn { height:32px; padding:0 14px; border-radius:5px; border:1px solid var(--border); background:#fff; color:var(--sub); font:inherit; font-size:13px; cursor:pointer; white-space:nowrap; }
+.doc-btn.primary { background:var(--brand); color:#fff; border-color:var(--brand); }
+.doc-btn:hover { background:var(--brand-light); color:var(--brand); border-color:var(--brand); }
+.doc-btn.primary:hover { background:#0041b8; color:#fff; }
+
+/* ── editor toolbar (decorative) ── */
+.doc-toolbar {
+  display:flex; align-items:center; gap:2px;
+  padding:6px 16px; background:#fff; border-bottom:1px solid var(--border);
+  overflow-x:auto;
+}
+.tb-btn {
+  height:28px; padding:0 7px; border:0; border-radius:4px;
+  background:none; color:var(--sub); font:inherit; font-size:13px; cursor:default;
+  white-space:nowrap;
+}
+.tb-btn:hover { background:var(--bg); }
+.tb-sep { width:1px; height:18px; background:var(--border); margin:0 4px; flex-shrink:0; }
+
+/* ── layout ── */
+.doc-layout { display:flex; max-width:1100px; margin:0 auto; padding:28px 24px; gap:0; align-items:flex-start; }
+.demo-goal { background:#fffbeb; border-top:3px solid #f59e0b; border-bottom:1px solid #fde68a; padding:10px 24px; display:flex; align-items:center; gap:14px; font-size:13px; color:#451a03; flex-wrap:wrap; position:sticky; top:50px; z-index:99; }
+.dg-label { background:#f59e0b; color:#fff; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; font-size:12px; flex-shrink:0; }
+.dg-steps { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.dg-step { display:inline-flex; align-items:center; gap:5px; }
+.dg-num { background:#92400e; color:#fff; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+.dg-arrow { color:#d97706; font-weight:700; }
+
+/* ── outline sidebar ── */
+.doc-outline {
+  width:var(--sidebar-w); flex-shrink:0;
+  position:sticky; top:90px; margin-right:24px;
+}
+.outline-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:16px; }
+.outline-title { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; margin-bottom:12px; }
+.outline-list { list-style:none; }
+.outline-list li { margin-bottom:1px; }
+.outline-list a {
+  display:block; font-size:13px; color:var(--sub); text-decoration:none;
+  padding:4px 8px; border-radius:4px; border-left:2px solid transparent;
+  line-height:1.4; transition:all .15s;
+}
+.outline-list a:hover { background:var(--brand-light); color:var(--brand); }
+.outline-list a.active { background:var(--brand-light); color:var(--brand); border-left-color:var(--brand); }
+.outline-list li.h3 a { padding-left:20px; font-size:12px; color:var(--muted); }
+.outline-list li.h3 a:hover, .outline-list li.h3 a.active { color:var(--brand); }
+
+/* ── doc body ── */
+.doc-body-wrap { flex:1; min-width:0; }
+
+.doc-page {
+  background:#fff; border-radius:8px;
+  border:1px solid var(--border);
+  padding:48px 56px 64px;
+  margin-bottom:24px;
+  /* extra right padding for annotation dots */
+  padding-right: 72px;
+  position:relative;
+}
+
+.doc-page h1 { font-size:26px; font-weight:800; color:var(--text); margin-bottom:8px; line-height:1.3; }
+.doc-page .doc-subtitle { font-size:14px; color:var(--muted); margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+.doc-page .doc-info-row { display:flex; gap:24px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin-bottom:32px; }
+.doc-page .doc-info-row span strong { color:var(--text); }
+
+.doc-section { margin-bottom:36px; }
+.doc-section h2 {
+  font-size:18px; font-weight:700; color:var(--text);
+  margin-bottom:14px; padding-bottom:8px;
+  border-bottom:2px solid var(--brand-light);
+  display:flex; align-items:center; gap:8px;
+}
+.doc-section h2 .sec-num {
+  width:24px; height:24px; background:var(--brand); border-radius:4px;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:12px; font-weight:800; flex-shrink:0;
+}
+.doc-section h3 { font-size:15px; font-weight:700; color:var(--text); margin:20px 0 8px; }
+.doc-section p  { color:var(--sub); margin-bottom:12px; line-height:1.75; }
+.doc-section p:last-child { margin-bottom:0; }
+
+/* callout boxes */
+.doc-callout {
+  border-radius:6px; padding:14px 18px; margin:16px 0;
+  font-size:14px; line-height:1.65;
+  display:flex; gap:10px; align-items:flex-start;
+}
+.doc-callout.info  { background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; }
+.doc-callout.warn  { background:#fffbeb; border:1px solid #fcd34d; color:#92400e; }
+.doc-callout.tip   { background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; }
+.doc-callout .co-icon { font-size:16px; flex-shrink:0; }
+.doc-callout .co-body p { margin:0; }
+
+/* table */
+.doc-table-wrap { overflow-x:auto; margin:16px 0; border-radius:6px; border:1px solid var(--border); }
+.doc-table { width:100%; border-collapse:collapse; font-size:13px; }
+.doc-table th { background:var(--bg); padding:9px 14px; text-align:left; font-weight:700; color:var(--text); border-bottom:1px solid var(--border); }
+.doc-table td { padding:9px 14px; color:var(--sub); border-bottom:1px solid #f0f3f8; vertical-align:top; }
+.doc-table tr:last-child td { border-bottom:none; }
+.doc-table tr:hover td { background:#fafbff; }
+
+/* milestone */
+.milestone-list { list-style:none; border-left:2px solid var(--brand-light); padding-left:20px; margin-top:12px; }
+.milestone-list li { margin-bottom:18px; position:relative; }
+.milestone-list li::before { content:''; position:absolute; left:-25px; top:7px; width:8px; height:8px; border-radius:50%; background:var(--brand); border:2px solid #fff; box-shadow:0 0 0 2px var(--brand-light); }
+.milestone-list .ms-date { font-size:12px; font-weight:700; color:var(--brand); margin-bottom:3px; }
+.milestone-list .ms-title { font-size:14px; font-weight:700; color:var(--text); }
+.milestone-list .ms-desc  { font-size:13px; color:var(--sub); margin-top:2px; }
+.ms-done::before  { background:#16a34a !important; box-shadow:0 0 0 2px #dcfce7 !important; }
+.ms-doing::before { background:#f59e0b !important; box-shadow:0 0 0 2px #fef3c7 !important; }
+
+/* badge */
+.badge { display:inline-block; font-size:11px; font-weight:600; padding:2px 8px; border-radius:10px; }
+.badge-blue   { background:#dbeafe; color:#1d4ed8; }
+.badge-green  { background:#dcfce7; color:#15803d; }
+.badge-yellow { background:#fef3c7; color:#92400e; }
+.badge-gray   { background:#f1f5f9; color:#475569; }
+
+/* footer */
+.doc-footer { text-align:center; padding:24px; font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="doc-topbar">
+  <a class="doc-logo" href="#">
+    <div class="icon">文</div>
+    <div>
+      <div class="name">腾讯文档</div>
+      <div class="sub">TDocs</div>
+    </div>
+  </a>
+  <div class="doc-divider"></div>
+  <div class="doc-title-area">
+    <div class="doc-filename">AnchorNote · 产品功能规划 v2.3</div>
+    <div class="doc-meta">产品部 · 已自动保存 · 最近编辑：10分钟前</div>
+  </div>
+  <div class="doc-topbar-right">
+    <button class="doc-btn">💬 评论</button>
+    <button class="doc-btn">📋 版本历史</button>
+    <button class="doc-btn primary">分享</button>
+  </div>
+</div>
+
+<div class="doc-toolbar">
+  <button class="tb-btn">正文</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" title="加粗">B</button>
+  <button class="tb-btn" title="斜体"><em>I</em></button>
+  <button class="tb-btn" title="下划线"><u>U</u></button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn">A ▾</button>
+  <button class="tb-btn">🎨 ▾</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn">≡ ▾</button>
+  <button class="tb-btn">↩ 链接</button>
+  <button class="tb-btn">📊 表格</button>
+  <button class="tb-btn">📷 图片</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn">↶</button>
+  <button class="tb-btn">↷</button>
+</div>
+
+<div class="demo-goal">
+  <span class="dg-label">🎯 演示目标 · doc 模式 vs article 模式</span>
+  <div class="dg-steps">
+    <span class="dg-step"><span class="dg-num">①</span> 注意正文内的黄色持久高亮 + 段落右侧彩色圆点（doc 模式专属）</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">②</span> 对比新闻页：书签只在右侧便签，本页书签同时嵌入正文可见</span>
+    <span class="dg-arrow">→</span>
+    <span class="dg-step"><span class="dg-num">③</span> 点击便签条目或边距圆点 → 段落出现蓝色脉冲边框</span>
+  </div>
+</div>
+
+<div class="doc-layout">
+
+  <!-- outline -->
+  <aside class="doc-outline">
+    <div class="outline-card">
+      <div class="outline-title">文档大纲</div>
+      <ul class="outline-list" id="outlineList">
+        <li><a href="#sec-bg" class="active">1 背景与目标</a></li>
+        <li class="h3"><a href="#sec-bg-1">1.1 问题现状</a></li>
+        <li class="h3"><a href="#sec-bg-2">1.2 产品目标</a></li>
+        <li><a href="#sec-user">2 用户研究摘要</a></li>
+        <li class="h3"><a href="#sec-user-1">2.1 核心痛点</a></li>
+        <li class="h3"><a href="#sec-user-2">2.2 用户分层</a></li>
+        <li><a href="#sec-feature">3 核心功能设计</a></li>
+        <li class="h3"><a href="#sec-f1">3.1 语义书签</a></li>
+        <li class="h3"><a href="#sec-f2">3.2 阅读断点</a></li>
+        <li class="h3"><a href="#sec-f3">3.3 知识库</a></li>
+        <li><a href="#sec-tech">4 技术方案</a></li>
+        <li><a href="#sec-ms">5 里程碑计划</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- document body -->
+  <div class="doc-body-wrap">
+    <div class="doc-page" id="doc-body">
+
+      <h1>AnchorNote · 产品功能规划</h1>
+      <p class="doc-subtitle">版本 v2.3 · 产品部内部文档 · 本文档为设计阶段草稿，请勿外传</p>
+      <div class="doc-info-row">
+        <span>作者：<strong>李晓明</strong></span>
+        <span>评审人：<strong>王芳 / 陈立</strong></span>
+        <span>状态：<strong><span class="badge badge-yellow">评审中</span></strong></span>
+        <span>更新：<strong>2024-11-18</strong></span>
+      </div>
+
+      <!-- 1 -->
+      <div class="doc-section" id="sec-bg" data-section="background">
+        <h2><span class="sec-num">1</span>背景与目标</h2>
+
+        <h3 id="sec-bg-1">1.1 问题现状</h3>
+        <p>用户在阅读长内容时普遍面临"读了忘、忘了找不回"的困境。移动端长文单次阅读完成率仅为 37%，大量有价值的内容在被用户中途打断后永久流失。</p>
+        <p>现有书签方案（浏览器收藏夹、微信"稍后再看"）本质上只记录 URL，无法定位到"上次读到哪一句"，更无法恢复用户当时的阅读状态和上下文理解。这是一个被低估的用户痛点——用户意识不到书签不好用，只是隐约觉得"那篇文章再也找不到感觉了"。</p>
+        <div class="doc-callout info" data-section="background">
+          <span class="co-icon">💡</span>
+          <div class="co-body"><p><strong>关键洞察：</strong>用户需要恢复的不是"位置"，而是"当时读到那句话时的理解状态"。语义书签的核心价值在于重建上下文，而非定位页面坐标。</p></div>
+        </div>
+
+        <h3 id="sec-bg-2">1.2 产品目标</h3>
+        <p>AnchorNote v2.3 的产品目标是将语义书签能力从 Chrome 插件扩展为可嵌入任意内容页面的 SDK，覆盖腾讯新闻、企鹅号、微信读书 Web 端三条核心内容链路，实现以下可量化指标：</p>
+        <div class="doc-table-wrap">
+          <table class="doc-table">
+            <thead><tr><th>目标指标</th><th>基准值</th><th>目标值</th><th>测量方式</th></tr></thead>
+            <tbody>
+              <tr><td>长文回访率</td><td>19%</td><td>32%</td><td>文章 UV 回访 / 首次 UV</td></tr>
+              <tr><td>书签创建率</td><td>—</td><td>每千次阅读 ≥ 8 个书签</td><td>SDK 埋点</td></tr>
+              <tr><td>书签后 30 日留存</td><td>61%</td><td>74%</td><td>创建书签用户 30 日 DAU</td></tr>
+              <tr><td>页面加载影响</td><td>—</td><td>SDK 引入后 FCP ≤ +120ms</td><td>Lighthouse CI</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="doc-section" id="sec-user" data-section="user-research">
+        <h2><span class="sec-num">2</span>用户研究摘要</h2>
+
+        <h3 id="sec-user-1">2.1 核心痛点</h3>
+        <p>2024 年 9 月，产品团队对 1,200 名重度内容消费用户进行了深度访谈。三个最高频的痛点依次为：</p>
+        <p><strong>① 中断恢复困难（78%）</strong>——打开通知、接到电话、切换应用后，很难精确回到中断处。用户描述为"滚来滚去找不到那段"。</p>
+        <p><strong>② 内容价值遗忘（65%）</strong>——读完后两天已记不清文章的核心论点，只留有模糊印象。收藏的文章很少再打开。</p>
+        <p><strong>③ 多来源整合困难（52%）</strong>——同一个话题分散在多篇文章、多个平台，缺乏统一的"观点聚合"工具。</p>
+        <div class="doc-callout warn" data-section="user-research">
+          <span class="co-icon">⚠️</span>
+          <div class="co-body"><p>访谈发现：用户对"AI帮我总结"的接受度远低于预期（仅41%），但对"AI帮我记住我自己划的那段"接受度高达 89%。核心差异在于<strong>主动性归属感</strong>——用户希望保留自己选择的控制感。</p></div>
+        </div>
+
+        <h3 id="sec-user-2">2.2 用户分层</h3>
+        <div class="doc-table-wrap">
+          <table class="doc-table">
+            <thead><tr><th>用户类型</th><th>占比</th><th>核心场景</th><th>AnchorNote 价值点</th></tr></thead>
+            <tbody>
+              <tr><td>深度阅读者</td><td>18%</td><td>长文、报告、白皮书阅读</td><td>断点 + 语义书签 + 笔记整合</td></tr>
+              <tr><td>碎片阅读者</td><td>51%</td><td>通勤/午休刷新闻</td><td>快速断点，0 操作恢复</td></tr>
+              <tr><td>内容创作者</td><td>16%</td><td>研究素材收集</td><td>多源书签聚合 + 观点提炼</td></tr>
+              <tr><td>职场学习者</td><td>15%</td><td>行业资讯、技术文档</td><td>知识库 + 标签分组</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="doc-section" id="sec-feature" data-section="feature-design">
+        <h2><span class="sec-num">3</span>核心功能设计</h2>
+
+        <h3 id="sec-f1">3.1 语义书签</h3>
+        <p>用户选中任意文字后，触发书签气泡。气泡提供颜色选择（5色）、备注输入框、保存为"标记书签"或"阅读断点"两种类型。</p>
+        <p>AI 在保存时自动完成三件事：① 生成标题（意图前缀 + 文字摘要）；② 识别内容意图（数据洞察/技术实现/问题痛点等 7 类）；③ 生成"下一步建议"——根据意图类型给出不同的后续行动建议，而非千篇一律的"继续阅读"。</p>
+        <p>书签以彩色便签形式悬浮在页面右侧栏，hover 展开显示 AI 生成的摘要、原文引用、备注和跳转按钮。支持拖拽排序和一键删除。</p>
+
+        <h3 id="sec-f2">3.2 阅读断点</h3>
+        <p>断点是一种特殊书签，全文唯一（新断点覆盖旧断点）。触发方式有两种：</p>
+        <p><strong>文字断点：</strong>选中文字后点击"📍 断点"，锚定到具体语句。AI 保存该语句的上下文，后续可通过"回到阅读断点"精确跳回。</p>
+        <p><strong>位置断点：</strong>不选文字，点击右侧栏"存断点"按钮，系统自动定位屏幕中央最近的段落，保存其文字作为定位锚点。适合不想打断阅读节奏的场景。</p>
+        <div class="doc-callout tip" data-section="feature-design">
+          <span class="co-icon">✅</span>
+          <div class="co-body"><p><strong>设计决策：</strong>跳转到书签前，系统自动保存"返回点"，让用户可以一键回到跳转前的位置。这解决了"跳过去找不到刚才在哪"的次级问题。</p></div>
+        </div>
+
+        <h3 id="sec-f3">3.3 书签知识库</h3>
+        <p>右侧栏顶部"N 书签"入口打开知识库面板。面板提供全文搜索、AI 摘要、书签列表三个区域。</p>
+        <p>当书签数量 ≥ 3 时，系统自动按意图类型聚类展示（数据洞察/技术实现/问题痛点……），帮助用户快速理解自己在这篇文章里关注了哪几类信息。</p>
+        <p>当书签来自多个来源（如内容运营调研场景）时，改为按来源分组，在单一视图内呈现跨文章的观点聚合。</p>
+        <p>当书签密度过高（≥ 8 个）时，AI 摘要区域转为"⚠️ 书签过密"警示，建议用户合并同类项，减少认知负担。</p>
+      </div>
+
+      <!-- 4 -->
+      <div class="doc-section" id="sec-tech" data-section="tech-design">
+        <h2><span class="sec-num">4</span>技术方案</h2>
+
+        <h3>4.1 嵌入方式</h3>
+        <p>anchornote-embed.js 以 IIFE（立即执行函数表达式）形式封装，通过宿主页面的 window.ANCHORNOTE_CONFIG 对象接收配置，不依赖任何外部框架。CSS 使用 an- 前缀命名空间，避免与宿主页面样式冲突。</p>
+        <p>书签数据通过 localStorage 持久化，键为 anchornote.embed.{pageId}，JSON 格式存储完整书签对象数组。无需服务器，无需登录，隐私数据不离开设备。</p>
+
+        <h3>4.2 文本定位算法</h3>
+        <p>书签锚点通过 selectedText 字段存储原始文字，跳转时使用 TreeWalker 遍历 DOM 文本节点，以 indexOf 精确匹配定位。当原文被编辑或结构变化导致直接匹配失败时，降级到 data-section 属性定位到所在章节。</p>
+        <p>文档模式（mode: 'doc'）在页面加载后立即渲染持久高亮（.an-doc-hi），在每个被标注段落的右侧边距注入彩色圆点（.an-doc-dot），点击圆点触发书签详情。这套机制无需用户 hover 右侧栏便可感知内容的标注密度。</p>
+
+        <h3>4.3 AI 能力说明</h3>
+        <p>Demo 阶段所有 AI 能力为本地规则引擎实现：意图识别通过正则匹配 7 类关键词；关键词提取通过去停用词后的中文分词；摘要生成通过意图映射模板。</p>
+        <p>生产版本将对接腾讯混元大模型 API，实现真实的语义理解、上下文感知摘要和跨文章主题聚类。API 调用仅在用户保存书签时触发，不在页面浏览时持续调用。</p>
+      </div>
+
+      <!-- 5 -->
+      <div class="doc-section" id="sec-ms" data-section="milestone">
+        <h2><span class="sec-num">5</span>里程碑计划</h2>
+        <ul class="milestone-list">
+          <li class="ms-done">
+            <div class="ms-date">2024年 9月</div>
+            <div class="ms-title">Chrome 插件 v1.0 <span class="badge badge-green">已完成</span></div>
+            <div class="ms-desc">完整插件功能：选中保存、语义书签、阅读断点、书签库、AI 摘要。</div>
+          </li>
+          <li class="ms-done">
+            <div class="ms-date">2024年 11月</div>
+            <div class="ms-title">Embed SDK v2.0 <span class="badge badge-green">已完成</span></div>
+            <div class="ms-desc">anchornote-embed.js 发布，支持任意网页嵌入，三个 PCG 场景 demo 页面上线。</div>
+          </li>
+          <li class="ms-doing">
+            <div class="ms-date">2024年 12月</div>
+            <div class="ms-title">文档模式 v2.3 <span class="badge badge-yellow">进行中</span></div>
+            <div class="ms-desc">新增 mode:'doc' 配置，持久内联高亮 + 边距标注点，覆盖腾讯文档类场景。</div>
+          </li>
+          <li>
+            <div class="ms-date">2025年 Q1</div>
+            <div class="ms-title">腾讯新闻集成 <span class="badge badge-gray">规划中</span></div>
+            <div class="ms-desc">与腾讯新闻客户端团队合作，将 SDK 集成至长文阅读页面，进行 A/B 测试。</div>
+          </li>
+          <li>
+            <div class="ms-date">2025年 Q2</div>
+            <div class="ms-title">混元 API 接入 + 跨页面聚合 <span class="badge badge-gray">规划中</span></div>
+            <div class="ms-desc">接入真实 LLM API；支持跨多篇文章的书签聚合与主题洞察。</div>
+          </li>
+        </ul>
+      </div>
+
+    </div><!-- .doc-page -->
+  </div><!-- .doc-body-wrap -->
+
+</div><!-- .doc-layout -->
+
+<div class="doc-footer">腾讯文档 · AnchorNote 产品部 · 内部文档，请勿外传</div>
+
+<script>
+/* outline scroll highlight */
+const outLinks = document.querySelectorAll('.outline-list a');
+const headings = [];
+outLinks.forEach(a => {
+  const id = a.getAttribute('href').replace('#','');
+  const el = document.getElementById(id);
+  if (el) headings.push({ el, a });
+});
+window.addEventListener('scroll', () => {
+  let cur = headings[0];
+  headings.forEach(h => { if (window.scrollY + 80 >= h.el.offsetTop) cur = h; });
+  outLinks.forEach(a => a.classList.remove('active'));
+  if (cur) cur.a.classList.add('active');
+}, { passive: true });
+</script>
+
+<script>
+window.ANCHORNOTE_CONFIG = {
+  pageId:          'tencent-doc-anchornote-v23',
+  pageTitle:       'AnchorNote 产品功能规划 v2.3',
+  pageUrl:         'docs.tencent.com/AnchorNote/product-plan-v2.3',
+  articleSelector: '#doc-body',
+  mode:            'doc',
+  seedBookmarks: [
+    {
+      type: 'checkpoint',
+      selectedText: '用户需要恢复的不是"位置"，而是"当时读到那句话时的理解状态"',
+      section: 'background',
+      note: '这句话是整个产品的核心叙事，提案必引',
+      contextText: '用户需要恢复的不是"位置"，而是"当时读到那句话时的理解状态"。语义书签的核心价值在于重建上下文，而非定位页面坐标。'
+    },
+    {
+      type: 'mark',
+      selectedText: '用户对"AI帮我总结"的接受度远低于预期（仅41%），但对"AI帮我记住我自己划的那段"接受度高达 89%',
+      section: 'user-research',
+      note: '这个数据反差是最强的用户洞察，答辩时用',
+      contextText: '用户对"AI帮我总结"的接受度远低于预期（仅41%），但对"AI帮我记住我自己划的那段"接受度高达 89%。核心差异在于主动性归属感——用户希望保留自己选择的控制感。'
+    },
+    {
+      type: 'mark',
+      selectedText: '跳转到书签前，系统自动保存"返回点"，让用户可以一键回到跳转前的位置',
+      section: 'feature-design',
+      note: '返回点设计细节，评审可能会追问',
+      contextText: '跳转到书签前，系统自动保存"返回点"，让用户可以一键回到跳转前的位置。这解决了"跳过去找不到刚才在哪"的次级问题。'
+    },
+    {
+      type: 'mark',
+      selectedText: 'API 调用仅在用户保存书签时触发，不在页面浏览时持续调用',
+      section: 'tech-design',
+      note: '隐私友好的设计论据，回答"会不会一直监控用户"',
+      contextText: 'API 调用仅在用户保存书签时触发，不在页面浏览时持续调用。'
+    }
+  ]
+};
+</script>
+<script src="../anchornote-embed.js"></script>
+</body>
+</html>

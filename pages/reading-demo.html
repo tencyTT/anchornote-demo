@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AnchorNote 演示阅读页</title>
+    <style>
+      body {
+        margin: 0;
+        color: #1f2937;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.72;
+      }
+
+      main {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 48px 22px 80px;
+      }
+
+      h1 {
+        font-size: 34px;
+        line-height: 1.2;
+      }
+
+      h2 {
+        margin-top: 42px;
+        font-size: 23px;
+      }
+
+      p,
+      li {
+        font-size: 17px;
+      }
+
+      .notice {
+        padding: 16px 18px;
+        border-left: 4px solid #1f6feb;
+        background: #f2f6ff;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>科研资料阅读与断点恢复示例</h1>
+      <p class="notice">
+        这是 AnchorNote 的本地演示页。安装扩展后，在页面中选中任意段落文字，打开侧边栏并添加语义书签。
+      </p>
+
+      <h2>为什么普通收藏夹不够</h2>
+      <p>
+        学生在阅读课程资料、技术博客和比赛通知时，经常不是只关心网页本身，而是关心网页里某一个具体段落。
+        普通收藏夹只能记录 URL，无法解释当时为什么保存，也无法带用户回到真正重要的位置。
+      </p>
+      <p>
+        滚动位置记录虽然可以解决一部分问题，但当网页顶部新增内容、广告加载顺序变化，或者正文结构调整后，原来的
+        scrollY 很容易指向错误位置。
+      </p>
+
+      <h2>AnchorNote 的核心思路</h2>
+      <p>
+        AnchorNote 保存用户选中的原文、附近上下文、页面标题和滚动位置，并生成简短标题与摘要。
+        下次用户回到同一网页时，侧边栏会展示这个页面里的多个语义书签。
+      </p>
+      <p>
+        点击书签后，插件优先通过 DOM selector 定位。如果页面结构发生变化，则退回到原文搜索；
+        如果原文也发生轻微变化，则尝试使用上下文寻找最接近的段落。
+      </p>
+
+      <h2>演示时可以选中的句子</h2>
+      <ul>
+        <li>传统书签记录的是网页地址，而 AnchorNote 记录的是网页内容里的阅读断点。</li>
+        <li>语义书签可以帮助学习者恢复“为什么标记这段内容”的上下文。</li>
+        <li>三层重定位逻辑足够支撑一个清晰的 MVP 演示闭环。</li>
+      </ul>
+    </main>
+  </body>
+</html>

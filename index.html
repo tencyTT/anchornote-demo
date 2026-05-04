@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AnchorNote Demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f4fb;
+      color: #17233d;
+      min-height: 100vh;
+    }
+
+    /* header */
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #dde8f8;
+      padding: 28px 40px 24px;
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1f6feb, #8757e8);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+    }
+    .logo-name {
+      font-size: 26px;
+      font-weight: 900;
+      color: #17233d;
+      letter-spacing: -0.5px;
+    }
+    .logo-tag {
+      font-size: 13px;
+      font-weight: 600;
+      color: #68758f;
+      background: #eef4ff;
+      padding: 2px 10px;
+      border-radius: 99px;
+    }
+    .header-desc {
+      font-size: 15px;
+      color: #5b6980;
+      line-height: 1.7;
+      max-width: 640px;
+    }
+
+    /* main */
+    .main {
+      max-width: 900px;
+      margin: 36px auto;
+      padding: 0 40px 60px;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #8fa3c2;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    /* demo cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 18px;
+      margin-bottom: 48px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid rgba(182, 205, 243, .7);
+      border-radius: 16px;
+      padding: 22px 24px;
+      box-shadow: 0 6px 24px rgba(26, 68, 133, .07);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: box-shadow .18s, transform .18s;
+    }
+    .card:hover {
+      box-shadow: 0 16px 40px rgba(26, 68, 133, .14);
+      transform: translateY(-2px);
+    }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .card-platform {
+      font-size: 12px;
+      font-weight: 700;
+      color: #8fa3c2;
+      letter-spacing: .03em;
+    }
+    .mode-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 99px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .mode-article { background: #e7f8ff; color: #1559ce; }
+    .mode-doc     { background: #f0e9ff; color: #6533c9; }
+    .card h2 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #17233d;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .card p {
+      font-size: 13px;
+      color: #68758f;
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .card-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .feat-tag {
+      font-size: 11px;
+      font-weight: 600;
+      background: #f4f8ff;
+      color: #4a6a9c;
+      border: 1px solid #d8e8f8;
+      border-radius: 7px;
+      padding: 2px 8px;
+    }
+    .card-footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #edf2fb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .open-btn {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1f6feb;
+      background: #eaf2ff;
+      border: 0;
+      border-radius: 8px;
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+    .card:hover .open-btn { background: #1f6feb; color: #fff; }
+
+    /* quick-start */
+    .quickstart {
+      background: #fff;
+      border: 1px solid #d8e8f8;
+      border-radius: 16px;
+      padding: 24px 28px;
+    }
+    .quickstart h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #17233d;
+      margin-bottom: 14px;
+    }
+    .steps {
+      display: grid;
+      gap: 10px;
+    }
+    .step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: #eaf2ff;
+      color: #1f6feb;
+      font-weight: 900;
+      font-size: 13px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .step p {
+      font-size: 14px;
+      color: #3d5070;
+      line-height: 1.6;
+      padding-top: 3px;
+    }
+    .step strong { color: #17233d; }
+
+    /* ── continue reading ── */
+    .cp-section {
+      margin-bottom: 40px;
+    }
+    .cp-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .cp-list {
+      display: grid;
+      gap: 12px;
+    }
+    .cp-card {
+      background: #fff;
+      border: 1px solid rgba(182, 205, 243, .7);
+      border-radius: 14px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 16px rgba(26, 68, 133, .06);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: box-shadow .15s, transform .15s;
+    }
+    .cp-card:hover {
+      box-shadow: 0 10px 28px rgba(26, 68, 133, .13);
+      transform: translateY(-1px);
+    }
+    .cp-page-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      display: grid; place-items: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .cp-info { flex: 1; min-width: 0; }
+    .cp-page-title {
+      font-size: 12px; font-weight: 700;
+      color: #8fa3c2; margin-bottom: 3px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .cp-text {
+      font-size: 14px; font-weight: 600; color: #17233d;
+      line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .cp-meta {
+      font-size: 11px; color: #aab4c8; margin-top: 4px;
+    }
+    .cp-btn {
+      flex-shrink: 0;
+      font-family: -apple-system, "PingFang SC", sans-serif;
+      font-size: 13px; font-weight: 700;
+      padding: 8px 18px; border: 0; border-radius: 9px;
+      background: #eaf2ff; color: #1f6feb;
+      cursor: pointer; text-decoration: none;
+      white-space: nowrap; display: inline-block;
+    }
+    .cp-btn:hover { background: #1f6feb; color: #fff; }
+    .cp-empty {
+      text-align: center; padding: 28px 20px;
+      color: #aab4c8; font-size: 13px; line-height: 1.7;
+      background: #fff; border: 1px dashed #d8e8f8; border-radius: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🔖</div>
+      <span class="logo-name">AnchorNote</span>
+      <span class="logo-tag">Demo</span>
+    </div>
+    <p class="header-desc">
+      每个演示页只证明一种核心能力：频道页继续阅读、长文精准定位、协作文档标注、多源资料聚合和全局书签回访。
+    </p>
+    <a href="./dashboard.html" target="_blank" style="
+      display:inline-flex;align-items:center;gap:8px;margin-top:14px;
+      background:#1f6feb;color:#fff;text-decoration:none;
+      font-size:14px;font-weight:700;padding:9px 20px;border-radius:10px;
+    ">📊 查看全局书签库 Dashboard →</a>
+  </div>
+</header>
+
+<main class="main">
+  <!-- 继续阅读区域 — 由 JS 动态渲染 -->
+  <div id="cp-section" class="cp-section" style="display:none">
+    <div class="cp-section-head">
+      <p class="section-title" style="margin:0">📍 继续阅读</p>
+    </div>
+    <div id="cp-list" class="cp-list"></div>
+  </div>
+
+  <p class="section-title">选择演示场景</p>
+
+  <div class="cards">
+
+    <a class="card" target="_blank" href="./pages/tencent-news-deep.html">
+      <div class="card-top">
+        <span class="card-platform">腾讯新闻</span>
+        <span class="mode-badge mode-article">article 模式</span>
+      </div>
+      <h2>C 端长文阅读</h2>
+      <p>证明能力：在长文中保存语义书签和阅读断点，重新进入后精准跳回原文位置。</p>
+      <div class="card-features">
+        <span class="feat-tag">选文保存</span>
+        <span class="feat-tag">阅读断点</span>
+        <span class="feat-tag">跳转 + 返回</span>
+        <span class="feat-tag">AI 意图聚类</span>
+      </div>
+      <div class="card-footer">
+        <span></span>
+        <span class="open-btn">打开演示 →</span>
+      </div>
+    </a>
+
+    <a class="card" target="_blank" href="./pages/tencent-research-index.html">
+      <div class="card-top">
+        <span class="card-platform">腾讯研究院</span>
+        <span class="mode-badge mode-article">父→子页面</span>
+      </div>
+      <h2>研究院首页 → 报告详情</h2>
+      <p>辅助演示：父页面聚合子页面断点，适合展示从专题入口回到报告详情的链路。</p>
+      <div class="card-features">
+        <span class="feat-tag">父→子页面导航</span>
+        <span class="feat-tag">断点继续阅读</span>
+        <span class="feat-tag">来源分组</span>
+        <span class="feat-tag">密度警告</span>
+      </div>
+      <div class="card-footer">
+        <span></span>
+        <span class="open-btn">打开演示 →</span>
+      </div>
+    </a>
+
+    <a class="card" target="_blank" href="./pages/penguin-article.html">
+      <div class="card-top">
+        <span class="card-platform">企鹅号</span>
+        <span class="mode-badge mode-article">article 模式</span>
+      </div>
+      <h2>个人叙事长文</h2>
+      <p>辅助演示：个人叙事类内容的语义书签，功能与长文页接近，路演时可作为备用页面。</p>
+      <div class="card-features">
+        <span class="feat-tag">书签知识库</span>
+        <span class="feat-tag">意图识别</span>
+        <span class="feat-tag">相关书签提示</span>
+      </div>
+      <div class="card-footer">
+        <span></span>
+        <span class="open-btn">打开演示 →</span>
+      </div>
+    </a>
+
+    <a class="card" target="_blank" href="./pages/tencent-doc.html">
+      <div class="card-top">
+        <span class="card-platform">腾讯文档</span>
+        <span class="mode-badge mode-doc">doc 模式</span>
+      </div>
+      <h2>协作文档内持久标注</h2>
+      <p>证明能力：腾讯文档式协作资料内保留持久高亮、段落圆点和团队备注。</p>
+      <div class="card-features">
+        <span class="feat-tag">持久高亮</span>
+        <span class="feat-tag">边距圆点</span>
+        <span class="feat-tag">段落脉冲跳转</span>
+      </div>
+      <div class="card-footer">
+        <span></span>
+        <span class="open-btn">打开演示 →</span>
+      </div>
+    </a>
+
+    <a class="card" target="_blank" href="./pages/content-research.html">
+      <div class="card-top">
+        <span class="card-platform">内容运营工作台</span>
+        <span class="mode-badge mode-article">article 模式</span>
+      </div>
+      <h2>多源书签聚合</h2>
+      <p>证明能力：把多来源资料里的标注按来源自动分组，适合内容运营和选题调研。</p>
+      <div class="card-features">
+        <span class="feat-tag">来源分组</span>
+        <span class="feat-tag">多源聚合</span>
+        <span class="feat-tag">全文关键词搜索</span>
+      </div>
+      <div class="card-footer">
+        <span></span>
+        <span class="open-btn">打开演示 →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="quickstart">
+    <h3>快速上手</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <p><strong>选中任意正文文字</strong> → 弹出气泡，选颜色、写备注，点 <strong>🔖 书签</strong> 或 <strong>📍 断点</strong> 保存</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <p>右侧栏点 <strong>存断点</strong> 可直接定位当前屏幕位置，无需选文</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <p>右侧栏点 <strong>N 书签</strong> 打开书签库 → 查看 AI 聚类 / 来源分组 / 全文搜索，点书签跳转原文</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <p>跳转后库内出现 <strong>↩ 返回上次位置</strong>，可一键回到跳转前的阅读位置</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  const PAGES = [
+    { id: 'tencent-news-deep',             title: 'AI大模型正在重塑内容消费',       icon: '📰', color: '#1f6feb', file: './pages/tencent-news-deep.html' },
+    { id: 'research-report-2024',           title: '2024年中国AI内容产业发展白皮书', icon: '📊', color: '#8757e8', file: './pages/research-report.html' },
+    { id: 'penguin-article-dachang',        title: '我在腾讯做产品的五年',           icon: '✍️', color: '#18b99a', file: './pages/penguin-article.html' },
+    { id: 'tencent-doc-anchornote-v23',     title: 'AnchorNote 产品功能规划 v2.3',  icon: '📄', color: '#f45b69', file: './pages/tencent-doc.html' },
+    { id: 'content-research-ai-reader-2024',title: 'AI阅读助手竞品调研素材板',      icon: '🗂️', color: '#f6bd18', file: './pages/content-research.html' }
+  ];
+
+  function timeAgo(iso) {
+    if (!iso) return '';
+    const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+    if (diff < 60)   return '刚刚';
+    if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前';
+    if (diff < 86400)return Math.floor(diff / 3600) + ' 小时前';
+    return Math.floor(diff / 86400) + ' 天前';
+  }
+
+  function loadCheckpoints() {
+    const results = [];
+    PAGES.forEach(page => {
+      try {
+        const raw = localStorage.getItem('anchornote.embed.' + page.id);
+        if (!raw) return;
+        const bms = JSON.parse(raw);
+        const cp = bms.find(b => b.type === 'checkpoint');
+        if (cp) results.push({ page, cp });
+      } catch {}
+    });
+    // sort by most recently saved
+    results.sort((a, b) => new Date(b.cp.createdAt) - new Date(a.cp.createdAt));
+    return results;
+  }
+
+  function render() {
+    const checkpoints = loadCheckpoints();
+    const section = document.getElementById('cp-section');
+    const list    = document.getElementById('cp-list');
+    list.innerHTML = '';
+
+    if (checkpoints.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = '';
+    checkpoints.forEach(({ page, cp }) => {
+      const url = `${page.file}#an-jump=${encodeURIComponent(cp.id)}`;
+      const card = document.createElement('div');
+      card.className = 'cp-card';
+      card.innerHTML = `
+        <div class="cp-page-icon" style="background:${page.color}22">${page.icon}</div>
+        <div class="cp-info">
+          <div class="cp-page-title">${page.title}</div>
+          <div class="cp-text">${cp.selectedText || cp.note || '阅读断点'}</div>
+          <div class="cp-meta">📍 阅读断点 · ${timeAgo(cp.createdAt)}${cp.note ? ' · ' + cp.note : ''}</div>
+        </div>
+        <a class="cp-btn" href="${url}" target="_blank">继续阅读 →</a>`;
+      list.appendChild(card);
+    });
+  }
+
+  render();
+
+  // refresh if another tab updates bookmarks
+  window.addEventListener('storage', e => {
+    if (e.key && e.key.startsWith('anchornote.embed.')) render();
+  });
+})();
+</script>
+</body>
+</html>

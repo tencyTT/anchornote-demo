@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AnchorNote · 全局书签库</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f4fb;
+      color: #17233d;
+      min-height: 100vh;
+    }
+
+    /* ── topbar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid #dde8f8;
+      padding: 14px 36px;
+      display: flex; align-items: center; gap: 18px;
+    }
+    .topbar-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: inherit; flex-shrink: 0;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #1f6feb, #8757e8);
+      display: grid; place-items: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .logo-name { font-size: 18px; font-weight: 900; letter-spacing: -.4px; }
+    .logo-sub  { font-size: 12px; color: #8fa3c2; font-weight: 600; background: #eef4ff; padding: 2px 8px; border-radius: 99px; }
+    .topbar-search {
+      flex: 1; max-width: 480px;
+      border: 1px solid #d0dffa; border-radius: 999px;
+      padding: 8px 18px; outline: none;
+      font: inherit; font-size: 14px; background: #f4f8ff; color: #17233d;
+    }
+    .topbar-search:focus { border-color: #1f6feb; background: #fff; }
+    .topbar-actions { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+    .btn-ghost {
+      font: inherit; font-size: 13px; font-weight: 700;
+      padding: 7px 16px; border: 1px solid #d0dffa; border-radius: 9px;
+      background: #fff; color: #4a6a9c; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-ghost:hover { background: #eaf2ff; border-color: #1f6feb; color: #1f6feb; }
+    .btn-primary {
+      font: inherit; font-size: 13px; font-weight: 700;
+      padding: 7px 16px; border: 0; border-radius: 9px;
+      background: #1f6feb; color: #fff; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary:hover { background: #1559ce; }
+
+    /* ── layout ── */
+    .main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 28px 36px 60px;
+    }
+    .demo-goal { background:#fffbeb; border-top:3px solid #f59e0b; border-bottom:1px solid #fde68a; padding:10px 20px; display:flex; align-items:center; gap:14px; font-size:13px; color:#451a03; flex-wrap:wrap; position:sticky; top:52px; z-index:99; margin-bottom:18px; }
+    .dg-label { background:#f59e0b; color:#fff; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; font-size:12px; flex-shrink:0; }
+    .dg-steps { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .dg-step { display:inline-flex; align-items:center; gap:5px; }
+    .dg-num { background:#92400e; color:#fff; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+    .dg-arrow { color:#d97706; font-weight:700; }
+
+    /* ── stat bar ── */
+    .stat-bar {
+      display: flex; gap: 14px; margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .stat-card {
+      background: #fff; border: 1px solid rgba(182,205,243,.7);
+      border-radius: 12px; padding: 14px 20px;
+      min-width: 140px; flex: 1;
+      box-shadow: 0 4px 16px rgba(26,68,133,.06);
+    }
+    .stat-num { font-size: 28px; font-weight: 900; color: #17233d; line-height: 1; margin-bottom: 4px; }
+    .stat-lbl { font-size: 12px; color: #8fa3c2; font-weight: 600; }
+
+    /* ── page group ── */
+    .page-group {
+      background: #fff; border: 1px solid rgba(182,205,243,.7);
+      border-radius: 16px; margin-bottom: 20px;
+      box-shadow: 0 6px 24px rgba(26,68,133,.07);
+      overflow: hidden;
+    }
+    .page-head {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 22px;
+      border-bottom: 1px solid #edf2fb;
+      cursor: pointer; user-select: none;
+    }
+    .page-head:hover { background: #fafcff; }
+    .page-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: grid; place-items: center; font-size: 16px;
+      flex-shrink: 0;
+    }
+    .page-head-info { flex: 1; min-width: 0; }
+    .page-head-title { font-size: 15px; font-weight: 800; color: #17233d; line-height: 1.3; }
+    .page-head-url { font-size: 12px; color: #8fa3c2; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .page-head-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .badge {
+      font-size: 11px; font-weight: 700; padding: 3px 10px;
+      border-radius: 99px; white-space: nowrap;
+    }
+    .badge-blue   { background: #eaf2ff; color: #1559ce; }
+    .badge-green  { background: #e5fbf4; color: #087967; }
+    .badge-purple { background: #f0e9ff; color: #6533c9; }
+    .badge-gray   { background: #f0f4fb; color: #8fa3c2; }
+    .chevron { font-size: 13px; color: #aab4c8; transition: transform .2s; }
+    .page-group.collapsed .chevron { transform: rotate(-90deg); }
+    .page-body { padding: 16px 22px 20px; }
+    .page-group.collapsed .page-body { display: none; }
+
+    /* ── empty state ── */
+    .empty-page {
+      text-align: center; padding: 28px 0;
+      color: #aab4c8; font-size: 14px;
+    }
+
+    /* ── bm list ── */
+    .bm-grid { display: grid; gap: 10px; }
+    .bm-item {
+      border: 1px solid rgba(182,205,243,.6); border-radius: 10px;
+      background: #fafcff; padding: 12px 14px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .bm-item.hidden { display: none; }
+    .bm-color-bar {
+      width: 4px; border-radius: 4px; flex-shrink: 0; align-self: stretch;
+      min-height: 40px;
+    }
+    .bm-content { flex: 1; min-width: 0; }
+    .bm-meta {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: #8fa3c2; font-weight: 600; margin-bottom: 5px;
+      flex-wrap: wrap;
+    }
+    .src-badge {
+      background: #eef4ff; color: #3b5f9e;
+      font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 9px;
+    }
+    .bm-text { font-size: 13px; color: #17233d; font-weight: 700; margin-bottom: 4px; line-height: 1.4; }
+    .bm-summary { font-size: 13px; color: #5b6980; line-height: 1.55; margin-bottom: 4px; }
+    .bm-note { font-size: 12px; color: #8fa3c2; }
+    .bm-note strong { color: #4a6a9c; }
+    .bm-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .bm-btn {
+      font: inherit; font-size: 12px; font-weight: 700;
+      padding: 4px 10px; border: 0; border-radius: 7px;
+      cursor: pointer; white-space: nowrap;
+    }
+    .bm-btn-jump { background: #eaf2ff; color: #1f6feb; }
+    .bm-btn-jump:hover { background: #1f6feb; color: #fff; }
+    .bm-btn-open { background: #f4f8ff; color: #68758f; }
+    .bm-btn-open:hover { background: #e5fbf4; color: #087967; }
+    .bm-btn-del { background: #fff0f0; color: #d7263d; font-weight: 900; }
+    .bm-btn-del:hover { background: #d7263d; color: #fff; }
+
+    /* search highlight */
+    .sh { background: #fff0a8; border-radius: 3px; color: inherit; }
+
+    /* ── empty global state ── */
+    .global-empty {
+      text-align: center; padding: 80px 20px;
+      color: #8fa3c2;
+    }
+    .global-empty .big-icon { font-size: 56px; margin-bottom: 18px; }
+    .global-empty h2 { font-size: 20px; font-weight: 800; color: #445a7a; margin-bottom: 10px; }
+    .global-empty p { font-size: 14px; line-height: 1.7; max-width: 380px; margin: 0 auto 20px; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="topbar-logo" href="./index.html">
+    <div class="logo-icon">🔖</div>
+    <span class="logo-name">AnchorNote</span>
+    <span class="logo-sub">全局书签库</span>
+  </a>
+  <input class="topbar-search" type="search" id="q" placeholder="搜索原文、摘要、备注、来源…" />
+  <div class="topbar-actions">
+    <button class="btn-ghost" id="btn-refresh" title="重新读取所有页面书签">↺ 刷新</button>
+    <a class="btn-primary" href="./index.html" target="_blank">← 返回首页</a>
+  </div>
+</header>
+
+<main class="main">
+  <div class="demo-goal">
+    <span class="dg-label">🎯 演示目标 · 跨页面统一书签库</span>
+    <div class="dg-steps">
+      <span class="dg-step"><span class="dg-num">①</span> 查看顶部统计卡片：各页面书签数与断点数</span>
+      <span class="dg-arrow">→</span>
+      <span class="dg-step"><span class="dg-num">②</span> 试试全局搜索，在所有 PCG 页面书签中检索关键词</span>
+      <span class="dg-arrow">→</span>
+      <span class="dg-step"><span class="dg-num">③</span> 点「跳转」→ 新标签页打开对应页面并自动定位到该书签</span>
+    </div>
+  </div>
+  <div class="stat-bar" id="stat-bar"></div>
+  <div id="content"></div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  const PAGES = [
+    {
+      id:    'tencent-news-yaowen',
+      title: '腾讯新闻要闻',
+      url:   'news.qq.com/要闻',
+      file:  './pages/tencent-news-yaowen.html',
+      icon:  '🗞️', color: '#c1281b', mode: 'article'
+    },
+    {
+      id:    'tencent-news-deep',
+      title: 'AI大模型正在重塑内容消费：从推荐算法到阅读助手',
+      url:   'news.qq.com/深度报道/AI大模型与内容消费',
+      file:  './pages/tencent-news-deep.html',
+      icon:  '📰', color: '#1f6feb', mode: 'article'
+    },
+    {
+      id:    'research-report-2024',
+      title: '2024年中国AI内容产业发展白皮书',
+      url:   'research.tencent.com/白皮书/AI内容产业2024',
+      file:  './pages/research-report.html',
+      icon:  '📊', color: '#8757e8', mode: 'article'
+    },
+    {
+      id:    'penguin-article-dachang',
+      title: '我在腾讯做产品的五年：写给所有在大厂迷失方向的人',
+      url:   'penguin.qq.com/创作者/林一默/大厂五年',
+      file:  './pages/penguin-article.html',
+      icon:  '✍️', color: '#18b99a', mode: 'article'
+    },
+    {
+      id:    'tencent-doc-anchornote-v23',
+      title: 'AnchorNote 产品功能规划 v2.3',
+      url:   'docs.tencent.com/AnchorNote/product-plan-v2.3',
+      file:  './pages/tencent-doc.html',
+      icon:  '📄', color: '#f45b69', mode: 'doc'
+    },
+    {
+      id:    'content-research-ai-reader-2024',
+      title: 'AI阅读助手竞品调研素材板',
+      url:   'ops.tencent.com/research/ai-reader-2024',
+      file:  './pages/content-research.html',
+      icon:  '🗂️', color: '#f6bd18', mode: 'article'
+    }
+  ];
+
+  const COLORS = [
+    '#f6bd18', '#1f6feb', '#18b99a', '#f45b69', '#8757e8'
+  ];
+
+  function loadBMs(pageId) {
+    try {
+      const raw = localStorage.getItem('anchornote.embed.' + pageId);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr.filter(b => b.type !== 'return') : [];
+    } catch { return []; }
+  }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  let _query = '';
+
+  function hi(text) {
+    const s = esc(text);
+    if (!_query) return s;
+    const re = new RegExp('(' + _query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    return s.replace(re, '<mark class="sh">$1</mark>');
+  }
+
+  function matchBM(bm) {
+    if (!_query) return true;
+    const q = _query.toLowerCase();
+    return [bm.selectedText, bm.title, bm.summary, bm.note, bm.source]
+      .some(f => f && f.toLowerCase().includes(q));
+  }
+
+  function typeLabel(bm) {
+    if (bm.type === 'checkpoint') return '📍 阅读断点';
+    return '🔖 标记书签';
+  }
+
+  function modeBadge(mode) {
+    if (mode === 'doc') return '<span class="badge badge-purple">doc 模式</span>';
+    return '<span class="badge badge-blue">article 模式</span>';
+  }
+
+  function deleteBM(pageId, bmId) {
+    const key = 'anchornote.embed.' + pageId;
+    try {
+      const arr = JSON.parse(localStorage.getItem(key) || '[]');
+      const next = arr.filter(b => b.id !== bmId);
+      localStorage.setItem(key, JSON.stringify(next));
+    } catch {}
+  }
+
+  function renderBMItem(bm, page) {
+    const div = document.createElement('div');
+    div.className = 'bm-item';
+    const accent = COLORS[(bm.colorIndex || 0) % COLORS.length];
+    div.innerHTML = `
+      <div class="bm-color-bar" style="background:${esc(accent)}"></div>
+      <div class="bm-content">
+        <div class="bm-meta">
+          ${esc(typeLabel(bm))}
+          ${bm.source ? `<span class="src-badge">${esc(bm.source)}</span>` : ''}
+        </div>
+        <div class="bm-text">${hi(bm.selectedText)}</div>
+        ${bm.summary ? `<div class="bm-summary">${hi(bm.summary)}</div>` : ''}
+        ${bm.note ? `<div class="bm-note"><strong>备注：</strong>${hi(bm.note)}</div>` : ''}
+      </div>
+      <div class="bm-actions">
+        <button class="bm-btn bm-btn-jump">跳转</button>
+        <button class="bm-btn bm-btn-open">↗ 原文</button>
+        <button class="bm-btn bm-btn-del" title="删除此书签">×</button>
+      </div>`;
+    div.querySelector('.bm-btn-jump').addEventListener('click', () => {
+      const url = bm.id ? `${page.file}#an-jump=${encodeURIComponent(bm.id)}` : page.file;
+      window.open(url, '_blank');
+    });
+    div.querySelector('.bm-btn-open').addEventListener('click', () => window.open(page.file, '_blank'));
+    div.querySelector('.bm-btn-del').addEventListener('click', () => {
+      if (!confirm(`删除书签「${bm.selectedText.slice(0, 30)}…」？`)) return;
+      deleteBM(page.id, bm.id);
+      div.remove();
+    });
+    return div;
+  }
+
+  function renderPageGroup(page, bms) {
+    const matched = bms.filter(matchBM);
+
+    const group = document.createElement('div');
+    group.className = 'page-group';
+    if (bms.length === 0) group.classList.add('collapsed');
+
+    const countBadge = bms.length === 0
+      ? '<span class="badge badge-gray">暂无书签</span>'
+      : `<span class="badge badge-green">${bms.length} 条</span>`;
+
+    group.innerHTML = `
+      <div class="page-head">
+        <div class="page-icon" style="background:${esc(page.color)}22">${esc(page.icon)}</div>
+        <div class="page-head-info">
+          <div class="page-head-title">${esc(page.title)}</div>
+          <div class="page-head-url">${esc(page.url)}</div>
+        </div>
+        <div class="page-head-right">
+          ${modeBadge(page.mode)}
+          ${countBadge}
+          <a class="btn-ghost" href="${esc(page.file)}" target="_blank" onclick="event.stopPropagation()">打开页面 ↗</a>
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="page-body"></div>`;
+
+    group.querySelector('.page-head').addEventListener('click', () => {
+      group.classList.toggle('collapsed');
+    });
+
+    const body = group.querySelector('.page-body');
+
+    if (bms.length === 0) {
+      body.innerHTML = '<div class="empty-page">该页面还没有保存任何书签，打开页面后选中文字即可保存。</div>';
+    } else if (matched.length === 0) {
+      body.innerHTML = '<div class="empty-page">没有匹配当前搜索的书签。</div>';
+    } else {
+      const grid = document.createElement('div');
+      grid.className = 'bm-grid';
+      matched.forEach(bm => grid.appendChild(renderBMItem(bm, page)));
+      body.appendChild(grid);
+    }
+
+    return group;
+  }
+
+  function renderStats(allData) {
+    const totalBMs = allData.reduce((s, d) => s + d.bms.length, 0);
+    const activePages = allData.filter(d => d.bms.length > 0).length;
+    const checkpoints = allData.reduce((s, d) => s + d.bms.filter(b => b.type === 'checkpoint').length, 0);
+    const marks = totalBMs - checkpoints;
+
+    const bar = document.getElementById('stat-bar');
+    bar.innerHTML = `
+      <div class="stat-card"><div class="stat-num">${totalBMs}</div><div class="stat-lbl">全部书签</div></div>
+      <div class="stat-card"><div class="stat-num">${activePages}</div><div class="stat-lbl">有书签的页面</div></div>
+      <div class="stat-card"><div class="stat-num">${marks}</div><div class="stat-lbl">🔖 标记书签</div></div>
+      <div class="stat-card"><div class="stat-num">${checkpoints}</div><div class="stat-lbl">📍 阅读断点</div></div>
+    `;
+  }
+
+  function render() {
+    const allData = PAGES.map(p => ({ page: p, bms: loadBMs(p.id) }));
+    renderStats(allData);
+
+    const container = document.getElementById('content');
+    container.textContent = '';
+
+    const totalBMs = allData.reduce((s, d) => s + d.bms.length, 0);
+    if (totalBMs === 0 && !_query) {
+      container.innerHTML = `
+        <div class="global-empty">
+          <div class="big-icon">🔖</div>
+          <h2>书签库是空的</h2>
+          <p>打开任意一个演示页面，选中文字后保存书签或阅读断点，它们会自动出现在这里。</p>
+          <a class="btn-primary" href="./index.html">← 去首页选择演示页</a>
+        </div>`;
+      return;
+    }
+
+    allData.forEach(({ page, bms }) => {
+      container.appendChild(renderPageGroup(page, bms));
+    });
+  }
+
+  // search
+  document.getElementById('q').addEventListener('input', function () {
+    _query = this.value.trim().toLowerCase();
+    // expand all groups when searching
+    if (_query) {
+      document.querySelectorAll('.page-group').forEach(g => g.classList.remove('collapsed'));
+    }
+    render();
+  });
+
+  // refresh
+  document.getElementById('btn-refresh').addEventListener('click', () => {
+    document.getElementById('q').value = '';
+    _query = '';
+    render();
+  });
+
+  // auto-refresh when another tab writes to localStorage
+  window.addEventListener('storage', e => {
+    if (e.key && e.key.startsWith('anchornote.embed.')) render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
