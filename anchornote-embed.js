@@ -43,6 +43,17 @@
   /* ── css ─────────────────────────────────────────────────────────────── */
   const styleEl = document.createElement('style');
   styleEl.textContent = `
+    /* ── selection trigger (小 logo) ── */
+    .an-sel-trigger {
+      position: fixed; z-index: 10000;
+      width: 32px; height: 32px;
+      border: 1px solid rgba(26,68,133,.2); border-radius: 10px 10px 12px 12px;
+      background: #fff5cf; color: #7a5200;
+      font-size: 18px; font-weight: 800; line-height: 1;
+      box-shadow: 0 8px 22px rgba(26,68,133,.18);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+
     /* ── selection bubble ── */
     .an-sel-bubble {
       position: fixed; z-index: 9999;
@@ -541,6 +552,7 @@
   const overlay = document.createElement('div');
   overlay.id = 'an-overlay-root';
   overlay.innerHTML = `
+    <button id="an-sel-trigger" class="an-sel-trigger" hidden>🔖</button>
     <div id="an-sel" class="an-sel-bubble" hidden>
       <button class="an-sel-close" id="an-sel-cls">✕</button>
       <div id="an-sel-quote" class="an-sel-quote"></div>
@@ -629,6 +641,7 @@
     // Suppress selectionchange-triggered hide while the user is pressing
     // inside the bubble (mousedown clears selection before click fires).
     $('an-sel').addEventListener('mousedown', () => { _bubbleDown = true; });
+    $('an-sel-trigger').addEventListener('mousedown', () => { _bubbleDown = true; });
     document.addEventListener('mouseup', () => { setTimeout(() => { _bubbleDown = false; }, 0); });
 
     document.addEventListener('selectionchange', () => {
@@ -638,8 +651,9 @@
       if (!s || !s.toString().trim()) hideBubble();
     });
 
+    // 选中文字后只显示小 logo trigger，点击后再展开完整面板
     document.addEventListener('mouseup', e => {
-      if ($('an-sel').contains(e.target)) return;
+      if ($('an-sel').contains(e.target) || $('an-sel-trigger').contains(e.target)) return;
       const sel = window.getSelection();
       const txt = norm(sel?.toString());
       if (!sel || sel.rangeCount === 0 || txt.length < 2) return;
@@ -648,8 +662,19 @@
       const range = sel.getRangeAt(0);
       if (!art.contains(range.commonAncestorContainer)) return;
       state.pending = buildPayload(sel, range);
-      positionBubble(range);
-      $('an-sel-quote').textContent = clip(txt, 48);
+      positionTrigger(range);
+      $('an-sel').hidden = true;
+      $('an-sel-trigger').hidden = false;
+    });
+
+    $('an-sel-trigger').addEventListener('click', () => {
+      if (!state.pending) return;
+      const sel = window.getSelection();
+      const range = sel && sel.rangeCount > 0 ? sel.getRangeAt(0) : null;
+      const txt = norm(sel?.toString());
+      $('an-sel-trigger').hidden = true;
+      if (range) positionBubble(range);
+      $('an-sel-quote').textContent = clip(txt || (state.pending.selectedText || ''), 48);
       $('an-sel-note').value = '';
       $('an-sel').hidden = false;
     });
@@ -726,7 +751,19 @@
     $('an-sel').style.top  = Math.max(60, top) + 'px';
   }
 
-  function hideBubble() { $('an-sel').hidden = true; state.pending = null; }
+  function positionTrigger(range) {
+    const rect = range.getBoundingClientRect();
+    const left = Math.max(8, Math.min(window.innerWidth - 48, rect.right + 8));
+    const top  = Math.max(8, Math.min(window.innerHeight - 40, rect.top - 4));
+    $('an-sel-trigger').style.left = left + 'px';
+    $('an-sel-trigger').style.top  = top + 'px';
+  }
+
+  function hideBubble() {
+    $('an-sel').hidden = true;
+    $('an-sel-trigger').hidden = true;
+    state.pending = null;
+  }
 
   function saveFromBubble(type) {
     if (!state.pending) { hideBubble(); return; }
